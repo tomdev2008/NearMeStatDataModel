@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+	"-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nearme.statistics.dao.app.common.UseractionDao">
+	<!-- 用户行为编码-查询分组 -->
+	<select id="getUsergroupList" parameterType="UseractionDTO" resultType="UseractionEntity">
+	    SELECT 
+	        T.GROUP_CODE groupcode,
+	        T.GROUP_NAME groupname
+		FROM GLT_USERACTION_CODE_GROUP T
+		WHERE T.SYSTEM_ID=#{systemID}
+		ORDER BY T.GROUP_CODE
+	</select>
+	
+	<!-- 用户行为编码-查询行为 -->
+	<select id="getUseractionList" parameterType="UseractionDTO" resultType="UseractionEntity">
+	    SELECT 
+	        ACT.GROUP_CODE groupcode,
+	        ACT.ACTION_CODE actioncode,
+			ACT.ACTION_NAME actionname,
+			GRP.GROUP_NAME groupname
+		FROM GLT_USERACTION_CODE ACT
+		JOIN GLT_USERACTION_CODE_GROUP GRP
+			ON(GRP.SYSTEM_ID=ACT.SYSTEM_ID AND GRP.GROUP_CODE=ACT.GROUP_CODE)
+		WHERE ACT.SYSTEM_ID=#{systemID}
+		<if test="groupcode != null">
+			AND ACT.GROUP_CODE=#{groupcode}
+		</if>
+		ORDER BY ACT.GROUP_CODE,ACT.ACTION_CODE
+	</select>
+	
+	<!-- 用户行为编码-删除分组 -->
+	<delete id="deleteGroupcode" parameterType="UseractionDTO">
+	    DELETE FROM GLT_USERACTION_CODE_GROUP T
+		WHERE T.SYSTEM_ID=#{systemID}
+			AND T.GROUP_CODE=#{groupcode}
+	</delete>
+	
+	<!-- 用户行为编码-删除行为 -->
+	<delete id="deleteActioncode" parameterType="UseractionDTO">
+	    DELETE FROM GLT_USERACTION_CODE T
+		WHERE T.SYSTEM_ID=#{systemID}
+			AND T.ACTION_CODE=#{actioncode}
+		<if test="groupcode != null">
+			AND T.GROUP_CODE=#{groupcode}
+		</if>
+	</delete>
+	
+	<!-- 用户行为编码-插入分组 -->
+	<update id="insertGroupcode" parameterType="UseractionDTO">
+	    INSERT INTO GLT_USERACTION_CODE_GROUP(SYSTEM_ID,GROUP_CODE,GROUP_NAME)
+		VALUES(#{systemID},#{groupcode},#{groupname})
+	</update>
+	
+	<!-- 用户行为编码-插入行为 -->
+	<update id="insertActioncode" parameterType="UseractionDTO">
+	    INSERT INTO GLT_USERACTION_CODE(SYSTEM_ID,GROUP_CODE,ACTION_CODE,ACTION_NAME)
+		VALUES(#{systemID},#{groupcode},#{actioncode},#{actionname})
+	</update>
+	
+	<!-- 用户行为编码-更新分组 -->
+	<update id="updateGroupcode" parameterType="UseractionDTO">
+	    UPDATE GLT_USERACTION_CODE_GROUP T
+		SET T.GROUP_NAME=#{groupname}
+		WHERE T.SYSTEM_ID=#{systemID}
+			AND T.GROUP_CODE=#{groupcode}
+	</update>
+	
+	<!-- 用户行为编码-更新行为 -->
+	<update id="updateActioncode" parameterType="UseractionDTO">
+	    UPDATE GLT_USERACTION_CODE T
+		SET T.ACTION_NAME=#{actionname}
+		WHERE T.SYSTEM_ID=#{systemID}
+			AND T.ACTION_CODE=#{actioncode}
+		<if test="groupcode != null">
+			AND T.GROUP_CODE=#{groupcode}
+		</if>
+	</update>
+	
+</mapper>

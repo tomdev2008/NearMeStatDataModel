@@ -1,0 +1,1674 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+	"-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nearme.statistics.dao.app.common.CommonDao">
+	<!-- 日明细数据 -->
+	<select id="getDetaildayList" parameterType="BaseDTO" resultType="DetaildayEntity">
+	    SELECT
+            T.STATDATE statDate,
+            T.START_TIMES startTimes,
+            T.START_IMEI startImei,
+            T.START_USER startUser,
+            T.NEW_IMEI newImei,
+            T.NEW_USER newUser
+        FROM Dm_Detail_Daily T
+        WHERE T.SYSTEM_ID = TRUNC(#{systemID})
+            <if test="startDate != null">
+			AND T.STATDATE >= TRUNC(#{startDate})
+		    </if>
+		    <if test="endDate != null">
+			AND T.STATDATE &lt; TRUNC(#{endDate}+1)
+		    </if>
+		    AND T.STATDATE != TRUNC(SYSDATE)
+		    <if test="model!= null and model!='' and model!='all'">
+            AND T.MODEL = #{model}
+            </if>
+            <if test="model=='all' or model=='' or model==null">
+            AND T.MODEL IS NULL
+            </if>
+            <if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+            AND T.APP_VERSION = #{appVersion}
+            </if>
+            <if test="appVersion=='all' or appVersion=='' or appVersion==null">
+            AND T.APP_VERSION IS NULL
+            </if>
+		ORDER BY T.STATDATE DESC
+	</select>
+
+	<!-- 周明细数据 -->
+	<select id="getDetailweekList" parameterType="BaseDTO" resultType="DetailweekEntity">
+	    SELECT
+            T.STATDATE statDate,
+            T.START_TIMES startTimes,
+            T.START_IMEI startImei,
+            T.START_USER startUser,
+            T.NEW_IMEI newImei,
+            T.NEW_USER newUser
+        FROM Dm_Detail_Weekly T
+        WHERE T.SYSTEM_ID = TRUNC(#{systemID})
+            <if test="startDate != null">
+			AND T.STATDATE >= TRUNC(#{startDate}-6 )
+		    </if>
+		    <if test="endDate != null">
+			AND T.STATDATE &lt; TRUNC(#{endDate}+7)
+		    </if>
+		    AND T.STATDATE &lt; TRUNC(SYSDATE)
+		    <if test="model!= null and model!='' and model!='all'">
+            AND T.MODEL = #{model}
+            </if>
+            <if test="model=='all' or model=='' or model==null">
+            AND T.MODEL IS NULL
+            </if>
+            <if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+            AND T.APP_VERSION = #{appVersion}
+            </if>
+            <if test="appVersion=='all' or appVersion=='' or appVersion==null">
+            AND T.APP_VERSION IS NULL
+            </if>
+		ORDER BY T.STATDATE DESC
+	</select>
+
+	<!-- 月明细数据 -->
+	<select id="getDetailmonthList" parameterType="BaseDTO" resultType="DetailmonthEntity">
+        SELECT
+            X.statDate,
+            X.startImei,
+            X.startUser,
+            X.newImei,
+            X.newUser,
+            Y.monthstartimei,
+            Y.monthstartuser,
+            Y.monthnewimei,
+            Y.monthnewuser
+        FROM (
+            SELECT
+                to_char(TRUNC(T.STATDATE),'YYYY-MM') monthstr,
+                T.STATDATE statDate,
+                T.START_IMEI startImei,
+                T.START_USER startUser,
+                T.NEW_IMEI newImei,
+                T.NEW_USER newUser
+            FROM Dm_Detail_Monthly T
+            WHERE T.SYSTEM_ID = TRUNC(#{systemID})
+                <if test="startDate != null">
+                AND T.STATDATE >= TRUNC(add_months(last_day(#{startDate}) + 1,-1))
+                </if>
+                <if test="endDate != null">
+                AND T.STATDATE &lt; TRUNC(last_day(#{endDate})+1)
+                </if>
+                AND T.STATDATE &lt; TRUNC(add_months(last_day(SYSDATE) + 1,-1))
+                <if test="model!= null and model!='' and model!='all'">
+                AND T.MODEL = #{model}
+                </if>
+                <if test="model=='all' or model=='' or model==null">
+                AND T.MODEL IS NULL
+                </if>
+                <if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+                AND T.APP_VERSION = #{appVersion}
+                </if>
+                <if test="appVersion=='all' or appVersion=='' or appVersion==null">
+                AND T.APP_VERSION IS NULL
+                </if>
+            ) X
+        LEFT JOIN (
+            SELECT
+                M.monthstr,
+                SUM(START_IMEI) monthstartimei,
+                SUM(START_USER) monthstartuser,
+                SUM(NEW_IMEI) monthnewimei,
+                SUM(NEW_USER) monthnewuser
+            FROM(
+                SELECT
+                    to_char(TRUNC(T.STATDATE),'YYYY-MM') monthstr,
+                    T.START_IMEI,
+                    T.START_USER,
+                    T.NEW_IMEI,
+                    T.NEW_USER
+                FROM Dm_Detail_DAILY T
+                WHERE T.SYSTEM_ID = TRUNC(#{systemID})
+                    <if test="startDate != null">
+			        AND T.STATDATE >= TRUNC(add_months(last_day(#{startDate}) + 1,-1))
+		            </if>
+		            <if test="endDate != null">
+			        AND T.STATDATE &lt; TRUNC(last_day(#{endDate})+1)
+		            </if>
+		            <if test="model!= null and model!='' and model!='all'">
+                    AND T.MODEL = #{model}
+                    </if>
+                    <if test="model=='all' or model=='' or model==null">
+                    AND T.MODEL IS NULL
+                    </if>
+                    <if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+                    AND T.APP_VERSION = #{appVersion}
+                    </if>
+                    <if test="appVersion=='all' or appVersion=='' or appVersion==null">
+                    AND T.APP_VERSION IS NULL
+                    </if>
+                )M
+                GROUP BY M.monthstr
+            )Y
+        ON X.monthstr=Y.monthstr
+        ORDER BY X.statDate DESC
+	</select>
+
+	<!-- 累计数据 -->
+	<select id="getGrandTotalList" parameterType="BaseDTO" resultType="GrandtotalEntity">
+	    SELECT
+            T.TOTAL_SSOID totalUser,
+            T.TOTAL_IMEI totalImei,
+            T.TOTAL_START_TIMES totalStart
+        FROM DM_TOTAL_REPORT T
+        WHERE T.SYSTEM_ID = TRUNC(#{systemID})
+        AND T.STATDATE = (SELECT MAX(statdate) FROM dm_total_report)
+    </select>
+
+
+	<!-- 月健康度数据 -->
+	<select id="getMonthhealthList" parameterType="BaseDTO" resultType="MonthhealthEntity">
+        Select
+            X.statDate statDate,
+            X.startImei startImei,
+            X.newImei newImei,
+            X.remainImei remainImei,
+            LEAD(X.startImei)over(Partition BY X.system_id Order By X.statdate DESC) - X.remainImei silentImei,
+            X.lostImei lostImei,
+            X.startImei - X.remainImei - X.newImei backImei,
+            X.startUser startUser,
+            X.newUser newUser,
+            X.remainUser remainUser,
+            LEAD(X.startUser)over(Partition By X.system_id Order By X.statdate DESC) - X.remainUser silentUser,
+            X.lostUser lostUser,
+            X.startUser - X.remainUser - X.newUser backUser
+        FROM (
+            SELECT
+                T.STATDATE statDate,
+                T.system_id,
+                Sum((CASE WHEN T.USER_TYPE = 'start' THEN T.IMEI_VALUE ELSE 0 END) ) startImei,
+                Sum((CASE WHEN T.USER_TYPE = 'new' THEN T.IMEI_VALUE ELSE 0 END) ) newImei,
+                Sum((CASE WHEN T.USER_TYPE = 'remain' THEN T.IMEI_VALUE ELSE 0 END)) remainImei,
+                Sum((CASE WHEN T.USER_TYPE = 'lost' THEN T.IMEI_VALUE ELSE 0 END)) lostImei,
+                Sum((CASE WHEN T.USER_TYPE = 'start' THEN T.USER_VALUE ELSE 0 END)) startUser,
+                Sum((CASE WHEN T.USER_TYPE = 'new' THEN T.USER_VALUE ELSE 0 END)) newUser,
+                Sum((CASE WHEN T.USER_TYPE = 'remain' THEN T.USER_VALUE ELSE 0 END)) remainUser,
+                Sum((CASE WHEN T.USER_TYPE = 'lost' THEN T.USER_VALUE ELSE 0 END)) lostUser
+            FROM DM_MONTH_HEALTH T
+            WHERE T.SYSTEM_ID = TRUNC(#{systemID})
+                <if test="startDate != null">
+			    AND T.STATDATE >= TRUNC(add_months(last_day(#{startDate}) + 1,-2))
+		        </if>
+		        <if test="endDate != null">
+			    AND T.STATDATE &lt; TRUNC(#{endDate}+1)
+		        </if>
+		        <if test="model!= null and model!='' and model!='all'">
+                AND T.MODEL = #{model}
+                </if>
+                <if test="model=='all' or model=='' or model==null">
+                AND T.MODEL IS NULL
+                </if>
+                <if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+                AND T.APP_VERSION = #{appVersion}
+                </if>
+                <if test="appVersion=='all' or appVersion=='' or appVersion==null">
+                AND T.APP_VERSION IS NULL
+                </if>
+            Group By statDate, system_id
+        )X
+        WHERE 1 = 1
+            <if test="startDate != null">
+			AND X.STATDATE >= TRUNC(#{startDate})
+		    </if>
+		    <if test="endDate != null">
+			AND X.STATDATE &lt; TRUNC(#{endDate}+1)
+		    </if>
+	</select>
+
+	<!-- 活跃天数 -->
+	<select id="getActivedaysList" parameterType="BaseDTO" resultType="ActivedaysEntity">
+	    SELECT
+            M.activeDays,
+            SUM(M.start_Imei) startImei
+        FROM (
+            SELECT
+                (CASE WHEN T.DAY_TYPE = '1day' THEN '1'
+                      WHEN T.DAY_TYPE = '2-3days' THEN '2~3'
+                      WHEN T.DAY_TYPE = '4-7days' THEN '4~7'
+                      WHEN T.DAY_TYPE = '8-15days' THEN '8~15'
+                      ELSE '>15' END) activeDays,
+                T.START_IMEI start_Imei
+            FROM DM_DAYS_ACTIVE T
+            WHERE T.SYSTEM_ID = TRUNC(#{systemID})
+                <if test="startDate != null">
+			    AND T.STATDATE = TRUNC(add_months(last_day(#{startDate}) + 1,-1)）
+		        </if>
+                <if test="model!= null and model!='' and model!='all'">
+                AND T.MODEL = #{model}
+                </if>
+                <if test="model=='all' or model=='' or model==null">
+                AND T.MODEL IS NULL
+                </if>
+                <if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+                AND T.APP_VERSION = #{appVersion}
+                </if>
+                <if test="appVersion=='all' or appVersion=='' or appVersion==null">
+                AND T.APP_VERSION IS NULL
+                </if>
+        ) M
+        GROUP BY M.activeDays
+        ORDER BY M.activeDays
+	</select>
+
+	<!-- 新增留存 -->
+	<select id="getIncreaseremainList" parameterType="BaseDTO" resultType="IncreaseremainEntity">
+	    SELECT
+            T.STATDATE statDate,
+            X.NEW_IMEI newImei,
+            X.NEW_USER newUser,
+            T.NRR1 nrr1,
+            T.NRR2 nrr2,
+            T.NRR3 nrr3,
+            T.NURR1 nurr1,
+            T.NURR2 nurr2,
+            T.NURR3 nurr3
+        FROM Dm_${lidu}_nrr T
+        LEFT JOIN Dm_Detail_${lidu} X
+        ON X.STATDATE = T.STATDATE
+            AND X.SYSTEM_ID = T.SYSTEM_ID
+            AND nvl(X.MODEL,'#null') = nvl(T.MODEL,'#null')
+            AND nvl(X.APP_VERSION,'#null') = nvl(T.APP_VERSION,'#null')
+		WHERE T.SYSTEM_ID = to_char(#{systemID})
+            <if test="startDate != null">
+			AND T.STATDATE >= TRUNC(#{startDate})
+		    </if>
+		    <if test="endDate != null">
+			AND T.STATDATE &lt; TRUNC(#{endDate}+1)
+		    </if>
+		    AND T.STATDATE != TRUNC(SYSDATE)
+		    <if test="model!= null and model!='' and model!='all'">
+            AND T.MODEL = #{model}
+            </if>
+            <if test="model=='all' or model=='' or model==null">
+            AND T.MODEL IS NULL
+            </if>
+            <if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+            AND T.APP_VERSION = #{appVersion}
+            </if>
+            <if test="appVersion=='all' or appVersion=='' or appVersion==null">
+            AND T.APP_VERSION IS NULL
+            </if>
+        ORDER BY T.STATDATE DESC
+	</select>
+
+	<!-- 启动留存 -->
+	<select id="getStartremainList" parameterType="BaseDTO" resultType="StartremainEntity">
+	   SELECT
+            T.STATDATE statDate,
+            X.START_IMEI startImei,
+            X.START_USER startUser,
+            T.LRR1 lrr1,
+            T.LRR2 lrr2,
+            T.LRR3 lrr3,
+            T.LURR1 lurr1,
+            T.LURR2 lurr2,
+            T.LURR3 lurr3
+        FROM Dm_${lidu}_lrr T
+        LEFT JOIN Dm_Detail_${lidu} X
+        ON X.STATDATE = T.STATDATE
+            AND X.SYSTEM_ID = T.SYSTEM_ID
+            AND nvl(X.MODEL,'#null') = nvl(T.MODEL,'#null')
+            AND nvl(X.APP_VERSION,'#null') = nvl(T.APP_VERSION,'#null')
+		WHERE T.SYSTEM_ID = to_char(#{systemID})
+            <if test="startDate != null">
+			AND T.STATDATE >= TRUNC(#{startDate})
+		    </if>
+		    <if test="endDate != null">
+			AND T.STATDATE &lt; TRUNC(#{endDate}+1)
+		    </if>
+		    AND T.STATDATE != TRUNC(SYSDATE)
+		    <if test="model!= null and model!='' and model!='all'">
+            AND T.MODEL = #{model}
+            </if>
+            <if test="model=='all' or model=='' or model==null">
+            AND T.MODEL IS NULL
+            </if>
+            <if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+            AND T.APP_VERSION = #{appVersion}
+            </if>
+            <if test="appVersion=='all' or appVersion=='' or appVersion==null">
+            AND T.APP_VERSION IS NULL
+            </if>
+        ORDER BY T.STATDATE DESC
+	</select>
+
+	<!-- 用户生命周期-整体 -->
+	<select id="getUserlifecycleTotalList" parameterType="BaseDTO" resultType="UserlifecycleTotalEntity">
+	    SELECT
+            SUM(T.NEW_IMEI) totalNewImei,
+            SUM(T.NEW_USER) totalNewUser
+        FROM Dm_Detail_Daily T
+        WHERE T.SYSTEM_ID = TRUNC(#{systemID})
+            <if test="startDate != null">
+			AND T.STATDATE >= TRUNC(#{startDate})
+		    </if>
+		    <if test="endDate != null">
+			AND T.STATDATE &lt; TRUNC(#{endDate}+1)
+		    </if>
+		    AND T.STATDATE != TRUNC(SYSDATE)
+		    <if test="model!= null and model!='' and model!='all'">
+            AND T.MODEL = #{model}
+            </if>
+            <if test="model=='all' or model=='' or model==null">
+            AND T.MODEL IS NULL
+            </if>
+            <if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+            AND T.APP_VERSION = #{appVersion}
+            </if>
+            <if test="appVersion=='all' or appVersion=='' or appVersion==null">
+            AND T.APP_VERSION IS NULL
+            </if>
+	</select>
+
+	<!-- 用户生命周期-衰减 -->
+	<select id="getUserlifecycleDecayList" parameterType="BaseDTO" resultType="UserlifecycleDecayEntity">
+	</select>
+
+	<!-- 渠道概况 -->
+	<select id="getChannelgeneralList" parameterType="BaseDTO" resultType="ChannelgeneralEntity">
+	    SELECT
+            X.statdate statDate,
+            Y.channel_name channelname,
+            X.imei_new newimei,
+    	    X.imei_count startimei,
+    	    X.cum_imei totalimei,
+    	    X.ssoid_new newssoid,
+    	    X.ssoid_count startssoid,
+    	    X.cum_ssoid totalssoid
+        FROM (
+            SELECT
+    	        t.statdate,
+    	        t.channel_id,
+    	        t.imei_new,
+    	        t.imei_count,
+    	        t.cum_imei,
+    	        t.ssoid_new,
+    	        t.ssoid_count,
+    	        t.cum_ssoid
+	        FROM DM_QD_DETAIL_DAILY2 t
+	        WHERE t.system_id = to_char(#{systemID})
+                <if test="startDate != null">
+                AND t.STATDATE = TRUNC(#{startDate})
+                </if>
+                <if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+                AND t.app_Version = #{appVersion}
+                </if>
+                <if test="appVersion=='all' or appVersion=='' or appVersion==null">
+                AND t.app_Version IS NULL
+                </if>
+        ) X
+        INNER JOIN (
+            select
+                tt.channel_id,
+                tt.channel_name
+            from bt_channel tt
+            where tt.system_id = #{systemID}
+        ) Y
+        ON X.channel_id = to_char(Y.channel_id)
+        ORDER BY X.imei_new DESC
+	</select>
+
+	<!-- 渠道质量 -->
+	<select id="getChannelqualityList" parameterType="BaseDTO" resultType="ChannelqualityEntity">
+	    SELECT
+            X.statdate statDate,
+            Y.channel_name channelname,
+            X.new_imei newimei,
+            X.imei_nrr1 nirday1,
+            X.imei_nrr7 nirday7,
+            X.imei_nrr30 nirday30,
+    	    X.imei_start startcnt
+        FROM (
+            SELECT
+    	        t.statdate,
+    	        t.channel_id,
+    	        t.new_imei,
+    	        t.imei_nrr1,
+    	        t.imei_nrr7,
+    	        t.imei_nrr30,
+    	        t.imei_start
+	        FROM DM_QD_QUALITY t
+	        WHERE t.system_id = to_char(#{systemID})
+                <if test="startDate != null">
+                AND t.STATDATE = TRUNC(#{startDate})
+                </if>
+                <if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+                AND t.app_Version = #{appVersion}
+                </if>
+                <if test="appVersion=='all' or appVersion=='' or appVersion==null">
+                AND t.app_Version IS NULL
+                </if>
+        ) X
+        INNER JOIN (
+            select
+                tt.channel_id,
+                tt.channel_name
+            from bt_channel tt
+            where tt.system_id = #{systemID}
+        ) Y
+        ON X.channel_id = to_char(Y.channel_id)
+        ORDER BY X.new_imei DESC
+	</select>
+
+	<!-- 渠道日明细  -->
+	<select id="getChanneldailyList" parameterType="BaseDTO"
+		resultType="ChanneldailyEntity">
+		SELECT
+		    t.statdate statDate,
+		    t.new_imei newImei,
+       		t.new_ssoid newSsoid,
+       		t.start_imei startImei,
+       		t.start_ssoid startSsoid
+        FROM DM_QD_DETAIL_DAILY t
+        WHERE t.system_id = to_char(#{systemID})
+            <if test="startDate != null">
+            AND t.STATDATE >= TRUNC(#{startDate})
+            </if>
+            <if test="endDate != null">
+            AND t.STATDATE &lt; TRUNC(#{endDate}+1)
+            </if>
+            <if test="qudao!= null and qudao!='' and qudao!='all'">
+            AND t.channel_id = #{qudao}
+            </if>
+            <if test="qudao=='all' or qudao=='' or qudao==null">
+            AND t.channel_id IS NULL
+            </if>
+            <if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+            AND t.app_Version = #{appVersion}
+            </if>
+            <if test="appVersion=='all' or appVersion=='' or appVersion==null">
+            AND t.app_Version IS NULL
+            </if>
+        ORDER BY t.statdate DESC
+	</select>
+
+	<!-- 渠道健康度(新增留存) -->
+	<select id="getChannelhealthnirList" parameterType="BaseDTO"
+		resultType="ChannelhealthEntity">
+		SELECT
+		    t.statdate statDate,
+		    t.nrr1_imei imei1x,
+       		t.nrr2_imei imei2x,
+       		t.nrr3_imei imei3x,
+       		t.nrr1_ssoid ssoid1x,
+       		t.nrr2_ssoid ssoid2x,
+       		t.nrr3_ssoid ssoid3x
+        FROM DM_QD_HEALTH_NRR_${lidu} t
+        WHERE t.system_id = to_char(#{systemID})
+            <if test="startDate != null">
+            AND t.STATDATE >= TRUNC(#{startDate})
+            </if>
+            <if test="endDate != null">
+            AND t.STATDATE &lt; TRUNC(#{endDate}+1)
+            </if>
+            <if test="qudao!= null and qudao!='' and qudao!='all'">
+            AND t.channel_id = #{qudao}
+            </if>
+            <if test="qudao=='all' or qudao=='' or qudao==null">
+            AND t.channel_id IS NULL
+            </if>
+            <if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+            AND t.app_Version = #{appVersion}
+            </if>
+            <if test="appVersion=='all' or appVersion=='' or appVersion==null">
+            AND t.app_Version IS NULL
+            </if>
+        ORDER BY t.statdate DESC
+	</select>
+
+	<!-- 渠道健康度(启动留存) -->
+	<select id="getChannelhealthsirList" parameterType="BaseDTO"
+		resultType="ChannelhealthEntity">
+		SELECT
+		    t.statdate statDate,
+		    t.llr1_imei imei1x,
+       		t.llr2_imei imei2x,
+       		t.llr3_imei imei3x,
+       		t.llr1_ssoid ssoid1x,
+       		t.llr2_ssoid ssoid2x,
+       		t.llr3_ssoid ssoid3x
+        FROM DM_QD_HEALTH_LRR_${lidu} t
+        WHERE t.system_id = to_char(#{systemID})
+           <if test="startDate != null">
+            AND t.STATDATE >= TRUNC(#{startDate})
+            </if>
+            <if test="endDate != null">
+            AND t.STATDATE &lt; TRUNC(#{endDate}+1)
+            </if>
+            <if test="qudao!= null and qudao!='' and qudao!='all'">
+            AND t.channel_id = #{qudao}
+            </if>
+            <if test="qudao=='all' or qudao=='' or qudao==null">
+            AND t.channel_id IS NULL
+            </if>
+            <if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+            AND t.app_Version = #{appVersion}
+            </if>
+            <if test="appVersion=='all' or appVersion=='' or appVersion==null">
+            AND t.app_Version IS NULL
+            </if>
+        ORDER BY t.statdate DESC
+	</select>
+
+	<!-- 页面访问分析 -->
+	<select id="getPagevisitList" parameterType="BaseDTO" resultType="PagevisitEntity">
+
+	</select>
+
+	<!-- 页面访问分析-跳转 -->
+	<select id="getPagejumpList" parameterType="BaseDTO" resultType="PagejumpEntity">
+	</select>
+
+	<!-- 自定义事件 -->
+	<select id="getSelfeventList" parameterType="BaseDTO" resultType="SelfeventEntity">
+	</select>
+
+	<!-- 版本占比 -->
+	<select id="getVersionzhanbiList" parameterType="BaseDTO" resultType="ColumnValueEntity">
+	    SELECT
+            M.value1 value1,
+            SUM(M.value2) value2
+        FROM(
+	        SELECT
+	            (CASE WHEN ROWNUM > 15 THEN N'其它' ELSE value1 END) value1,
+                value2
+	        FROM (
+	            SELECT
+	                value1,
+                    value2,
+                    ROWNUM
+	            FROM (
+	                SELECT
+                        T.APP_VERSION value1,
+                        <if test="type == 'STARTIMEI'">
+                        T.START_IMEI value2
+                        </if>
+                        <if test="type == 'NEWIMEI'">
+                        nvl(T.NEW_IMEI,0) value2
+                        </if>
+                    FROM DM_DETAIL_DAILY T
+                    WHERE T.SYSTEM_ID = TRUNC(#{systemID})
+                        AND T.APP_VERSION IS NOT NULL
+                        AND T.MODEL IS NULL
+                        <if test="startDate != null">
+			            AND T.STATDATE = TRUNC(#{startDate})
+		                </if>
+		            <if test="type == 'STARTIMEI'">
+		            ORDER BY T.START_IMEI DESC
+		            </if>
+		            <if test="type == 'NEWIMEI'">
+		            ORDER BY nvl(T.NEW_IMEI,0) DESC
+                    </if>
+                )
+            )
+	    )M
+        GROUP BY M.value1
+        ORDER BY value2 DESC
+	</select>
+
+	<!-- 网络占比 -->
+	<select id="getNetzhanbiList" parameterType="BaseDTO" resultType="ColumnValueEntity">
+	    SELECT
+            M.value1 value1,
+            SUM(M.value2) value2
+        FROM(
+	        SELECT
+	            (CASE WHEN ROWNUM > 10 THEN TO_CHAR(N'其它') ELSE value1 END) value1,
+                value2
+	        FROM (
+	            SELECT
+	                value1,
+                    value2,
+                    ROWNUM
+	            FROM (
+	                SELECT
+                        G.NETWORK_NAME value1,
+                        <if test="type == 'STARTIMEI'">
+                        T.START_IMEI value2
+                        </if>
+                        <if test="type == 'NEWIMEI'">
+                        nvl(T.NEW_IMEI,0) value2
+                        </if>
+                    FROM GLT_NETWORK_TYPE G
+                    LEFT JOIN DM_NETWORK_DAILY T
+                    ON G.NETWORK_ID = T.NETWORK_ID
+                    WHERE T.SYSTEM_ID = to_char(#{systemID})
+                        <if test="startDate != null">
+                        AND T.STATDATE = TRUNC(#{startDate})
+                        </if>
+                    <if test="type == 'STARTIMEI'">
+                    ORDER BY T.START_IMEI DESC
+                    </if>
+                    <if test="type == 'NEWIMEI'">
+                    ORDER BY nvl(T.NEW_IMEI,0) DESC
+                    </if>
+                )
+            )
+        )M
+        GROUP BY M.value1
+        ORDER BY value2 DESC
+	</select>
+
+	<!-- 终端占比 -->
+	<select id="getModulezhanbiList" parameterType="BaseDTO" resultType="ColumnValueEntity">
+	    SELECT
+            M.value1 value1,
+            SUM(M.value2) value2
+        FROM(
+	        SELECT
+	            (CASE WHEN ROWNUM > 25 THEN N'其它' ELSE value1 END) value1,
+                value2
+	        FROM (
+	            SELECT
+	                value1,
+                    value2,
+                    ROWNUM
+	            FROM (
+	                SELECT
+                        T.MODEL value1,
+                        <if test="type == 'STARTIMEI'">
+                        T.START_IMEI value2
+                        </if>
+                        <if test="type == 'NEWIMEI'">
+                        nvl(T.NEW_IMEI,0) value2
+                        </if>
+                    FROM DM_DETAIL_DAILY T
+                    WHERE T.SYSTEM_ID = TRUNC(#{systemID})
+                        AND T.APP_VERSION IS NULL
+                        AND T.MODEL IS NOT NULL
+                        <if test="startDate != null">
+			            AND T.STATDATE = TRUNC(#{startDate})
+		                </if>
+		            <if test="type == 'STARTIMEI'">
+		            ORDER BY T.START_IMEI DESC
+		            </if>
+		            <if test="type == 'NEWIMEI'">
+		            ORDER BY nvl(T.NEW_IMEI,0) DESC
+                    </if>
+                )
+	        )
+	    )M
+        GROUP BY M.value1
+        ORDER BY value2 DESC
+	</select>
+
+	<!-- 版本日明细 -->
+	<select id="getVersiondayList" parameterType="BaseDTO" resultType="VersiondayEntity">
+	    SELECT
+            t.statdate statDate,
+            t.allstartimei allstartImei,
+            t.allnewimei allnewImei,
+            t.start_imei startImei,
+            t.new_imei newImei,
+            t.updateimei updateImei
+        FROM dm_detail_daily_appversion t
+        WHERE t.system_id = TRUNC(#{systemID})
+            <if test="startDate != null">
+			AND T.STATDATE >= TRUNC(#{startDate})
+		    </if>
+		    <if test="endDate != null">
+			AND T.STATDATE &lt; TRUNC(#{endDate}+1)
+		    </if>
+		    AND T.STATDATE &lt;= TRUNC(SYSDATE)
+		    <if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+            AND T.APP_VERSION = #{appVersion}
+            </if>
+            <if test="appVersion=='all' or appVersion=='' or appVersion==null">
+            AND T.APP_VERSION IS NULL
+            </if>
+        ORDER BY t.statdate DESC
+	</select>
+
+
+	<!-- 网络日明细 -->
+	<select id="getNetdayList" parameterType="BaseDTO" resultType="NetdayEntity">
+	    SELECT
+            t.statdate statDate,
+            SUM(t.start_imei) allstartImei,
+            SUM(t.new_imei) allnewImei,
+            SUM((CASE WHEN g.network_name = #{networkType} THEN t.start_imei ELSE 0 END)) startImei,
+            SUM((CASE WHEN g.network_name = #{networkType} THEN t.new_imei ELSE 0 END)) newImei
+        FROM GLT_NETWORK_TYPE g
+        LEFT JOIN DM_NETWORK_DAILY t
+        ON g.NETWORK_ID = t.NETWORK_ID
+        WHERE t.system_id = to_char(#{systemID})
+            <if test="startDate != null">
+            AND T.STATDATE >= TRUNC(#{startDate})
+            </if>
+            <if test="endDate != null">
+            AND T.STATDATE &lt; TRUNC(#{endDate}+1)
+            </if>
+            AND T.STATDATE != TRUNC(SYSDATE)
+        GROUP BY t.statdate
+        ORDER BY t.statdate DESC
+	</select>
+
+	<!-- 终端日明细  -->
+	<select id="getModuledayList" parameterType="BaseDTO" resultType="ModuledayEntity">
+	    SELECT
+            t.statdate statDate,
+            SUM((CASE WHEN t.model IS NULL THEN t.start_imei ELSE 0 END)) allstartImei,
+            SUM((CASE WHEN t.model IS NULL THEN t.new_imei ELSE 0 END)) allnewImei,
+            SUM((CASE WHEN t.model = #{model} THEN t.start_imei ELSE 0 END)) startImei,
+            SUM((CASE WHEN t.model = #{model} THEN t.new_imei ELSE 0 END)) newImei
+        FROM dm_detail_daily t
+        WHERE t.system_id = TRUNC(#{systemID})
+            AND t.app_version IS NULL
+            <if test="startDate != null">
+			AND T.STATDATE >= TRUNC(#{startDate})
+		    </if>
+		    <if test="endDate != null">
+			AND T.STATDATE &lt; TRUNC(#{endDate}+1)
+		    </if>
+		    AND T.STATDATE != TRUNC(SYSDATE)
+        GROUP BY t.statdate
+        ORDER BY t.statdate DESC
+	</select>
+
+	<!-- 地区分析-top10 -->
+	<select id="getAreatop10List" parameterType="BaseDTO" resultType="ColumnValueEntity">
+	</select>
+
+	<!-- 地区分析-详情 -->
+	<select id="getAreadetailList" parameterType="BaseDTO" resultType="ColumnValueEntity">
+	</select>
+
+	<!-- 使用频率时长分析-日启动次数 -->
+	<select id="getUseoftenStartcntList" parameterType="BaseDTO" resultType="ColumnValueEntity">
+	</select>
+
+	<!-- 使用频率时长分析-日使用时间 -->
+	<select id="getUseoftenUsetimeList" parameterType="BaseDTO" resultType="ColumnValueEntity">
+	</select>
+
+	<!-- 错误分析-错误数日分布 -->
+	<select id="getErrordailyList" parameterType="BaseDTO" resultType="ErrorEntity">
+	    SELECT
+    	    t.statdate statDate,
+    	    SUM(t.exp_cnt) errorcnt
+	    FROM dm_app_exception t
+	    WHERE t.system_id = #{systemID}
+	        <if test="startDate != null">
+			AND t.statdate >= TRUNC(#{startDate})
+		    </if>
+		    <if test="endDate != null">
+			AND t.statdate &lt; TRUNC(#{endDate}+1)
+		    </if>
+		    <if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+            AND t.app_version = #{appVersion}
+            </if>
+	    GROUP BY t.statdate
+	    ORDER BY t.statdate DESC
+	</select>
+
+	<!-- 错误分析-错误详情 -->
+	<select id="getErrordetailList" parameterType="BaseDTO" resultType="ErrorDetailEntity">
+	    SELECT
+	        Y.genneral,
+            Y.detail,
+            Y.version,
+            Y.errorcnt
+        FROM (
+	        SELECT
+                X.genneral,
+                X.detail,
+                X.version,
+                X.errorcnt,
+                ROWNUM rnum
+            FROM (
+	            SELECT
+    	            t.exp_gen genneral,
+    	            t.exp_detail detail,
+    	            t.app_version version,
+    	            sum(t.exp_cnt) errorcnt
+	            FROM dm_app_exception t
+	            WHERE t.system_id = #{systemID}
+	                <if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+                    AND t.app_version = #{appVersion}
+                    </if>
+                GROUP BY t.exp_gen, t.exp_detail, t.app_version
+                ORDER BY errorcnt DESC
+            ) X
+        ) Y
+        WHERE Y.rnum >= #{rownumbegin}
+        AND Y.rnum &lt;= #{rownumend}
+	</select>
+
+	<!-- 错误分析-查询错误详细信息记录数(用于分页) -->
+	<select id="getErrordetailCnt" parameterType="BaseDTO" resultType="long">
+	    SELECT
+	        count(1)
+	    FROM (
+	        SELECT
+    	        t.exp_gen genneral,
+    	        t.exp_detail detail,
+    	        t.app_version version,
+    	        sum(t.exp_cnt) errorcnt
+	        FROM dm_app_exception t
+	        WHERE t.system_id = #{systemID}
+	            <if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+                AND t.app_version = #{appVersion}
+                </if>
+            GROUP BY t.exp_gen, t.exp_detail, t.app_version
+            ORDER BY errorcnt DESC
+	    )
+	</select>
+	
+	<!-- 错误分析-特定错误机型分布 -->
+	<select id="getErrormodeldistribute" parameterType="BaseDTO" resultType="ErrorDetailEntity">
+	    SELECT 
+            t.model model,
+            sum(t.exp_cnt) errorcnt
+        FROM dm_app_exception t
+        WHERE t.system_id = #{systemID}
+            <if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+            AND t.app_version = #{appVersion}
+            </if>
+            <if test="errordetail!=null">
+            AND t.exp_detail = #{errordetail}
+            </if>
+        GROUP BY t.model
+        ORDER BY errorcnt DESC
+	</select>
+
+	<!-- 用户行为分析 -->
+	<select id="getUactionList" parameterType="BaseDTO" resultType="UactionEntity">
+        SELECT
+            X.statDate statDate,
+            X.startuser startuser,
+            X.startimei startimei,
+            X.startcnt startcnt,
+            Y.eventuser eventuser,
+            Y.eventimei eventimei,
+            Y.eventcnt eventcnt
+        FROM (
+            SELECT
+                t.statdate statDate,
+                t.start_imei startimei,
+                t.start_user startuser,
+                t.start_times startcnt
+            FROM Dm_Detail_Daily t
+            WHERE t.system_id = TRUNC(${systemID})
+                <if test="startDate != null">
+			    AND t.statdate >= TRUNC(#{startDate})
+		        </if>
+		        <if test="endDate != null">
+			    AND t.statdate &lt; TRUNC(#{endDate}+1)
+		        </if>
+		        AND t.statdate &lt; TRUNC(SYSDATE)
+		        <if test="model!= null and model!='' and model!='all'">
+                AND t.model = #{model}
+                </if>
+                <if test="model=='all' or model=='' or model==null">
+                AND t.model IS NULL
+                </if>
+                <if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+                AND t.app_version = #{appVersion}
+                </if>
+                <if test="appVersion=='all' or appVersion=='' or appVersion==null">
+                AND t.app_version IS NULL
+                </if>
+        ) X
+        LEFT JOIN
+        (
+            SELECT
+                tt.statdate statDate,
+                tt.cnt_user eventuser,
+                tt.cnt_imei eventimei,
+                tt.cnt_times eventcnt
+            FROM dm_useraction tt
+            WHERE tt.system_id = ${systemID}
+                AND tt.action_code = '${actioncode}'
+                <if test="startDate != null">
+			    AND tt.statdate >= TRUNC(#{startDate})
+		        </if>
+		        <if test="endDate != null">
+			    AND tt.statdate &lt; TRUNC(#{endDate}+1)
+		        </if>
+		        AND tt.statdate &lt; TRUNC(SYSDATE)
+		        <if test="model!= null and model!='' and model!='all'">
+                AND tt.model = #{model}
+                </if>
+                <if test="model=='all' or model=='' or model==null">
+                AND tt.model IS NULL
+                </if>
+                <if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+                AND tt.app_version = #{appVersion}
+                </if>
+                <if test="appVersion=='all' or appVersion=='' or appVersion==null">
+                AND tt.app_version IS NULL
+                </if>
+        ) Y
+        ON X.statDate = Y.statDate
+        ORDER BY X.statDate DESC
+	</select>
+
+	<!-- 整体用户生命周期 -->
+	<select id="getWholeuserlifecycle"  parameterType="HivejobDTO" resultType="WholeuserlifecycleEntity">
+	    SELECT
+    	    to_date(t.statdate,'yyyy-MM-dd') statDate,
+    	    to_date(t.statenddate,'yyyy-MM-dd') statEndDate,
+    	    t.startimei startimei,
+    	    t.startcnt startcnt,
+    	    t.downcnt downcnt,
+    	    t.startdays startdays
+	    FROM dm_hive_whole_userlife_cycle t
+	    WHERE t.job_id = '${jobID}'
+	    ORDER BY t.statdate DESC
+	</select>
+
+	<!-- 月活跃天数及分布 -->
+	<select id="getActivedaysdistribute"  parameterType="HivejobDTO" resultType="ActivedaysdistributeEntity">
+	    SELECT
+    	    t.activedays activedays,
+    	    t.startimei startimei,
+    	    t.startcnt startcnt,
+    	    t.downcnt downcnt
+	    FROM dm_hive_activedays_distribute t
+	    WHERE t.job_id = '${jobID}'
+	    ORDER BY t.activedays
+	</select>
+
+	<!-- 新用户活跃-第一个月 -->
+	<select id="getNewuseractivemonth"  parameterType="HivejobDTO" resultType="NewuseractiveEntity">
+	    SELECT
+    	    t.activedays activedays,
+    	    t.startimei startimei,
+    	    t.startcnt startcnt,
+    	    t.downcnt downcnt
+	    FROM dm_hive_new_user_active_month t
+	    WHERE t.job_id = '${jobID}'
+	    ORDER BY t.activedays
+	</select>
+
+	<!-- 新用户活跃-第一个周 -->
+	<select id="getNewuseractiveweek"  parameterType="HivejobDTO" resultType="NewuseractiveEntity">
+	    SELECT
+    	    t.activedays activedays,
+    	    t.startimei startimei,
+    	    t.startcnt startcnt,
+    	    t.downcnt downcnt
+	    FROM dm_hive_new_user_active_week t
+	    WHERE t.job_id = '${jobID}'
+	    ORDER BY t.activedays
+	</select>
+
+	<!-- 产品名 -->
+	<select id="getProductinfoList" parameterType="ProductinfoDTO" resultType="ProductinfoEntity">
+	    SELECT
+            t.categoryname fenlei,
+            t.product_master_id productMID,
+            t.product_id productID,
+            t.product_name productName,
+            t.product_ver productVersion,
+            t.product_onshelftime uptime,
+            t.charge_type feetype
+        FROM tjt_product_shelf t
+        WHERE t.system_id = ${systemID}
+            <if test="productname != null or productname = ''">
+            AND t.product_name LIKE '%'||#{productname}||'%'
+            </if>
+        ORDER BY t.product_master_id DESC,t.product_onshelftime DESC
+	</select>
+
+	<!-- 内容子平台->资源分类 -->
+	<select id="getFSResourcetype"  parameterType="HivejobDTO" resultType="FSResourcetypeChildEntity">
+	    SELECT 
+	        to_date(statdate,'yyyy-MM-dd') statDate,
+	        CATEGORY_ID typename,
+	        DOWN_NUMS downcnt,
+	        DOWN_APPS downapp
+		FROM DM_HIVE_CATEGORY_DOWN
+		WHERE JOB_ID = #{jobID}
+		ORDER BY STATDATE, DOWN_NUMS DESC
+	</select>
+	<select id="getFSResourcetypeDate"  parameterType="HivejobDTO" resultType="FSResourcetypeChildEntity">
+	    SELECT 
+	        distinct to_date(statdate,'yyyy-MM-dd') statDate
+		FROM DM_HIVE_CATEGORY_DOWN
+		WHERE JOB_ID = #{jobID}
+            AND STATDATE IS NOT NULL
+		ORDER BY STATDATE ASC
+	</select>
+	<select id="getFSResourcetypeCategory"  parameterType="HivejobDTO" resultType="FSResourcetypeChildEntity">
+	    SELECT 
+	        distinct CATEGORY_ID typename,
+	        DOWN_NUMS downcnt
+		FROM DM_HIVE_CATEGORY_DOWN
+		WHERE JOB_ID = #{jobID}
+            AND STATDATE IS NULL
+            AND CATEGORY_ID IS NOT NULL
+		ORDER BY DOWN_NUMS DESC
+	</select>
+
+	<!-- 内容子平台->自然模块 -->
+	<select id="getFSNaturemodle"  parameterType="HivejobDTO" resultType="FSNaturemodleChildEntity">
+	    SELECT 
+	        to_date(statdate,'yyyy-MM-dd') statDate,
+	        SOURCE_NAME modulename,
+	        DOWN_NUMS downcnt,
+	        DOWN_IMEIS downimei
+		FROM DM_HIVE_SOURCE_DOWN
+		WHERE JOB_ID = #{jobID}
+		ORDER BY STATDATE, DOWN_NUMS DESC
+	</select>
+	<select id="getFSNaturemodleDate"  parameterType="HivejobDTO" resultType="FSNaturemodleChildEntity">
+	    SELECT 
+	        distinct to_date(statdate,'yyyy-MM-dd') statDate
+		FROM DM_HIVE_SOURCE_DOWN
+		WHERE JOB_ID = #{jobID}
+            AND STATDATE IS NOT NULL
+		ORDER BY STATDATE ASC
+	</select>
+	<select id="getFSNaturemodleSource"  parameterType="HivejobDTO" resultType="FSNaturemodleChildEntity">
+	    SELECT distinct SOURCE_NAME modulename,DOWN_NUMS downcnt
+		FROM DM_HIVE_SOURCE_DOWN
+		WHERE JOB_ID = #{jobID}
+            AND STATDATE IS NULL
+            AND SOURCE_NAME IS NOT NULL
+		ORDER BY DOWN_NUMS DESC
+	</select>
+
+	<!-- 内容子平台->top资源分布 -->
+	<select id="getFSTopresource" parameterType="HivejobDTO" resultType="FSTopresourceEntity">
+	    SELECT
+    	    to_date(t.statdate,'yyyy-MM-dd') statDate,
+    	    SUM(t.down_nums) totaldown,
+    	    SUM(CASE WHEN t.position &lt;= 50 THEN t.down_nums ELSE 0 END) top50,
+    	    SUM(CASE WHEN t.position &lt;= 100 THEN t.down_nums ELSE 0 END) top100,
+    	    SUM(CASE WHEN t.position &lt;= 200 THEN t.down_nums ELSE 0 END) top200,
+    	    SUM(CASE WHEN t.position &lt;= 300 THEN t.down_nums ELSE 0 END) top300,
+    	    SUM(CASE WHEN t.position &lt;= 500 THEN t.down_nums ELSE 0 END) top500
+	    FROM dm_hive_top_down t
+	    WHERE t.job_id = #{jobID}
+	    GROUP BY t.statdate
+	    ORDER BY t.statdate DESC
+	</select>
+	<!-- 内容子平台->top资源分布-总体 -->
+	<select id="getFSTopresourceTotal" parameterType="HivejobDTO" resultType="FSTopresourceEntity">
+	    SELECT
+    	    SUM(t.down_nums) totaldown,
+    	    SUM(CASE WHEN t.position &lt;= 50 THEN t.down_nums ELSE 0 END) top50,
+    	    SUM(CASE WHEN t.position &lt;= 100 THEN t.down_nums ELSE 0 END) top100,
+    	    SUM(CASE WHEN t.position &lt;= 200 THEN t.down_nums ELSE 0 END) top200,
+    	    SUM(CASE WHEN t.position &lt;= 300 THEN t.down_nums ELSE 0 END) top300,
+    	    SUM(CASE WHEN t.position &lt;= 500 THEN t.down_nums ELSE 0 END) top500
+	    FROM dm_hive_top_down t
+	    WHERE t.job_id = #{jobID}
+	</select>
+
+	<!-- 内容子平台->更新 -->
+	<select id="getFSUpdatenum" parameterType="HivejobDTO" resultType="FSUpdatenumEntity">
+	    SELECT
+            to_date(t.statdate,'yyyy-MM-dd') statDate,
+            t.down_imeis downimei,
+            t.down_nums downcnt,
+            t.update_nums updatecnt,
+            t.update_imeis updateimei,
+            t.update_apps updateres
+	    FROM dm_hive_update t
+	    WHERE t.job_id = #{jobID}
+	    ORDER BY t.statdate DESC
+	</select>
+	<!-- 内容子平台->更新-总体 -->
+	<select id="getFSUpdatenumTotal" parameterType="HivejobDTO" resultType="FSUpdatenumEntity">
+	    SELECT
+            sum(t.down_imeis) downimei,
+            sum(t.down_nums) downcnt,
+            sum(t.update_nums) updatecnt,
+            sum(t.update_imeis) updateimei,
+            sum(t.update_apps) updateres
+	    FROM dm_hive_update t
+	    WHERE t.job_id = #{jobID}
+	</select>
+
+	<!-- 内容子平台->单个资源运营-模块 -->
+	<select id="getProductrunmodule" parameterType="HivejobDTO" resultType="ProductrunEntity">
+	    SELECT
+            t.name name,
+            t.down_imeis downimei,
+            t.browse_imeis browseimei,
+            t.direct_down directdown,
+            t.detail_down detaildown
+	    FROM DM_HIVE_PRODUCTRUN_MODULE t
+	    WHERE t.job_id = #{jobID}
+      ORDER BY t.down_imeis DESC
+	</select>
+
+
+	<!-- 删除月活天数分布  -->
+	<update id="deleteActivedaysdistribute" parameterType="HivejobDTO">
+		DELETE dm_hive_activedays_distribute t
+		WHERE t.job_id = #{jobID}
+	</update>
+	<!-- 删除自然模块  -->
+	<update id="deleteFSNaturemodlenum" parameterType="HivejobDTO">
+		DELETE DM_HIVE_SOURCE_DOWN t
+		WHERE t.job_id = #{jobID}
+	</update>
+	<!-- 删除资源类型 -->
+	<update id="deleteFSResourcetype" parameterType="HivejobDTO">
+		DELETE DM_HIVE_CATEGORY_DOWN t
+		WHERE t.job_id = #{jobID}
+	</update>
+	<!-- 删除Top资源  -->
+	<update id="deleteFSTopresource" parameterType="HivejobDTO">
+		DELETE dm_hive_top_down t
+		WHERE t.job_id = #{jobID}
+	</update>
+	<!-- 删除更新  -->
+	<update id="deleteFSUpdatenum" parameterType="HivejobDTO">
+		DELETE dm_hive_update t
+		WHERE t.job_id = #{jobID}
+	</update>
+	<!-- 删除新用户活跃-月  -->
+	<update id="deleteNewuseractivemonth" parameterType="HivejobDTO">
+		DELETE dm_hive_new_user_active_month t
+		WHERE t.job_id = #{jobID}
+	</update>
+	<!-- 删除新用户活跃-周  -->
+	<update id="deleteNewuseractiveweek" parameterType="HivejobDTO">
+		DELETE dm_hive_new_user_active_week t
+		WHERE t.job_id = #{jobID}
+	</update>
+	<!-- 删除单个资源运营-模块  -->
+	<update id="deleteProductrunmodule" parameterType="HivejobDTO">
+		DELETE DM_HIVE_PRODUCTRUN_MODULE t
+		WHERE t.job_id = #{jobID}
+	</update>
+	<!-- 删除整体用户生命周期  -->
+	<update id="deleteWholeuserlifecycle" parameterType="HivejobDTO">
+		DELETE dm_hive_whole_userlife_cycle t
+		WHERE t.job_id = #{jobID}
+	</update>
+
+
+
+	<!-- 模块下载 -->
+	<select id="getModuledown"  parameterType="HivejobDTO" resultType="ModuledownChildEntity">
+	    SELECT 
+	        to_date(statdate,'yyyy-MM-dd') statDate,
+	        SOURCE_NAME modulename,
+	        DOWN_NUMS downcnt,
+	        DOWN_IMEIS downimei
+		FROM DM_HIVE_MODULE_DOWN
+		WHERE JOB_ID = #{jobID}
+		ORDER BY STATDATE, DOWN_NUMS DESC
+	</select>
+	<select id="getModuledownDate"  parameterType="HivejobDTO" resultType="ModuledownChildEntity">
+	    SELECT 
+	        distinct to_date(statdate,'yyyy-MM-dd') statDate
+		FROM DM_HIVE_MODULE_DOWN
+		WHERE JOB_ID = #{jobID}
+            AND STATDATE IS NOT NULL
+		ORDER BY STATDATE ASC
+	</select>
+	<select id="getModuledownSource"  parameterType="HivejobDTO" resultType="ModuledownChildEntity">
+	    SELECT 
+	        distinct SOURCE_NAME modulename,
+	        DOWN_NUMS downcnt
+		FROM DM_HIVE_MODULE_DOWN
+		WHERE JOB_ID = #{jobID}
+            AND STATDATE IS NULL
+            AND SOURCE_NAME IS NOT NULL
+		ORDER BY DOWN_NUMS DESC
+	</select>
+	<update id="deleteModuledown" parameterType="HivejobDTO">
+		DELETE DM_HIVE_MODULE_DOWN t
+		WHERE t.job_id = #{jobID}
+	</update>
+
+
+
+	<!-- 模块位置下载 -->
+	<select id="getModuleposition"  parameterType="HivejobDTO" resultType="ModulepositionChildEntity">
+	    SELECT 
+	        to_date(statdate,'yyyy-MM-dd') statDate,
+	        SOURCE_NAME modulename,
+	        DOWN_NUMS downcnt,
+	        DOWN_IMEIS downimei
+		FROM DM_HIVE_MODULE_POSITION
+		WHERE JOB_ID = #{jobID}
+		ORDER BY STATDATE, DOWN_NUMS DESC
+	</select>
+	<select id="getModulepositionDate"  parameterType="HivejobDTO" resultType="ModulepositionChildEntity">
+	    SELECT 
+	        distinct to_date(statdate,'yyyy-MM-dd') statDate
+		FROM DM_HIVE_MODULE_POSITION
+		WHERE JOB_ID = #{jobID}
+            AND STATDATE IS NOT NULL
+		ORDER BY STATDATE ASC
+	</select>
+	<select id="getModulepositionSource"  parameterType="HivejobDTO" resultType="ModulepositionChildEntity">
+	    SELECT 
+	        distinct SOURCE_NAME modulename,
+	        DOWN_NUMS downcnt
+		FROM DM_HIVE_MODULE_POSITION
+		WHERE JOB_ID = #{jobID}
+            AND STATDATE IS NULL
+            AND SOURCE_NAME IS NOT NULL
+            AND REGEXP_LIKE(SOURCE_NAME,'^-?[0-9]+')
+		ORDER BY TO_NUMBER(SOURCE_NAME)
+	</select>
+	<update id="deleteModuleposition" parameterType="HivejobDTO">
+		DELETE DM_HIVE_MODULE_POSITION t
+		WHERE t.job_id = #{jobID}
+	</update>
+
+
+	<!-- 下载日明细 -->
+	<select id="getDowndayList" parameterType="BaseDTO" resultType="DowndayEntity">
+	    SELECT
+    	    t.statdate statDate,
+    	    t.download_imei downimei,
+    	    t.download_ssoid downuser,
+    	    t.download_times downcnt
+	    FROM dm_download_daily t
+	    WHERE t.system_id = #{systemID}
+	        <if test="startDate != null">
+			AND T.STATDATE >= TRUNC(#{startDate})
+		    </if>
+		    <if test="endDate != null">
+			AND T.STATDATE &lt; TRUNC(#{endDate}+1)
+		    </if>
+		    <if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+            AND T.APP_VERSION = #{appVersion}
+            </if>
+            <if test="appVersion=='all' or appVersion=='' or appVersion==null">
+            AND T.APP_VERSION IS NULL
+            </if>
+            <if test="qudao!= null and qudao!='' and qudao!='all'">
+            AND t.channel = #{qudao}
+            </if>
+            <if test="qudao=='all' or qudao=='' or qudao==null">
+            AND t.channel IS NULL
+            </if>
+	    ORDER BY t.statdate DESC
+	</select>
+
+	<!-- 下载周明细 -->
+	<select id="getDownweekList" parameterType="BaseDTO" resultType="DownweekEntity">
+	    SELECT
+    	    t.statdate statDate,
+    	    t.download_imei downimei,
+    	    t.download_ssoid downuser,
+    	    t.download_times downcnt
+	    FROM dm_download_weekly t
+	    WHERE t.system_id = #{systemID}
+	        <if test="startDate != null">
+			AND T.STATDATE >= TRUNC(#{startDate})
+		    </if>
+		    <if test="endDate != null">
+			AND T.STATDATE &lt; TRUNC(#{endDate}+1)
+		    </if>
+		    <if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+            AND T.APP_VERSION = #{appVersion}
+            </if>
+            <if test="appVersion=='all' or appVersion=='' or appVersion==null">
+            AND T.APP_VERSION IS NULL
+            </if>
+            <if test="qudao!= null and qudao!='' and qudao!='all'">
+            AND t.channel = #{qudao}
+            </if>
+            <if test="qudao=='all' or qudao=='' or qudao==null">
+            AND t.channel IS NULL
+            </if>
+	    ORDER BY t.statdate DESC
+	</select>
+
+	<!-- 下载月明细 -->
+	<select id="getDownmonthList" parameterType="BaseDTO" resultType="DownmonthEntity">
+	    SELECT
+    	    t.statdate statDate,
+    	    t.download_imei downimei,
+    	    t.download_ssoid downuser,
+    	    t.download_times downcnt
+	    FROM dm_download_monthly t
+	    WHERE t.system_id = #{systemID}
+	        <if test="startDate != null">
+			AND T.STATDATE >= TRUNC(#{startDate})
+		    </if>
+		    <if test="endDate != null">
+			AND T.STATDATE &lt; TRUNC(#{endDate}+1)
+		    </if>
+		    <if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+            AND T.APP_VERSION = #{appVersion}
+            </if>
+            <if test="appVersion=='all' or appVersion=='' or appVersion==null">
+            AND T.APP_VERSION IS NULL
+            </if>
+            <if test="qudao!= null and qudao!='' and qudao!='all'">
+            AND t.channel = #{qudao}
+            </if>
+            <if test="qudao=='all' or qudao=='' or qudao==null">
+            AND t.channel IS NULL
+            </if>
+	    ORDER BY t.statdate DESC
+	</select>
+
+	<!-- 下载终端占比 -->
+	<select id="getDownmobilezhanbiList" parameterType="BaseDTO" resultType="ColumnValueEntity">
+	    SELECT
+            M.value1 value1,
+            SUM(M.value2) value2
+        FROM(
+            SELECT
+                (CASE WHEN ROWNUM > 25 THEN '其它' ELSE value1 END) value1,
+                value2
+            FROM (
+                SELECT
+                    value1,
+                    value2,
+                    ROWNUM
+                FROM (
+                    SELECT
+                        t.model value1,
+                        <if test="type == 'DOWNIMEI'">
+                        t.download_imei value2
+                        </if>
+                        <if test="type == 'DOWNSSOID'">
+                        t.download_ssoid value2
+                        </if>
+                        <if test="type == 'DOWNCNT'">
+                        t.download_times value2
+                        </if>
+                    FROM dm_download_model_daily T
+                    WHERE t.system_id = #{systemID}
+                        AND t.model IS NOT NULL
+                        <if test="startDate != null">
+                        AND t.statdate = TRUNC(#{startDate})
+                        </if>
+                        <if test="type == 'DOWNIMEI'">
+                        ORDER BY t.download_imei DESC
+                        </if>
+                        <if test="type == 'DOWNSSOID'">
+                        ORDER BY t.download_ssoid DESC
+                        </if>
+                        <if test="type == 'DOWNCNT'">
+                        ORDER BY t.download_times DESC
+                        </if>
+                )
+            )
+        )M
+        GROUP BY M.value1
+        ORDER BY value2 DESC
+	</select>
+
+	<!-- 下载渠道占比 -->
+	<select id="getDownqudaozhanbiList" parameterType="BaseDTO" resultType="ColumnValueEntity">
+	    SELECT
+            M.value1 value1,
+            SUM(M.value2) value2
+        FROM(
+	        SELECT
+	            (CASE WHEN ROWNUM > 25 THEN '其它' ELSE value1 END) value1,
+                value2
+            FROM (
+                SELECT
+                    Y.channel_name value1,
+                    X.value2 value2
+                FROM (
+                    SELECT
+                        t.channel,
+                        <if test="type == 'DOWNIMEI'">
+                        t.Download_Imei value2
+                        </if>
+                        <if test="type == 'DOWNSSOID'">
+                        t.Download_Ssoid value2
+                        </if>
+                        <if test="type == 'DOWNCNT'">
+                        t.Download_Times value2
+                        </if>
+                    FROM dm_download_daily t
+                    WHERE t.system_id = #{systemID}
+                        AND t.channel IS NOT NULL
+                        AND t.app_version IS NULL
+                        <if test="startDate != null">
+			            AND t.statdate = TRUNC(#{startDate})
+		                </if>
+                ) X
+                INNER JOIN (
+                    select
+                        tt.channel_id,
+                        tt.channel_name
+                    from bt_channel tt
+                    where tt.system_id = #{systemID}
+                ) Y
+                ON X.channel = to_char(Y.channel_id)
+                ORDER BY X.value2 DESC
+            )
+        )M
+        GROUP BY M.value1
+        ORDER BY value2 DESC
+	</select>
+
+	<!-- 下载版本占比 -->
+	<select id="getDownversionzhanbiList" parameterType="BaseDTO" resultType="ColumnValueEntity">
+	    SELECT
+            M.value1 value1,
+            SUM(M.value2) value2
+        FROM(
+	        SELECT
+	            (CASE WHEN ROWNUM > 25 THEN '其它' ELSE value1 END) value1,
+                value2
+            FROM (
+                SELECT
+                    value1,
+                    value2,
+                    ROWNUM
+                FROM (
+                    SELECT
+                        t.app_version value1,
+                        <if test="type == 'DOWNIMEI'">
+                        T.Download_Imei value2
+                        </if>
+                        <if test="type == 'DOWNSSOID'">
+                        T.Download_Ssoid value2
+                        </if>
+                        <if test="type == 'DOWNCNT'">
+                        T.Download_Times value2
+                        </if>
+                    FROM dm_download_daily T
+                    WHERE t.system_id = #{systemID}
+                        AND t.channel IS NULL
+                        AND t.app_version IS NOT NULL
+                        <if test="startDate != null">
+			            AND t.statdate = TRUNC(#{startDate})
+		                </if>
+                        <if test="type == 'DOWNIMEI'">
+                        ORDER BY t.download_imei DESC
+                        </if>
+                        <if test="type == 'DOWNSSOID'">
+                        ORDER BY t.download_ssoid DESC
+                        </if>
+                        <if test="type == 'DOWNCNT'">
+                        ORDER BY t.download_times DESC
+                        </if>
+                )
+            )
+        )M
+        GROUP BY M.value1
+        ORDER BY value2 DESC
+	</select>
+
+	<!-- 下载留存 -->
+	<select id="getDownremainList" parameterType="BaseDTO" resultType="DownremainEntity">
+	    SELECT
+	        t.statdate statDate,
+            t.rr_date statEndDate,
+            t.imeis downimei,
+            t.new_imeis newdownimei
+        FROM dm_rr_down_${lidu} t
+        WHERE t.system_id  = #{systemID}
+            <if test="startDate != null">
+            AND T.STATDATE >= TRUNC(#{startDate})
+            </if>
+            <if test="endDate != null">
+            AND T.STATDATE &lt; TRUNC(#{endDate}+1)
+            </if>
+            <if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+            AND T.APP_VERSION = #{appVersion}
+            </if>
+            <if test="appVersion=='all' or appVersion=='' or appVersion==null">
+            AND T.APP_VERSION IS NULL
+            </if>
+            <if test="qudao!= null and qudao!='' and qudao!='all'">
+            AND t.channel_id = #{qudao}
+            </if>
+            <if test="qudao=='all' or qudao=='' or qudao==null">
+            AND t.channel_id IS NULL
+            </if>
+        ORDER BY t.statdate DESC, t.rr_date DESC
+	</select>
+
+	<!-- 单个资源下载 -->
+	<select id="getDownsourceList" parameterType="BaseDTO" resultType="DownsourceEntity">
+	    SELECT
+            t.statdate statDate,
+            sum(t.cnt_download) downcnt,
+            sum(t.cnt_browse) browsecnt
+        FROM dm_product_down t
+        WHERE t.system_id  = to_char(#{systemID})
+            <if test="startDate != null">
+            AND T.STATDATE >= TRUNC(#{startDate})
+            </if>
+            <if test="endDate != null">
+            AND T.STATDATE &lt; TRUNC(#{endDate}+1)
+            </if>
+            <if test="qudao!= null and qudao!='' and qudao!='all'">
+            AND t.channel_id = #{qudao}
+            </if>
+            <if test="groupname!= null and groupname!='' and groupname!='all'">
+            AND t.source_code IN (
+                SELECT tt.source_code
+                FROM bt_module tt
+                WHERE tt.group_name IN (${groupname})
+                    AND tt.system_id = #{systemID}
+            )
+            </if>
+            AND t.product_id IN (${productIDs})
+        GROUP BY t.statdate
+        ORDER BY t.statdate DESC
+	</select>
+
+	<!-- 下载累计 -->
+	<select id="getDownleijiList" parameterType="BaseDTO" resultType="DownleijiEntity">
+	    SELECT
+            T.DOWNLOAD_TIMES downcnt,
+            T.DOWNLOAD_IMEI downimei,
+            T.DOWNLOAD_SSOID downssoid
+        FROM DM_DOWNLOAD_TOTAL T
+        WHERE T.SYSTEM_ID = TRUNC(#{systemID})
+        AND T.STATDATE = (SELECT MAX(statdate) FROM DM_DOWNLOAD_TOTAL)
+	</select>
+
+	<!-- 单个资源下载CPT -->
+	<select id="getDownsourceCPTList" parameterType="BaseDTO" resultType="DownsourceCPTEntity">
+	    SELECT
+            t.statdate statDate,
+            sum(t.download) totalDown,
+            sum(t.browse) totalBrowse,
+            sum(t.hot_rec) hottuijian,-- 热门推荐
+            sum(t.editor_rec) editortujian,-- 小编推荐
+            sum(t.yingyong) app,-- 应用榜
+            sum(t.youxi) game,-- 游戏榜
+            sum(t.liuxing) pop,-- 最近流行
+            sum(t.jingxuan_fenglei) fenlei,-- 分类精选
+            sum(t.erji_fenglei) secondfenlei,-- 二级分类
+            sum(t.search_everyone) allsearch,-- 大家都在搜
+            sum(t.search_24h) hotsearch,-- 48小时热搜榜
+            sum(t.search_rank) searchrank,-- 搜索排行榜
+            sum(t.search_zhudong) tosearch,-- 主动搜索
+            sum(t.bibei) installmust,-- 装机必备
+            sum(t.relate_rec) recommondpush,-- 相关推荐
+            sum(t.xiazai) downgift,-- 下载有礼
+            sum(t.shengji) upgrade,-- 升级
+            sum(t.single_ad) resourceads,-- 单个资源广告
+            sum(t.active_page) activepage --活动页面
+        FROM dm_cpt_report_new t
+        WHERE 1 = 1
+            <if test="startDate != null">
+            AND t.STATDATE >= TRUNC(#{startDate})
+            </if>
+            <if test="endDate != null">
+            AND t.STATDATE &lt; TRUNC(#{endDate}+1)
+            </if>
+            AND t.STATDATE != TRUNC(SYSDATE)
+            <if test="productIDs != null and productIDs != ''">
+            AND t.product_id IN (${productIDs})
+            </if>
+        GROUP BY t.statdate
+        ORDER BY t.statdate
+	</select>
+
+	<!-- 时段分析 -->
+	<select id="listHHStart" parameterType="BaseDTO" resultType="HHStartEntity">
+	    SELECT HH,SUM(YESTERDAY) YESTERDAY,SUM(LAST7) LAST7,SUM(LAST30) LAST30
+		FROM(
+		SELECT TO_CHAR(T.STATDATE,'HH24') HH,
+		       CASE WHEN TRUNC(T.STATDATE)=TRUNC(SYSDATE-1) THEN T.CNT_TIMES ELSE 0 END YESTERDAY,
+		       CASE WHEN TRUNC(T.STATDATE)=TRUNC(SYSDATE-7) THEN T.CNT_TIMES ELSE 0 END LAST7,
+		       CASE WHEN TRUNC(T.STATDATE)=TRUNC(SYSDATE-30) THEN T.CNT_TIMES ELSE 0 END LAST30
+		FROM DM_HH_START T
+		WHERE T.SYSTEM_ID='${systemID}' AND T.STATDATE>=TRUNC(SYSDATE-30)
+		)M
+		GROUP BY HH
+		ORDER BY HH DESC
+	</select>
+
+	<!-- 需求提交 -->
+	<insert id="createRequest" parameterType="RequestjobDTO">
+		INSERT INTO log_request_job(job_id,system_id,condition,sample,indicat,username,state,request_time,last_update_time)
+		VALUES(SEQ_LOG_REQUEST_JOB.NEXTVAL,
+			#{systemID},
+			#{condition,jdbcType=VARCHAR},
+			#{sample,jdbcType=VARCHAR},
+			#{indicat,jdbcType=VARCHAR},
+			#{username,jdbcType=VARCHAR},
+			0,
+			SYSDATE,
+			SYSDATE)
+	</insert>
+	
+	<!-- 30天留存 -->
+	<select id="getRemain30daysList" parameterType="BaseDTO" resultType="Remain30daysEntity">
+	    SELECT
+	        t.statdate statDate,
+            t.rr_date statEndDate,
+            <if test="type!=null and type=='STARTIMEI'">
+            t.imeis remain
+            </if>
+            <if test="type!=null and type=='NEWIMEI'">
+            t.new_imeis remain
+            </if>
+        FROM dm_rr_start_daily t
+        WHERE t.system_id  = #{systemID}
+            <if test="startDate != null">
+            AND T.STATDATE >= TRUNC(#{startDate})
+            </if>
+            <if test="endDate != null">
+			AND T.STATDATE &lt; TRUNC(#{endDate}+1)
+		    </if>
+            <if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+            AND T.APP_VERSION = #{appVersion}
+            </if>
+            <if test="appVersion=='all' or appVersion=='' or appVersion==null">
+            AND T.APP_VERSION IS NULL
+            </if>
+            <if test="qudao!= null and qudao!='' and qudao!='all'">
+            AND t.channel_id = #{qudao}
+            </if>
+            <if test="qudao=='all' or qudao=='' or qudao==null">
+            AND t.channel_id IS NULL
+            </if>
+        ORDER BY t.statdate DESC, t.rr_date
+	</select>
+</mapper>

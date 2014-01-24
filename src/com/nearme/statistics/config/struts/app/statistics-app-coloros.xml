@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<!-- coloros -->
+	<package name="appColoros" namespace="/app/coloros" extends="statistics-default">
+		<!-- 明细数据-->
+		<action name="coloros_detail_*" class="colorosDetailAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/coloros/detail.jsp</result>
+		</action>
+
+		<!-- 版本活跃 -->
+		<action name="coloros_versionactive_*" class="colorosVersionactiveAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/coloros/versionactive.jsp</result>
+		</action>
+
+		<!-- 启动排行 -->
+		<action name="coloros_startrank_*" class="colorosStartrankAction"
+			method="{1}">
+			<result name="startrank_week">/WEB-INF/pages/app/coloros/startrank_week.jsp</result>
+			<result name="success">/WEB-INF/pages/app/coloros/startrank.jsp</result>
+			<result name="redirect" type="redirect">coloros_startrank_initrank.do?form.systemID=${form.systemID}
+			</result>
+			<result name="hive_listjob">/WEB-INF/pages/app/common/hive_listjob.jsp
+			</result>
+			<result name="hive_listsql">/WEB-INF/pages/app/common/hive_listsql.jsp
+			</result>
+			<result name="startrank_jobresult">/WEB-INF/pages/app/coloros/startrank_jobresult.jsp
+			</result>
+		</action>
+
+		<!-- 人均启动次数排行 -->
+		<action name="coloros_avgstartcntrank_*" class="colorosAvgstartcntrankAction"
+			method="{1}">
+			<result name="startavgrank_week">/WEB-INF/pages/app/coloros/avgstartcntrank_week.jsp</result>
+			<result name="success">/WEB-INF/pages/app/coloros/avgstartcntrank.jsp</result>
+			<result name="redirect" type="redirect">coloros_avgstartcntrank_init.do?form.systemID=${form.systemID}
+			</result>
+			<result name="hive_listjob">/WEB-INF/pages/app/common/hive_listjob.jsp
+			</result>
+			<result name="hive_listsql">/WEB-INF/pages/app/common/hive_listsql.jsp
+			</result>
+			<result name="avgstartcntrank_jobresult">/WEB-INF/pages/app/coloros/avgstartcntrank_jobresult.jsp
+			</result>
+		</action>
+
+		<!-- 安装排行 -->
+		<action name="coloros_installrank_*" class="colorosInstallrankAction"
+			method="{1}">
+			<result name="installrank_week">/WEB-INF/pages/app/coloros/installrank_week.jsp</result>
+			<result name="success">/WEB-INF/pages/app/coloros/installrank.jsp</result>
+			<result name="redirect" type="redirect">coloros_installrank_init.do?form.systemID=${form.systemID}
+			</result>
+			<result name="hive_listjob">/WEB-INF/pages/app/common/hive_listjob.jsp
+			</result>
+			<result name="hive_listsql">/WEB-INF/pages/app/common/hive_listsql.jsp
+			</result>
+			<result name="installrank_jobresult">/WEB-INF/pages/app/coloros/installrank_jobresult.jsp
+			</result>
+		</action>
+
+		<!-- 活跃用户地域分布 -->
+		<action name="coloros_area_*" class="colorosAreaAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/coloros/area.jsp</result>
+		</action>
+
+		<!-- 周新增留存-->
+		<action name="coloros_weeknir_*" class="colorosWeeknirAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/coloros/weeknir.jsp</result>
+		</action>
+
+		<!-- 月启动留存-->
+		<action name="coloros_monthsr_*" class="colorosMonthsrAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/coloros/monthsr.jsp</result>
+		</action>
+
+		<!-- 网络分布 -->
+		<action name="coloros_netdistribute_*" class="colorosNetdistributeAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/coloros/netdistribute.jsp</result>
+		</action>
+
+		<!-- 终端占比 -->
+		<action name="coloros_mobilezhanbi_*" class="colorosMobilezhanbiAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/coloros/mobilezhanbi.jsp
+			</result>
+		</action>
+	</package>
+</struts>

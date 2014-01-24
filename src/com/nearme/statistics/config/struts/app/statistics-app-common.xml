@@ -1,0 +1,407 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<!-- 应用，公共 -->
+	<package name="appCommon" namespace="/app/common" extends="statistics-default">
+		<!-- 日明细数据 -->
+		<action name="common_detailday_*" class="commonDetaildayAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/common/detailday.jsp</result>
+		</action>
+		<!-- 周明细数据 -->
+		<action name="common_detailweek_*" class="commonDetailweekAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/common/detailweek.jsp</result>
+		</action>
+		<!-- 月明细数据 -->
+		<action name="common_detailmonth_*" class="commonDetailmonthAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/common/detailmonth.jsp
+			</result>
+		</action>
+		<!-- 累计数据 -->
+		<action name="common_grandtotal_*" class="commonGrandtotalAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/common/grandtotal.jsp</result>
+		</action>
+		<!-- 月健康度数据 -->
+		<action name="common_monthhealth_*" class="commonMonthhealthAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/common/monthhealth.jsp
+			</result>
+		</action>
+		<!--  活跃天数 -->
+		<action name="common_activedays_*" class="commonActivedaysAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/common/activedays.jsp</result>
+		</action>
+		<!-- 新增留存 -->
+		<action name="common_increaseremain_*" class="commonIncreaseremainAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/common/increaseremain.jsp
+			</result>
+		</action>
+		<!-- 启动留存 -->
+		<action name="common_startremain_*" class="commonStartremainAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/common/startremain.jsp
+			</result>
+		</action>
+		<!-- 用户生命周期 -->
+		<action name="common_userlifecycle_*" class="commonUserlifecycleAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/common/userlifecycle.jsp
+			</result>
+		</action>
+		<!-- 渠道概况 -->
+		<action name="common_channelgeneral_*" class="commonChannelgeneralAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/common/channelgeneral.jsp
+			</result>
+		</action>
+		<!-- 渠道质量 -->
+		<action name="common_channelquality_*" class="commonChannelqualityAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/common/channelquality.jsp
+			</result>
+		</action>
+		<!-- 渠道日明细 -->
+		<action name="common_channeldaily_*" class="commonChanneldailyAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/common/channeldaily.jsp</result>
+		</action>
+		<!-- 渠道健康度 -->
+		<action name="common_channelhealth_*" class="commonChannelhealthAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/common/channelhealth.jsp</result>
+		</action>
+		<!-- 页面访问分析 -->
+		<action name="common_pagevisit_*" class="commonPagevisitAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/common/pagevisit.jsp
+			</result>
+			<result name="queryjump">/WEB-INF/pages/app/common/pagevisit_jump.jsp
+			</result>
+		</action>
+		<!-- 自定义事件 -->
+		<action name="common_selfevent_*" class="commonSelfeventAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/common/selfevent.jsp
+			</result>
+		</action>
+		<!-- 地区分析 -->
+		<action name="common_areaanaly_*" class="commonAreaanalyAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/common/areaanaly.jsp
+			</result>
+			<result name="querytop10">/WEB-INF/pages/app/common/areaanaly_top10.jsp
+			</result>
+			<result name="querydetail">/WEB-INF/pages/app/common/areaanaly_detail.jsp
+			</result>
+		</action>
+		<!-- 使用频率时长分析 -->
+		<action name="common_useoftenanaly_*" class="commonUseoftenanalyAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/common/useoftenanaly.jsp
+			</result>
+			<result name="querystartcnt">/WEB-INF/pages/app/common/useoftenanaly_startcnt.jsp
+			</result>
+			<result name="queryusetime">/WEB-INF/pages/app/common/useoftenanaly_usetime.jsp
+			</result>
+		</action>
+		<!-- 错误分析 -->
+		<action name="common_erroranaly_*" class="commonErroranalyAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/common/erroranaly.jsp</result>
+			<result name="erroranaly_general">/WEB-INF/pages/app/common/erroranaly_general.jsp</result>
+			<result name="erroranaly_detail_modeldistribute">/WEB-INF/pages/app/common/erroranaly_detail_modeldistribute.jsp</result>
+		</action>
+
+		<!-- 版本占比 -->
+		<action name="common_versionzhanbi_*" class="commonVersionzhanbiAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/common/versionzhanbi.jsp
+			</result>
+		</action>
+		<!-- 网络占比 -->
+		<action name="common_netzhanbi_*" class="commonNetzhanbiAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/common/netzhanbi.jsp
+			</result>
+		</action>
+		<!-- 终端占比 -->
+		<action name="common_modulezhanbi_*" class="commonModulezhanbiAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/common/modulezhanbi.jsp
+			</result>
+		</action>
+
+		<!-- 版本日明细 -->
+		<action name="common_versionday_*" class="commonVersiondayAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/common/versionday.jsp
+			</result>
+		</action>
+		<!-- 网络占比 -->
+		<action name="common_netday_*" class="commonNetdayAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/common/netday.jsp
+			</result>
+		</action>
+		<!-- 终端占比 -->
+		<action name="common_moduleday_*" class="commonModuledayAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/common/moduleday.jsp
+			</result>
+		</action>
+
+		<!-- 用户行为分析 -->
+		<action name="common_useraction_*" class="commonUseractionAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/common/useraction.jsp
+			</result>
+		</action>
+
+		<!-- 整体用户生命周期 -->
+		<action name="common_wholeuserlifecycle_*" class="commonWholeuserlifecycleAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/common/wholeuserlifecycle.jsp
+			</result>
+			<result name="redirect" type="redirect">common_wholeuserlifecycle_init.do?form.systemID=${form.systemID}
+			</result>
+			<result name="hive_listjob">/WEB-INF/pages/app/common/hive_listjob.jsp
+			</result>
+			<result name="hive_listsql">/WEB-INF/pages/app/common/hive_listsql.jsp
+			</result>
+			<result name="wholeuserlifecycle_jobresult">/WEB-INF/pages/app/common/wholeuserlifecycle_jobresult.jsp
+			</result>
+		</action>
+
+		<!-- 月活天数和分布 -->
+		<action name="common_activedaysdistribute_*" class="commonActivedaysdistributeAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/common/activedaysdistribute.jsp
+			</result>
+			<result name="redirect" type="redirect">common_activedaysdistribute_init.do?form.systemID=${form.systemID}
+			</result>
+			<result name="hive_listjob">/WEB-INF/pages/app/common/hive_listjob.jsp
+			</result>
+			<result name="hive_listsql">/WEB-INF/pages/app/common/hive_listsql.jsp
+			</result>
+			<result name="activedaysdistribute_jobresult">/WEB-INF/pages/app/common/activedaysdistribute_jobresult.jsp
+			</result>
+		</action>
+
+		<!-- 新用户活跃 -->
+		<action name="common_newuseractive_*" class="commonNewuseractiveAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/common/newuseractive.jsp
+			</result>
+			<result name="redirect" type="redirect">common_newuseractive_init.do?form.systemID=${form.systemID}
+			</result>
+			<result name="hive_listjob">/WEB-INF/pages/app/common/hive_listjob.jsp
+			</result>
+			<result name="hive_listsql">/WEB-INF/pages/app/common/hive_listsql.jsp
+			</result>
+			<result name="newuseractive_jobresult">/WEB-INF/pages/app/common/newuseractive_jobresult.jsp
+			</result>
+		</action>
+
+		<!-- 流量结构分析 -->
+		<action name="common_flowstruct_*" class="commonFlowstructAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/common/flowstruct.jsp
+			</result>
+			<result name="redirect" type="redirect">common_flowstruct_init.do?form.systemID=${form.systemID}
+			</result>
+			<result name="hive_listjob">/WEB-INF/pages/app/common/hive_listjob.jsp
+			</result>
+			<result name="hive_listsql">/WEB-INF/pages/app/common/hive_listsql.jsp
+			</result>
+			<result name="flowstruct_jobresult">/WEB-INF/pages/app/common/flowstruct_jobresult.jsp
+			</result>
+
+			<result name="flowstruct_updatenum">/WEB-INF/pages/app/common/flowstruct_updatenum.jsp
+			</result>
+			<result name="flowstruct_resourcetype">/WEB-INF/pages/app/common/flowstruct_resourcetype.jsp
+			</result>
+			<result name="flowstruct_topresource">/WEB-INF/pages/app/common/flowstruct_topresource.jsp
+			</result>
+			<result name="flowstruct_naturemodlenum">/WEB-INF/pages/app/common/flowstruct_naturemodlenum.jsp
+			</result>
+			<result name="flowstruct_operatepoint">/WEB-INF/pages/app/common/flowstruct_operatepoint.jsp
+			</result>
+		</action>
+
+		<!-- 模块下载量分析 -->
+		<action name="common_moduledown_*" class="commonModuledownAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/common/module_down.jsp</result>
+			<result name="redirect" type="redirect">common_moduledown_init.do?form.systemID=${form.systemID}
+			</result>
+			<result name="hive_listjob">/WEB-INF/pages/app/common/hive_listjob.jsp
+			</result>
+			<result name="hive_listsql">/WEB-INF/pages/app/common/hive_listsql.jsp
+			</result>
+			<result name="moduledown_jobresult">/WEB-INF/pages/app/common/module_down_jobresult.jsp
+			</result>
+		</action>
+
+		<!-- 模块位置下载分析 -->
+		<action name="common_moduleposition_*" class="commonModulepositionAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/common/module_position.jsp</result>
+			<result name="redirect" type="redirect">common_moduleposition_init.do?form.systemID=${form.systemID}
+			</result>
+			<result name="hive_listjob">/WEB-INF/pages/app/common/hive_listjob.jsp
+			</result>
+			<result name="hive_listsql">/WEB-INF/pages/app/common/hive_listsql.jsp
+			</result>
+			<result name="moduleposition_jobresult">/WEB-INF/pages/app/common/module_position_jobresult.jsp
+			</result>
+		</action>
+
+		<!-- 产品名 -->
+		<action name="common_queryproduct" class="commonProductAction"
+			method="queryproduct">
+			<result name="success">/WEB-INF/pages/app/common/productinfo.jsp</result>
+		</action>
+
+		<!-- 单个资源运营 -->
+		<action name="common_productrun_*" class="commonProductrunAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/common/productrun.jsp</result>
+			<result name="redirect" type="redirect">common_productrun_init.do?form.systemID=${form.systemID}
+			</result>
+			<result name="hive_listjob">/WEB-INF/pages/app/common/hive_listjob.jsp
+			</result>
+			<result name="hive_listsql">/WEB-INF/pages/app/common/hive_listsql.jsp
+			</result>
+			<result name="productrun_jobresult">/WEB-INF/pages/app/common/productrun_jobresult.jsp
+			</result>
+		</action>
+
+		<!-- 自定义事件 -->
+		<action name="common_event_*" class="commonEventAction"	method="{1}">
+			<result name="success">/WEB-INF/pages/app/common/event_index.jsp</result>
+			<result name="event_detail">/WEB-INF/pages/app/common/event_detail.jsp</result>
+			<result name="event_detail_sum">/WEB-INF/pages/app/common/event_detail_sum.jsp</result>
+		</action>
+
+		<!-- 事件转化率 -->
+		<action name="common_eventconversion_*" class="commonEventConversionAction"	method="{1}">
+			<result name="success">/WEB-INF/pages/app/common/event_flow_list.jsp</result>
+			<result name="detail">/WEB-INF/pages/app/common/event_conversion_detail.jsp</result>
+			<result name="period">/WEB-INF/pages/app/common/event_conversion_period.jsp</result>
+		</action>
+
+		<!-- 下载日明细 -->
+		<action name="common_downday_*" class="commonDowndayAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/common/downday.jsp</result>
+		</action>
+		<!-- 下载周明细 -->
+		<action name="common_downweek_*" class="commonDownweekAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/common/downweek.jsp</result>
+		</action>
+		<!-- 下载月明细 -->
+		<action name="common_downmonth_*" class="commonDownmonthAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/common/downmonth.jsp
+			</result>
+		</action>
+		<!-- 下载终端占比 -->
+		<action name="common_downmobilezhanbi_*" class="commonDownmobilezhanbiAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/common/downmobilezhanbi.jsp
+			</result>
+		</action>
+		<!-- 下载渠道占比 -->
+		<action name="common_downqudaozhanbi_*" class="commonDownqudaozhanbiAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/common/downqudaozhanbi.jsp
+			</result>
+		</action>
+		<!-- 下载版本占比 -->
+		<action name="common_downversionzhanbi_*" class="commonDownversionzhanbiAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/common/downversionzhanbi.jsp
+			</result>
+		</action>
+		<!-- 下载留存 -->
+		<action name="common_downremain_*" class="commonDownremainAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/common/downremain.jsp
+			</result>
+		</action>
+		<!-- 单个资源下载 -->
+		<action name="common_downsource_*" class="commonDownsourceAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/common/downsource.jsp
+			</result>
+			<result name="downsource_result">/WEB-INF/pages/app/common/downsource_result.jsp
+			</result>
+			<result name="downsource_cpt">/WEB-INF/pages/app/common/downsource_cpt.jsp
+			</result>
+		</action>
+		<!-- 下载累计 -->
+		<action name="common_downleiji_*" class="commonDownleijiAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/common/downleiji.jsp</result>
+		</action>
+
+		<!-- 时段分析 -->
+		<action name="common_hhstart_*" class="commonHHStartAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/common/hh_start.jsp
+			</result>
+		</action>
+		<!-- 使用时长 -->
+		<action name="common_pvduration_*" class="commonPVDurationAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/common/pv_duration.jsp
+			</result>
+		</action>
+		<!-- 使用频率 -->
+		<action name="common_pvfrequency_*" class="commonPVFrequencyAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/common/pv_frequency.jsp
+			</result>
+		</action>
+		<!-- 访问页面 -->
+		<action name="common_pvvisitpage_*" class="commonPVVisitpageAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/common/pv_visitpage.jsp
+			</result>
+		</action>
+
+		<!-- 需求提交 -->
+		<action name="common_request_*" class="commonRequestAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/common/request.jsp
+			</result>
+		</action>
+		<!-- 对比使用时长、使用频率 -->
+		<action name="common_pvcp_*" class="commonPVCpAction"
+			method="{1}">
+			<result name="duration_cp">/WEB-INF/pages/app/common/pv_durationcp.jsp</result>
+			<result name="frequency_cp">/WEB-INF/pages/app/common/pv_frequencycp.jsp</result>
+		</action>
+		<!-- 页面访问路径 -->
+		<action name="common_pvpath_*" class="commonPVPathAction"
+			method="{1}">
+			<result name="visit">/WEB-INF/pages/app/common/pv_curpage_visit.jsp</result>
+			<result name="jump">/WEB-INF/pages/app/common/pv_curpage_jump.jsp</result>
+		</action>
+		
+		<!-- 30天留存 -->
+		<action name="common_remain30days_*" class="commonRemain30daysAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/common/remain30days.jsp
+			</result>
+		</action>
+	</package>
+</struts>

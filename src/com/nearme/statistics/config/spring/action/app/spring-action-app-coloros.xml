@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+	<!-- 启动imei排行 -->
+	<bean id="colorosStartrankAction" class="com.nearme.statistics.action.app.coloros.StartrankAction"
+		scope="prototype">
+		<property name="service">
+			<ref bean="hivecolorosService" />
+		</property>
+		<property name="jobservice">
+	        <ref bean="hivejobService" />
+	    </property>
+	</bean>
+
+	<!-- 人均启动次数排行 -->
+	<bean id="colorosAvgstartcntrankAction" class="com.nearme.statistics.action.app.coloros.AvgstartcntAction"
+		scope="prototype">
+		<property name="service">
+			<ref bean="hivecolorosService" />
+		</property>
+		<property name="jobservice">
+	        <ref bean="hivejobService" />
+	    </property>
+	</bean>
+
+	<!-- 安装排行 -->
+	<bean id="colorosInstallrankAction" class="com.nearme.statistics.action.app.coloros.InstallrankAction"
+		scope="prototype">
+		<property name="service">
+			<ref bean="hivecolorosService" />
+		</property>
+		<property name="jobservice">
+	        <ref bean="hivejobService" />
+	    </property>
+	</bean>
+
+	<!-- 明细数据 -->
+	<bean id="colorosDetailAction" class="com.nearme.statistics.action.app.coloros.DetailAction"
+		scope="prototype">
+		<property name="service">
+			<ref bean="colorosService" />
+		</property>
+	</bean>
+	
+	<!-- 版本活跃用户排行 -->
+	<bean id="colorosVersionactiveAction" class="com.nearme.statistics.action.app.coloros.VersionactiveAction"
+		scope="prototype">
+		<property name="service">
+			<ref bean="colorosService" />
+		</property>
+	</bean>
+	
+	<!-- 活跃用户地域分布-->
+	<bean id="colorosAreaAction" class="com.nearme.statistics.action.app.coloros.AreaAction"
+		scope="prototype">
+		<property name="service">
+			<ref bean="colorosService" />
+		</property>
+	</bean>
+	
+	<!-- 周新增留存 -->
+	<bean id="colorosWeeknirAction" class="com.nearme.statistics.action.app.coloros.WeeknirAction"
+		scope="prototype">
+		<property name="service">
+			<ref bean="colorosService" />
+		</property>
+	</bean>
+	
+	<!-- 月启动留存 -->
+	<bean id="colorosMonthsrAction" class="com.nearme.statistics.action.app.coloros.MonthsrAction"
+		scope="prototype">
+		<property name="service">
+			<ref bean="colorosService" />
+		</property>
+	</bean>
+	
+	<!-- 网络分布 -->
+	<bean id="colorosNetdistributeAction" class="com.nearme.statistics.action.app.coloros.NetdistributeAction"
+		scope="prototype">
+		<property name="service">
+			<ref bean="colorosService" />
+		</property>
+	</bean>
+	
+	<!-- 终端占比 --> 
+	<bean id="colorosMobilezhanbiAction" class="com.nearme.statistics.action.app.coloros.MobilezhanbiAction" 
+	    scope="prototype">
+	    <property name="service">
+	        <ref bean="colorosService" />
+	    </property>
+	</bean>
+</beans>

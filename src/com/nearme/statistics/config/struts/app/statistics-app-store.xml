@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<!-- 商店 -->
+	<package name="appStore" namespace="/app/store" extends="statistics-default">
+		<!-- 细分用户客户端 -->
+		<action name="store_detailuserclient_*" class="storeDetailuserclientAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/store/detailuserclient.jsp</result>
+		</action>
+		
+		<!-- 首页推荐 -->
+		<action name="store_homepagerecommend_*" class="storeHomepagerecommendAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/store/homepagerecommend.jsp</result>
+		</action>
+		
+		<!-- push推送 -->
+		<action name="store_push_*" class="storePushAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/store/push.jsp
+			</result>
+		</action>
+		
+		<!-- 应用榜 -->
+		<action name="store_app_*" class="storeAppAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/store/app.jsp</result>
+		</action>
+		
+		<!-- 游戏榜 -->
+		<action name="store_game_*" class="storeGameAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/store/game.jsp</result>
+		</action>
+		
+		<!-- 相关推荐 -->
+		<action name="store_tuijian_*" class="storeTuijianAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/store/tuijian.jsp
+			</result>
+		</action>
+		
+		<!--  搜索 -->
+		<action name="store_search_*" class="storeSearchAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/store/search.jsp</result>
+		</action>
+		
+		<!-- 下载有礼 -->
+		<action name="store_downgift_*" class="storeDowngiftAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/store/downgift.jsp
+			</result>
+		</action>
+		
+		<!-- 专题 -->
+		<action name="store_zuanti_*" class="storeZuantiAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/store/zuanti.jsp
+			</result>
+		</action>
+		
+		<!-- 活动中心 -->
+		<action name="store_activecenter_*" class="storeActivecenterAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/store/activecenter.jsp
+			</result>
+		</action>
+		
+		<!-- 装机必备 -->
+		<action name="store_installmust_*" class="storeInstallmustAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/store/installmust.jsp
+			</result>
+		</action>
+		
+		<!-- 最近流行 -->
+		<action name="store_poprecent_*" class="storePoprecentAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/store/poprecent.jsp
+			</result>
+		</action>
+		
+		<!-- 分类 -->
+		<action name="store_sort_*" class="storeSortAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/store/sort.jsp
+			</result>
+		</action>
+		
+		<!-- 客户端内容分布 -->
+		<action name="store_clientcontent_*" class="storeClientcontentAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/store/clientcontent.jsp
+			</result>
+		</action>
+		
+		<!-- 小编推荐 -->
+		<action name="store_editorrecommend_*" class="storeEditorrecommendAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/store/editorrecommend.jsp</result>
+		</action>
+		
+		<!-- 48小时热搜榜 -->
+		<action name="store_hotsearch_*" class="storeHotsearchAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/store/hotsearch.jsp</result>
+		</action>
+		
+		<!-- 分类精选 -->
+		<action name="store_typeselect_*" class="storeTypeselectAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/store/typeselect.jsp</result>
+		</action>
+		
+		<!-- 下载安装成功率 -->
+		<action name="store_downinstall_*" class="storeDowninstallAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/store/down_install.jsp
+			</result>
+		</action>
+		
+		<!-- 安装统计  -->
+		<action name="store_installstat_*" class="installStatAction"
+			method="{1}">
+			<result name="install_total">/WEB-INF/pages/app/store/install_total.jsp</result>
+			<result name="install_top">/WEB-INF/pages/app/store/install_top.jsp</result>
+			<result name="install_channel">/WEB-INF/pages/app/store/install_channel.jsp</result>
+			<result name="install_index">/WEB-INF/pages/app/store/install_index.jsp</result>
+			<result name="install_detail">/WEB-INF/pages/app/store/install_detail.jsp</result>
+		</action>
+		
+	</package>
+</struts>

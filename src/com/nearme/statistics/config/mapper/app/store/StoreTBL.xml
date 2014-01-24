@@ -1,0 +1,705 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+	"-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nearme.statistics.dao.app.store.StoreDao">
+	<!-- 细分用户客户端行为统计 -->
+	<select id="getDetailuserclientList" parameterType="StoreDTO"
+		resultType="DetailuserclientEntity">
+		SELECT 
+            t.statdate statDate,
+            t.start_user startUser,
+            t.down_user downUser,
+            t.down_cnt downCnt,
+            t.start_cnt startCnt
+        FROM dm_store_user_${lidu} t
+        WHERE 1 = 1
+            <if test="startDate != null">
+            AND t.STATDATE >= TRUNC(#{startDate})
+            </if>
+            <if test="endDate != null">
+            AND t.STATDATE &lt; TRUNC(#{endDate}+1)
+            </if>
+            AND t.STATDATE != TRUNC(SYSDATE)
+            <if test="(model=='all' or model=='' or model==null) and 
+                      (appVersion=='all' or appVersion=='' or appVersion==null) and 
+                      (userType=='all' or userType=='' or userType==null)">
+            AND t.optn IS NULL
+            </if>
+            <if test="model!= null and model!='' and model!='all'">
+            AND t.optn = 'model' AND t.optn_value = #{model}
+            </if>
+            <if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+            AND t.optn = 'app_version' AND t.optn_value = #{appVersion}
+            </if>
+            <if test="userType!=null and userType!='' and userType!='all'">
+            AND t.optn = 'user_group' AND t.optn_value = #{userType}
+            </if>
+        ORDER BY t.statdate DESC
+	</select>
+
+	<!-- 首页推荐 -->
+	<select id="getHomepagerecommendList" parameterType="StoreDTO"
+		resultType="HomepagerecommendEntity">
+		SELECT 
+            t.statdate statDate,
+            t.start_user startUser,
+            t.down_user downUser,
+            t.module_down moduleDown,
+            t.browse_cnt moduleAllJump
+        FROM dm_store_info_${lidu} t
+        WHERE t.module_type = 'homepage'
+            <if test="startDate != null">
+            AND T.STATDATE >= TRUNC(#{startDate})
+            </if>
+            <if test="endDate != null">
+            AND T.STATDATE &lt; TRUNC(#{endDate}+1)
+            </if>
+            AND t.STATDATE != TRUNC(SYSDATE)
+            <if test="model!= null and model!='' and model!='all'">
+            AND t.MODEL = #{model}
+            </if>
+            <if test="model=='all' or model=='' or model==null">
+            AND t.MODEL IS NULL
+            </if>
+            <if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+            AND t.APP_VERSION = #{appVersion}
+            </if>
+            <if test="appVersion=='all' or appVersion=='' or appVersion==null">
+            AND t.APP_VERSION IS NULL
+            </if>
+            <if test="userType!=null and userType!='' and userType!='all'">
+            AND t.USER_GROUP = #{userType}
+            </if>
+            <if test="userType=='all' or userType=='' or userType==null">
+            AND t.USER_GROUP IS NULL
+            </if>
+        ORDER BY t.statdate DESC
+	</select>
+	
+	<!-- push推送 -->
+	<select id="getPushList" parameterType="StoreDTO"
+		resultType="PushEntity">
+		SELECT
+            (CASE WHEN Y.push_obj IS NOT NULL THEN Y.push_obj ELSE '('||to_char(X.push_id)||')' END) pushObj,
+            Y.stat_period timePeriod,
+            Y.push_type pushType,
+            Y.detail_user pushDetailUser,
+            sum(X.send_cnt) sendPushCnt,
+            sum(X.arrive_cnt) arriveImei,
+            sum(X.look_imei) lookImei,
+            sum(X.refuse_imei) refuseImei
+        FROM (
+            SELECT 
+                tt.push_id push_id,
+                sum(tt.send_cnt) send_cnt,
+                sum(tt.arrive_cnt) arrive_cnt,
+                sum(tt.look_imei) look_imei,
+                sum(tt.refuse_imei) refuse_imei
+            FROM dm_store_push2_daily tt 
+            WHERE 1 = 1
+                <if test="startDate != null">
+                AND tt.statdate >= TRUNC(#{startDate})
+                </if>
+                <if test="endDate != null">
+                AND tt.statdate &lt; TRUNC(#{endDate}+1)
+                </if>
+                AND tt.statdate != TRUNC(SYSDATE)
+                <if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+                AND tt.APP_VERSION = #{appVersion}
+                </if>
+                <if test="appVersion=='all' or appVersion=='' or appVersion==null">
+                AND tt.APP_VERSION IS NULL
+                </if>
+            GROUP BY tt.statdate,tt.push_id
+        ) X 
+        LEFT JOIN(
+            SELECT
+                m.id,
+                m.name ||'('||m.id||')' push_obj,
+                to_char(m.start_time,'yyyy-mm-dd') ||'至'|| to_char(m.end_time,'yyyy-mm-dd') stat_period,
+                (CASE WHEN m.push_scene = 0 THEN '客户端内'
+                      WHEN m.push_scene = 1 THEN '客户端外'
+                      ELSE '混合' END) push_type,
+                (CASE WHEN m.user_type IS NULL THEN '全部'
+                      ELSE REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE( 
+                           REPLACE(m.user_type,'1','两周新用户')
+                                          ,'2','进阶新用户')
+                                          ,'3','常规活跃用户')
+                                          ,'4','五个月用户')
+                                          ,'5','老用户')
+                                          ,'6','沉默用户')
+                                          ,'7','流失用户')
+                 END) detail_user
+            FROM p_content_push m
+        ) Y
+        ON X.push_id = Y.id
+        GROUP BY (CASE WHEN Y.push_obj IS NOT NULL THEN Y.push_obj ELSE '('||to_char(X.push_id)||')' END),Y.stat_period,Y.push_type,Y.detail_user
+        ORDER BY (CASE WHEN Y.push_obj IS NOT NULL THEN Y.push_obj ELSE '('||to_char(X.push_id)||')' END),Y.stat_period,Y.push_type,Y.detail_user
+	</select>
+	
+	<!-- 应用榜 -->
+	<select id="getAppList" parameterType="StoreDTO"
+		resultType="AppEntity">
+		SELECT 
+            t.statdate statDate,
+            t.start_user startUser,
+            t.down_user downUser,
+            t.module_down moduleDown,
+            t.browse_cnt moduleAllJump
+        FROM dm_store_info_${lidu} t
+        WHERE t.module_type = 'app'
+            <if test="startDate != null">
+            AND T.STATDATE >= TRUNC(#{startDate})
+            </if>
+            <if test="endDate != null">
+            AND T.STATDATE &lt; TRUNC(#{endDate}+1)
+            </if>
+            AND t.STATDATE != TRUNC(SYSDATE)
+            <if test="model!= null and model!='' and model!='all'">
+            AND t.MODEL = #{model}
+            </if>
+            <if test="model=='all' or model=='' or model==null">
+            AND t.MODEL IS NULL
+            </if>
+            <if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+            AND t.APP_VERSION = #{appVersion}
+            </if>
+            <if test="appVersion=='all' or appVersion=='' or appVersion==null">
+            AND t.APP_VERSION IS NULL
+            </if>
+            <if test="userType!=null and userType!='' and userType!='all'">
+            AND t.USER_GROUP = #{userType}
+            </if>
+            <if test="userType=='all' or userType=='' or userType==null">
+            AND t.USER_GROUP IS NULL
+            </if>
+        ORDER BY t.statdate DESC
+	</select>
+	
+	<!-- 游戏榜 -->
+	<select id="getGameList" parameterType="StoreDTO"
+		resultType="GameEntity">
+		SELECT 
+            t.statdate statDate,
+            t.start_user startUser,
+            t.down_user downUser,
+            t.module_down moduleDown,
+            t.browse_cnt moduleAllJump
+        FROM dm_store_info_${lidu} t
+        WHERE t.module_type = 'game'
+            <if test="startDate != null">
+            AND T.STATDATE >= TRUNC(#{startDate})
+            </if>
+            <if test="endDate != null">
+            AND T.STATDATE &lt; TRUNC(#{endDate}+1)
+            </if>
+            AND t.STATDATE != TRUNC(SYSDATE)
+            <if test="model!= null and model!='' and model!='all'">
+            AND t.MODEL = #{model}
+            </if>
+            <if test="model=='all' or model=='' or model==null">
+            AND t.MODEL IS NULL
+            </if>
+            <if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+            AND t.APP_VERSION = #{appVersion}
+            </if>
+            <if test="appVersion=='all' or appVersion=='' or appVersion==null">
+            AND t.APP_VERSION IS NULL
+            </if>
+            <if test="userType!=null and userType!='' and userType!='all'">
+            AND t.USER_GROUP = #{userType}
+            </if>
+            <if test="userType=='all' or userType=='' or userType==null">
+            AND t.USER_GROUP IS NULL
+            </if>
+        ORDER BY t.statdate DESC
+	</select>
+	
+	<!-- 相关推荐 -->
+	<select id="getTuijianList" parameterType="StoreDTO"
+		resultType="TuijianEntity">
+		SELECT 
+            t.statdate statDate,
+            t.start_imei startUser,
+            t.down_imei downUser,
+            t.down_num moduleDown,
+            t.browse_num moduleAllJump 
+        FROM dm_store_relation t
+        WHERE 1 = 1
+            <if test="startDate != null">
+            AND T.STATDATE >= TRUNC(#{startDate})
+            </if>
+            <if test="endDate != null">
+            AND T.STATDATE &lt; TRUNC(#{endDate}+1)
+            </if>
+            AND t.STATDATE != TRUNC(SYSDATE)
+            <if test="model!= null and model!='' and model!='all'">
+            AND t.MODEL = #{model}
+            </if>
+            <if test="model=='all' or model=='' or model==null">
+            AND t.MODEL IS NULL
+            </if>
+            <if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+            AND t.APP_VERSION = #{appVersion}
+            </if>
+            <if test="appVersion=='all' or appVersion=='' or appVersion==null">
+            AND t.APP_VERSION IS NULL
+            </if>
+            <if test="userType!=null and userType!='' and userType!='all'">
+            AND t.USER_GROUP = #{userType}
+            </if>
+            <if test="userType=='all' or userType=='' or userType==null">
+            AND t.USER_GROUP IS NULL
+            </if>
+        ORDER BY t.statdate DESC
+	</select>
+	
+	<!--  搜索 -->
+	<select id="getSearchList" parameterType="StoreDTO"
+		resultType="SearchEntity">
+		SELECT  
+    		t.statdate statDate,
+    		t.down_num totalDown,
+    		t.search_num total,
+    		t.down_imei downTotalUser,
+    		t.search_imei totalUser,
+    		t.down_num_rank searchPhbCnt,
+    		t.down_num_baidu searchBaiduCnt
+		FROM dm_store_search_down t
+		WHERE 1 = 1
+            <if test="startDate != null">
+            AND T.STATDATE >= TRUNC(#{startDate})
+            </if>
+            <if test="endDate != null">
+            AND T.STATDATE &lt; TRUNC(#{endDate}+1)
+            </if>
+            AND t.STATDATE != TRUNC(SYSDATE)
+            <if test="model!= null and model!='' and model!='all'">
+            AND t.MODEL = #{model}
+            </if>
+            <if test="model=='all' or model=='' or model==null">
+            AND t.MODEL IS NULL
+            </if>
+            <if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+            AND t.APP_VERSION = #{appVersion}
+            </if>
+            <if test="appVersion=='all' or appVersion=='' or appVersion==null">
+            AND t.APP_VERSION IS NULL
+            </if>
+        ORDER BY t.statdate DESC
+	</select>
+	
+	<!-- 下载有礼 -->
+	<select id="getDowngiftList" parameterType="StoreDTO"
+		resultType="DowngiftEntity">
+		SELECT 
+            t.click_index position,
+            t.product_desc sourceName,
+            sum(t.down_num) downCnt,
+            sum(t.browse_num) liulanCnt 
+        FROM dm_appstore_position t
+        WHERE t.source_code IN ('1098','1099')
+                AND T.STATDATE = TRUNC(#{startDate})
+        GROUP BY t.click_index,t.product_desc
+        ORDER BY t.click_index
+	</select>
+	
+	<!-- 专题 -->
+	<select id="getZuantiList" parameterType="StoreDTO"
+		resultType="ZuantiEntity">
+		SELECT 
+            t.statdate statDate,
+            t.start_user startUser,
+            t.down_user downUser,
+            t.module_down moduleDown,
+            t.browse_cnt moduleAllJump
+        FROM dm_store_info_${lidu} t
+        WHERE t.module_type = 'zuanti'
+            <if test="startDate != null">
+            AND T.STATDATE >= TRUNC(#{startDate})
+            </if>
+            <if test="endDate != null">
+            AND T.STATDATE &lt; TRUNC(#{endDate}+1)
+            </if>
+            AND t.STATDATE != TRUNC(SYSDATE)
+            <if test="model!= null and model!='' and model!='all'">
+            AND t.MODEL = #{model}
+            </if>
+            <if test="model=='all' or model=='' or model==null">
+            AND t.MODEL IS NULL
+            </if>
+            <if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+            AND t.APP_VERSION = #{appVersion}
+            </if>
+            <if test="appVersion=='all' or appVersion=='' or appVersion==null">
+            AND t.APP_VERSION IS NULL
+            </if>
+            <if test="userType!=null and userType!='' and userType!='all'">
+            AND t.USER_GROUP = #{userType}
+            </if>
+            <if test="userType=='all' or userType=='' or userType==null">
+            AND t.USER_GROUP IS NULL
+            </if>
+        ORDER BY t.statdate DESC
+	</select>
+	
+	<!-- 活动中心 -->
+	<select id="getActivecenterList" parameterType="StoreDTO"
+		resultType="ActivecenterEntity">
+		SELECT 
+    		t.click_index position,
+    		t.product_desc sourceName,
+    		t.down_num downCnt,
+    		t.browse_num liulanCnt 
+		FROM dm_appstore_position t
+		WHERE t.source_code IN ('1116','1117','1118','1119','1120')
+            AND T.STATDATE = TRUNC(#{startDate})
+	</select>
+	
+	<!-- 装机必备 -->
+	<select id="getInstallmustList" parameterType="StoreDTO"
+		resultType="InstallmustEntity">
+		SELECT 
+            t.statdate statDate,
+            t.start_user startUser,
+            t.down_user downUser,
+            t.module_down moduleDown,
+            t.browse_cnt moduleAllJump
+        FROM dm_store_info_${lidu} t
+        WHERE t.module_type = 'zjbb'
+            <if test="startDate != null">
+            AND T.STATDATE >= TRUNC(#{startDate})
+            </if>
+            <if test="endDate != null">
+            AND T.STATDATE &lt; TRUNC(#{endDate}+1)
+            </if>
+            AND t.STATDATE != TRUNC(SYSDATE)
+            <if test="model!= null and model!='' and model!='all'">
+            AND t.MODEL = #{model}
+            </if>
+            <if test="model=='all' or model=='' or model==null">
+            AND t.MODEL IS NULL
+            </if>
+            <if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+            AND t.APP_VERSION = #{appVersion}
+            </if>
+            <if test="appVersion=='all' or appVersion=='' or appVersion==null">
+            AND t.APP_VERSION IS NULL
+            </if>
+            <if test="userType!=null and userType!='' and userType!='all'">
+            AND t.USER_GROUP = #{userType}
+            </if>
+            <if test="userType=='all' or userType=='' or userType==null">
+            AND t.USER_GROUP IS NULL
+            </if>
+        ORDER BY t.statdate DESC
+	</select>
+	
+	<!-- 最近流行 -->
+	<select id="getPoprecentList" parameterType="StoreDTO"
+		resultType="PoprecentEntity">
+		SELECT 
+            t.statdate statDate,
+            t.start_user startUser,
+            t.down_user downUser,
+            t.module_down moduleDown,
+            t.browse_cnt moduleAllJump
+        FROM dm_store_info_${lidu} t
+        WHERE t.module_type = 'zjlx'
+            <if test="startDate != null">
+            AND T.STATDATE >= TRUNC(#{startDate})
+            </if>
+            <if test="endDate != null">
+            AND T.STATDATE &lt; TRUNC(#{endDate}+1)
+            </if>
+            AND t.STATDATE != TRUNC(SYSDATE)
+            <if test="model!= null and model!='' and model!='all'">
+            AND t.MODEL = #{model}
+            </if>
+            <if test="model=='all' or model=='' or model==null">
+            AND t.MODEL IS NULL
+            </if>
+            <if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+            AND t.APP_VERSION = #{appVersion}
+            </if>
+            <if test="appVersion=='all' or appVersion=='' or appVersion==null">
+            AND t.APP_VERSION IS NULL
+            </if>
+            <if test="userType!=null and userType!='' and userType!='all'">
+            AND t.USER_GROUP = #{userType}
+            </if>
+            <if test="userType=='all' or userType=='' or userType==null">
+            AND t.USER_GROUP IS NULL
+            </if>
+        ORDER BY t.statdate DESC
+	</select>
+	
+	<!-- 分类 -->
+	<select id="getSortList" parameterType="StoreDTO"
+		resultType="SortEntity">
+		SELECT 
+            t.statdate statDate,
+            t.start_user startUser,
+            t.down_user downUser,
+            t.module_down moduleDown,
+            t.browse_cnt moduleAllJump
+        FROM dm_store_info_${lidu} t
+        WHERE t.module_type = 'fenlei'
+            <if test="startDate != null">
+            AND T.STATDATE >= TRUNC(#{startDate})
+            </if>
+            <if test="endDate != null">
+            AND T.STATDATE &lt; TRUNC(#{endDate}+1)
+            </if>
+            AND t.STATDATE != TRUNC(SYSDATE)
+            <if test="model!= null and model!='' and model!='all'">
+            AND t.MODEL = #{model}
+            </if>
+            <if test="model=='all' or model=='' or model==null">
+            AND t.MODEL IS NULL
+            </if>
+            <if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+            AND t.APP_VERSION = #{appVersion}
+            </if>
+            <if test="appVersion=='all' or appVersion=='' or appVersion==null">
+            AND t.APP_VERSION IS NULL
+            </if>
+            <if test="userType!=null and userType!='' and userType!='all'">
+            AND t.USER_GROUP = #{userType}
+            </if>
+            <if test="userType=='all' or userType=='' or userType==null">
+            AND t.USER_GROUP IS NULL
+            </if>
+        ORDER BY t.statdate DESC
+	</select>
+	
+	<!-- 客户端内容分布 -->
+	<select id="getClientcontentList" parameterType="StoreDTO"
+		resultType="ClientcontentEntity">
+		SELECT
+    		t.statdate statDate,
+    		t.app app,
+    		t.app_update appupdate,
+    		t.game game,
+    		t.game_update gameupdate,
+    		t.theme theme,
+    		t.new_theme themenew,
+    		t.wallpaper wallpaper,
+    		t.ring ring,
+    		t.font font,
+    		t.ebook ebook,
+    		t.color_ring colorring
+		FROM dm_store_client_contents_${lidu} t
+		WHERE 1 = 1
+            <if test="startDate != null">
+            AND T.STATDATE >= TRUNC(#{startDate})
+            </if>
+            <if test="endDate != null">
+            AND T.STATDATE &lt; TRUNC(#{endDate}+1)
+            </if>
+            AND t.STATDATE != TRUNC(SYSDATE)
+            <if test="model!= null and model!='' and model!='all'">
+            AND t.MODEL = #{model}
+            </if>
+            <if test="model=='all' or model=='' or model==null">
+            AND t.MODEL IS NULL
+            </if>
+            <if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+            AND t.APP_VERSION = #{appVersion}
+            </if>
+            <if test="appVersion=='all' or appVersion=='' or appVersion==null">
+            AND t.APP_VERSION IS NULL
+            </if>
+        ORDER BY t.statdate DESC
+	</select>
+	
+	<!-- 小编推荐 -->
+	<select id="getEditorrecommendList" parameterType="StoreDTO"
+		resultType="StoreEditorrecommendEntity">
+		SELECT 
+            t.statdate statDate,
+            t.start_user startUser,
+            t.down_user downUser,
+            t.module_down moduleDown,
+            t.browse_cnt moduleAllJump
+        FROM dm_store_info_${lidu} t
+        WHERE t.module_type = 'xbtj'
+            <if test="startDate != null">
+            AND T.STATDATE >= TRUNC(#{startDate})
+            </if>
+            <if test="endDate != null">
+            AND T.STATDATE &lt; TRUNC(#{endDate}+1)
+            </if>
+            AND t.STATDATE != TRUNC(SYSDATE)
+            <if test="model!= null and model!='' and model!='all'">
+            AND t.MODEL = #{model}
+            </if>
+            <if test="model=='all' or model=='' or model==null">
+            AND t.MODEL IS NULL
+            </if>
+            <if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+            AND t.APP_VERSION = #{appVersion}
+            </if>
+            <if test="appVersion=='all' or appVersion=='' or appVersion==null">
+            AND t.APP_VERSION IS NULL
+            </if>
+            <if test="userType!=null and userType!='' and userType!='all'">
+            AND t.USER_GROUP = #{userType}
+            </if>
+            <if test="userType=='all' or userType=='' or userType==null">
+            AND t.USER_GROUP IS NULL
+            </if>
+        ORDER BY t.statdate DESC
+	</select>
+	
+	<!-- 48小时热搜榜 -->
+	<select id="getHotsearchList" parameterType="StoreDTO"
+		resultType="StoreHotsearchEntity">
+		SELECT 
+            t.statdate statDate,
+            t.start_user startUser,
+            t.down_user downUser,
+            t.module_down moduleDown,
+            t.browse_cnt moduleAllJump
+        FROM dm_store_info_${lidu} t
+        WHERE t.module_type = '48rs'
+            <if test="startDate != null">
+            AND T.STATDATE >= TRUNC(#{startDate})
+            </if>
+            <if test="endDate != null">
+            AND T.STATDATE &lt; TRUNC(#{endDate}+1)
+            </if>
+            AND t.STATDATE != TRUNC(SYSDATE)
+            <if test="model!= null and model!='' and model!='all'">
+            AND t.MODEL = #{model}
+            </if>
+            <if test="model=='all' or model=='' or model==null">
+            AND t.MODEL IS NULL
+            </if>
+            <if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+            AND t.APP_VERSION = #{appVersion}
+            </if>
+            <if test="appVersion=='all' or appVersion=='' or appVersion==null">
+            AND t.APP_VERSION IS NULL
+            </if>
+            <if test="userType!=null and userType!='' and userType!='all'">
+            AND t.USER_GROUP = #{userType}
+            </if>
+            <if test="userType=='all' or userType=='' or userType==null">
+            AND t.USER_GROUP IS NULL
+            </if>
+        ORDER BY t.statdate DESC
+	</select>
+	
+	<!-- 分类精选 -->
+	<select id="getTypeselectList" parameterType="StoreDTO"
+		resultType="StoreTypeselectEntity">
+		SELECT 
+            t.statdate statDate,
+            t.start_user startUser,
+            t.down_user downUser,
+            t.module_down moduleDown,
+            t.browse_cnt moduleAllJump
+        FROM dm_store_info_${lidu} t
+        WHERE t.module_type = 'fljx'
+            <if test="startDate != null">
+            AND T.STATDATE >= TRUNC(#{startDate})
+            </if>
+            <if test="endDate != null">
+            AND T.STATDATE &lt; TRUNC(#{endDate}+1)
+            </if>
+            AND t.STATDATE != TRUNC(SYSDATE)
+            <if test="model!= null and model!='' and model!='all'">
+            AND t.MODEL = #{model}
+            </if>
+            <if test="model=='all' or model=='' or model==null">
+            AND t.MODEL IS NULL
+            </if>
+            <if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+            AND t.APP_VERSION = #{appVersion}
+            </if>
+            <if test="appVersion=='all' or appVersion=='' or appVersion==null">
+            AND t.APP_VERSION IS NULL
+            </if>
+            <if test="userType!=null and userType!='' and userType!='all'">
+            AND t.USER_GROUP = #{userType}
+            </if>
+            <if test="userType=='all' or userType=='' or userType==null">
+            AND t.USER_GROUP IS NULL
+            </if>
+        ORDER BY t.statdate DESC
+	</select>
+	
+	<!-- 下载成功率 -->
+	<select id="listDownInstall" parameterType="StoreDTO" resultType="DownInstallEntity">
+		SELECT T.STATDATE,SUM(T.DOWN_REQUEST) downRequest,SUM(T.DOWN_SUCCESS) downSuccess,
+				SUM(T.DOWN_FAIL) downFail,SUM(T.INSTALL) INSTALL,SUM(T.INSTALL_SUCCESS) installSuccess
+		FROM DM_DOWN_INSTALL T
+		WHERE 1 = 1
+            <if test="startDate != null">
+            AND T.STATDATE >= TRUNC(#{startDate})
+            </if>
+            <if test="endDate != null">
+            AND T.STATDATE &lt;= TRUNC(#{endDate})
+            </if>
+            <if test="model!=null and model!='' and model!='all'">
+            AND t.MODEL = #{model}
+            </if>
+            <if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+            AND t.APP_VERSION = #{appVersion}
+            </if>
+        GROUP BY T.STATDATE
+        ORDER BY T.STATDATE DESC
+	</select>
+	
+	<!-- 总体流量分布 -->
+	<select id="listInstallTotal" parameterType="StoreDTO" resultType="InstallStatEntity">
+		SELECT T.STATDATE,T.INS_IMEI INSTALLIMEI,T.INS_TIMES INSTALLTIMES,
+		       T.INS_OPPO_IMEI INSTALLIMEIOPPO,T.INS_OPPO_TIMES INSTALLTIMESOPPO,
+		       T.INS_OTHER_IMEI INSTALLIMEIOTHER,T.INS_OTHER_TIMES INSTALLTIMESOTHER,
+		       T.INS_OPPO_TIMES/T.INS_TIMES*100 AVGINSTALL
+		FROM DM_RESOURCE_${lidu} T
+		WHERE T.STATDATE>=${startDateInt} AND T.STATDATE &lt;= ${endDateInt}
+		ORDER BY T.STATDATE DESC
+	</select>
+	<!-- top100渠道分布 -->
+	<select id="listInstallChannelTop" parameterType="StoreDTO" resultType="InstallStatEntity">
+		SELECT ROWNUM RANK,CHANNEL,INSTALLIMEI,INSTALLTIMES,AVGINSTALL
+		FROM(
+		SELECT T.CHANNEL,T.INS_IMEI INSTALLIMEI,T.INS_TIMES INSTALLTIMES,T.INS_TIMES/T.INS_IMEI AVGINSTALL
+		FROM DM_RES_ALL_CHANNEL_${lidu} T
+		WHERE T.STATDATE=${statDateInt}
+		ORDER BY T.INS_IMEI DESC
+		)M WHERE ROWNUM &lt;= 100
+	</select>
+	<!-- 某单个渠道的流量情况 -->
+	<select id="listInstallByChannel" parameterType="StoreDTO" resultType="InstallStatEntity">
+		SELECT T.STATDATE,sum(T.INS_IMEI) INSTALLIMEI,sum(T.INS_TIMES) INSTALLTIMES,sum(T.INS_TIMES)/sum(T.INS_IMEI) AVGINSTALL
+		FROM DM_RES_ALL_CHANNEL_${lidu} T
+		WHERE T.STATDATE>=${startDateInt} AND T.STATDATE &lt;= ${endDateInt}
+			<if test="channel!=null and channel!='' and channel!='all'">
+				AND T.CHANNEL=#{channel} 
+			</if>
+		GROUP BY T.STATDATE
+		ORDER BY T.STATDATE DESC
+	</select>
+	<!-- 单竞品分析(列表) -->
+	<select id="listInstallFromApp" parameterType="StoreDTO" resultType="InstallStatEntity">
+		SELECT T.STATDATE,SUM(T.INS_IMEI) INSTALLIMEI,SUM(T.INS_TIMES） INSTALLTIMES,
+		       MAX(T.START_IMEI) STARTIMEI,MAX(T.START_TIMES) STARTTIMES
+		FROM DM_CHANNEL_RES_${lidu} T
+		WHERE  T.APPPACKAGE=#{channel} AND T.STATDATE>=${startDateInt} AND T.STATDATE &lt;= ${endDateInt}
+		GROUP BY T.STATDATE
+		ORDER BY T.STATDATE DESC
+	</select>
+	<!-- 单竞品分析(详情) -->
+	<select id="listAppSource" parameterType="StoreDTO" resultType="InstallStatEntity">
+		SELECT T.CHANNEL,SUM(T.INS_TIMES) INSTALLTIMES
+		FROM DM_CHANNEL_RES_${lidu} T
+		WHERE  T.APPPACKAGE=#{channel} AND T.STATDATE=${statDateInt}
+		GROUP BY T.CHANNEL
+		ORDER BY SUM(T.INS_TIMES) DESC
+	</select>
+	
+</mapper>

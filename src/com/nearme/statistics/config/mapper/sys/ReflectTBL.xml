@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+	"-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nearme.statistics.dao.sys.ReflectDao">
+	<!-- 反馈 -->
+	<insert id="setReflectInfo" parameterType="ReflectDTO">
+	    INSERT INTO Log_Feedback (STATDATE, URL, DETAIL, USER_NAME)
+        VALUES (SYSDATE, #{url}, #{detail}, #{username})
+	</insert>
+</mapper>

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<!-- 装机宝 -->
+	<package name="appZjb" namespace="/app/zjb" extends="statistics-default">
+		<!-- 基础数据 -->
+		<action name="zjb_basedate_*" class="zjbBasedateAction" method="{1}">
+			<result name="success">/WEB-INF/pages/app/zjb/basedate.jsp</result>
+		</action>
+
+		<!-- 分渠道服务数据 -->
+		<action name="zjb_channelservice_*" class="zjbChannelserviceAction" method="{1}">
+			<result name="success">/WEB-INF/pages/app/zjb/channelservice.jsp</result>
+		</action>
+
+		<!-- 软件安装排行 -->
+		<action name="zjb_softinstall_*" class="zjbSoftinstallAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/zjb/softinstall.jsp</result>
+		</action>
+
+		<!-- 服务机型 -->
+		<action name="zjb_servermodel_*" class="zjbServermodelAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/zjb/servermodel.jsp</result>
+		</action>
+
+		<!-- 模块安装量 -->
+		<action name="zjb_moduleinstall_*" class="zjbModuleinstallAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/zjb/moduleinstall.jsp</result>
+		</action>
+
+		<!-- 推广软件安装情况 -->
+		<action name="zjb_tuiguanginstall_*" class="zjbTuiguanginstallAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/zjb/tuiguanginstall.jsp
+			</result>
+		</action>
+
+		<!-- 性能指标 -->
+		<action name="zjb_performance_*" class="zjbPerformanceAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/zjb/performance.jsp</result>
+		</action>
+		
+		<!-- 月活天数分布 -->
+		<action name="zjb_activedaysdistribute_*" class="zjbActivedaysdistributeAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/zjb/activedaysdistribute.jsp</result>
+		</action>
+		
+		<!-- 用户行为分析 -->
+		<action name="zjb_useraction_*" class="zjbUseractionAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/zjb/useraction.jsp</result>
+		</action>
+		
+		<!-- 软件下载 -->
+		<action name="zjb_softdown_*" class="zjbSoftdownAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/zjb/softdown.jsp</result>
+		</action>
+		
+		<!-- 软件下载top -->
+		<action name="zjb_softdowntop_*" class="zjbSoftdowntopAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/zjb/softdowntop.jsp</result>
+		</action>
+		
+		<!-- 资源包安装 -->
+		<action name="zjb_pkginstall_*" class="zjbPkginstallAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/zjb/pkginstall.jsp</result>
+		</action>
+		
+		<!-- 单个资源运营点 -->
+		<action name="zjb_runpoint_*" class="zjbRunpointAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/zjb/runpoint.jsp</result>
+			<result name="runpoint_result">/WEB-INF/pages/app/zjb/runpoint_result.jsp</result>
+		</action>
+		
+		<!-- 在线资源包软件安装 -->
+		<action name="zjb_onlinepkginstall_*" class="zjbOnlinepkginstallAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/zjb/onlinepkginstall.jsp</result>
+		</action>
+		
+		<!-- 在线资源包内软件安装 -->
+		<action name="zjb_onlinepkginnerinstall_*" class="zjbOnlinepkginnerinstallAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/zjb/onlinepkginnerinstall.jsp</result>
+		</action>
+		
+		<!-- 版本分析 -->
+		<action name="zjb_versionanaly_*" class="zjbVersionanalyAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/zjb/versionanaly.jsp</result>
+		</action>
+	</package>
+</struts>

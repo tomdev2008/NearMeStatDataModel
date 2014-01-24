@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
+	http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+	<welcome-file-list>
+		<welcome-file>index.jsp</welcome-file>
+	</welcome-file-list>
+	<!-- Spring ApplicationContext配置文件的路径,可使用通配符，多个路径用","号分隔 -->
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>classpath:spring-*.xml</param-value>
+		<!-- local:<param-value>classpath:spring-*.xml</param-value> -->
+		<!-- dev:<param-value>file:///var/www/http/NearMeStatDataModel/WEB-INF/classes/spring-*.xml</param-value> -->
+		<!-- test:<param-value>file:///var/www/httpd/NearMeStatDataModel/WEB-INF/classes/spring-*.xml</param-value> -->
+		<!-- online:<param-value>file:///var/www/httpd/NearMeStatDataModel/WEB-INF/classes/spring-*.xml</param-value> -->
+	</context-param>
+	<!--Spring ApplicationContext 载入 -->
+	<!-- 用于初始化Spring容器的Listener -->
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+	<!-- Spring 刷新Introspector防止内存泄露 -->
+	<listener>
+		<listener-class>org.springframework.web.util.IntrospectorCleanupListener</listener-class>
+	</listener>
+	
+	<listener>
+		<listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
+	</listener>
+
+	<!-- Log4j listener -->
+	<listener>
+		<listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
+	</listener>
+
+	<!-- 配置struts2过滤器 -->
+	<filter>
+		<filter-name>struts2</filter-name>
+		<filter-class>
+			org.apache.struts2.dispatcher.ng.filter.StrutsPrepareAndExecuteFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>struts2</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+	<!-- session超时定义,单位为分钟 -->
+	<session-config>
+		<session-timeout>1200</session-timeout>
+	</session-config>
+</web-app>

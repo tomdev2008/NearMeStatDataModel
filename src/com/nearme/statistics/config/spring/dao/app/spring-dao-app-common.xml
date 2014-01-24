@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+	<!-- commonDao -->
+	<bean id="commonDao" 
+	    class="com.nearme.statistics.dao.app.common.impl.CommonDaoImpl">
+	    <property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	
+	<!-- hive commonDao -->
+	<bean id="hivecommonDao" 
+	    class="com.nearme.statistics.dao.hiveapp.common.impl.CommonDaoImpl">
+	    <property name="hiveSessionFactory" ref="hiveSessionFactory" />
+	    <property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	
+	<!-- hive jobDao -->
+	<bean id="hivejobDao" 
+	    class="com.nearme.statistics.dao.app.common.impl.HivejobDaoImpl">
+	    <property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	
+	<!-- 设置 -->
+	<bean id="useractionDao" 
+	    class="com.nearme.statistics.dao.app.common.impl.UseractionDaoImpl">
+	    <property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	
+	<!-- 渠道管理 -->
+	<bean id="channelinfoDao" 
+	    class="com.nearme.statistics.dao.app.common.impl.ChannelinfoDaoImpl">
+	    <property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	
+	<!-- 模块运营点管理 -->
+	<bean id="modulerunpointDao" 
+	    class="com.nearme.statistics.dao.app.common.impl.ModulerunpointDaoImpl">
+	    <property name="hiveSessionFactory" ref="hiveSessionFactory" />
+	    <property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	
+	<!-- 模块管理 -->
+	<bean id="moduleDao" 
+	    class="com.nearme.statistics.dao.app.common.impl.ModuleDaoImpl">
+	    <property name="hiveSessionFactory" ref="hiveSessionFactory" />
+	    <property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	
+	<!-- 自定义事件 -->
+	<bean id="eventDao" 
+	    class="com.nearme.statistics.dao.app.common.impl.EventDaoImpl">
+	    <property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	
+	<!-- 版本管理 -->
+	<bean id="versionDao" 
+	    class="com.nearme.statistics.dao.app.common.impl.VersionDaoImpl">
+	    <property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	
+	<!-- 机型管理 -->
+	<bean id="modelDao" 
+	    class="com.nearme.statistics.dao.app.common.impl.ModelDaoImpl">
+	    <property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	
+	<!-- 指标管理 -->
+	<bean id="measureDao" 
+	    class="com.nearme.statistics.dao.app.common.impl.MeasureDaoImpl">
+	    <property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	
+	<!-- 页面访问 -->
+	<bean id="pvDao" 
+	    class="com.nearme.statistics.dao.app.common.impl.PvDaoImpl">
+	    <property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	
+	<!-- 安装来源管理 -->
+	<bean id="installSourceDao" 
+	    class="com.nearme.statistics.dao.app.common.impl.InstallSourceDaoImpl">
+	    <property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+</beans>

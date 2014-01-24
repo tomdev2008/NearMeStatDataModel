@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<!-- 设置，公共 -->
+	<package name="appZJBsetting" namespace="/app/zjbsetting" extends="statistics-default">
+		<!-- 渠道管理 -->
+		<action name="setting_channelinfo_*" class="zjbsettingChannelinfoAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/zjbsetting/channelinfo.jsp</result>
+		</action>
+		
+		<!-- 用户行为编码管理 -->
+		<action name="setting_useractioncode_*" class="zjbsettingUseractioncodeAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/zjbsetting/useractioncode.jsp</result>
+		</action>
+	</package>
+</struts>

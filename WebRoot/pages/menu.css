@@ -1,0 +1,116 @@
+@CHARSET "UTF-8";
+
+body {
+	margin-left: 10px;
+	margin-right: 10px;
+}
+
+.menu b {
+	font-size: 14px;
+	color: #2ba7e1;
+}
+
+.menu select {
+	margin-top: 5px;
+	margin-bottom: 5px;
+	width: 190px;
+	height: 22px;
+	color: #333333;
+	background: #eaeaea;
+}
+
+.menu select optgroup {
+	font-style: normal;
+	margin-top: 2px;
+	color: #333333;
+}
+
+.menu select optgroup option {
+	padding-top: 2px;
+	padding-bottom: 2px;
+	color: #333333;
+}
+
+.menu div {
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+
+.menu div.divbody {
+    background: #cfe1ed;
+    min-height: 620px;
+    border-top-left-radius: 8px;
+	border-top-right-radius: 8px;
+	border-bottom-left-radius: 8px;
+	border-bottom-right-radius: 8px;
+	padding-left: 10px;
+	padding-right: 10px;
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+
+.menu div.catalog {
+    list-style-type: none;
+    width: 190px;
+    text-align: left; 
+    padding-top: 6px;
+    padding-bottom: 5px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    border-bottom: 1px solid #CCCBDB; 
+}
+
+.menu div.leaf {
+	list-style-type: none;
+	width: 190px;
+    text-align: left;
+    text-indent: 30px; 
+    padding-top: 6px;
+    padding-bottom: 5px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+.menu a {
+	text-decoration: none;
+	font-size: 14px;
+	color: #333333;
+	cursor: pointer;
+}
+
+//未访问
+.menu a:link {
+	font-weight: normal;
+}
+
+//激活
+.menu a:active {
+	font-weight: bold;
+}
+
+//已访问
+.menu a:visited {
+	font-weight: normal;
+}
+
+//鼠标移近
+.menu a:hover {
+	font-weight: bold;
+	color: #2ba7e1;
+}
+
+.menu a.node:hover, .menu a.nodeSel:hover {
+	font-weight: bold;
+	color: #2ba7e1;
+}
+
+.menu a.changestyle {
+	margin-left: 95px;
+	font-size: 12px;
+	color: #2ba7e1;
+	text-decoration: underline;
+}
+
+.menu a.changestyle:hover {
+	font-weight: bold;
+}

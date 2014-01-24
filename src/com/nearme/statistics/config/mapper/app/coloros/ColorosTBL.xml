@@ -1,0 +1,360 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+	"-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nearme.statistics.dao.app.coloros.ColorosDao">
+	<!-- 明细数据 -->
+	<select id="getDetailList" parameterType="ColorosDTO"
+		resultType="COSDetailEntity">
+		SELECT
+		    to_date(t.statdate,'yyyy-MM-dd') statDate,
+		    t.useract startuser,
+       		t.usernew newuser,
+       		t.userromnew leijiuser
+        FROM DM_OS_${lidu} t
+        WHERE T.SYSTEM_ID = TRUNC(#{systemID})
+            <if test="startDate != null">
+            AND to_date(t.statdate,'yyyy-MM-dd') >= trunc(#{startDate})
+            </if>
+            <if test="endDate != null">
+            AND to_date(t.statdate,'yyyy-MM-dd') &lt; trunc(#{endDate})
+            </if>
+            <if test="model!= null and model!='' and model!='all'">
+            AND t.MODEL = #{model}
+            </if>
+            <if test="model=='all' or model=='' or model==null">
+            AND t.MODEL IS NULL
+            </if>
+            <if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+            AND t.romversion = #{appVersion}
+            </if>
+            <if test="appVersion=='all' or appVersion=='' or appVersion==null">
+            AND t.romversion IS NULL
+            </if>
+        ORDER BY t.statdate DESC
+	</select>
+
+	<!-- 版本活跃用户排名 -->
+	<select id="getVersionactiveList" parameterType="ColorosDTO"
+		resultType="COSVersionActiveEntity">
+		SELECT
+            to_date(t.statdate,'yyyy-MM-dd') statDate,
+            t.romversion version,
+            t.useract activeTotal
+        FROM DM_OS_${lidu} t
+        WHERE T.SYSTEM_ID = TRUNC(#{systemID})
+            <if test="lidu != null and lidu =='DAILY'">
+            AND to_date(t.statdate,'yyyy-MM-dd') = trunc(#{startDate})
+            </if>
+            <if test="lidu != null and lidu =='MONTHLY'">
+            AND to_date(t.statdate,'yyyy-MM-dd') = trunc(#{startDate})
+            </if>
+            <if test="lidu != null and lidu =='WEEKLY'">
+            AND to_date(t.statdate,'yyyy-MM-dd') >= trunc(#{startDate})
+            </if>
+            <if test="lidu != null and lidu =='WEEKLY'">
+            AND to_date(t.statdate,'yyyy-MM-dd') &lt;= trunc(#{endDate})
+            </if>
+            <if test="model!= null and model!='' and model!='all'">
+            AND T.MODEL = #{model}
+            </if>
+            <if test="model=='all' or model=='' or model==null">
+            AND T.MODEL IS NULL
+            </if>
+            AND t.romversion IS NOT NULL
+        ORDER BY t.useract DESC
+	</select>
+
+	<!-- 启动排行 -->
+	<select id="getStartrank" parameterType="HivejobDTO"
+		resultType="COSStartrankEntity">
+	    SELECT
+            to_date(t.statdate,'yyyy-MM-dd') statDate,
+            to_date(t.statenddate,'yyyy-MM-dd') statEndDate,
+            t.position position,
+            t.app_name appname,
+            t.launch_imei startimei,
+            t.launch_cnt startcnt,
+            t.install_cnt installcnt
+	    FROM dm_hive_cos_start_rank t
+	    WHERE t.job_id = #{jobID}
+	    ORDER BY position
+	</select>
+
+	<!-- 启动排行周数据 -->
+	<select id="getStartrankweekList" parameterType="ColorosDTO"
+		resultType="COSStartrankEntity">
+        SELECT
+            to_date(t.statdate,'yyyy-MM-dd') statDate,
+            t.position position,
+            t.app_name appname,
+            t.launch_imei startimei,
+            t.launch_cnt startcnt,
+            t.install_cnt installcnt
+		from DM_OS_START_RANK_WEEKLY t
+		where SYSTEM_ID=${systemID}
+            <if test="startDateStr != null">
+            AND t.STATDATE >= #{startDateStr}
+            </if>
+            <if test="endDateStr != null">
+            AND t.STATDATE &lt;= #{endDateStr}
+            </if>
+		order by startimei DESC
+	</select>
+
+	<!-- 安装排行 -->
+	<select id="getInstallrank" parameterType="HivejobDTO"
+		resultType="COSInstallrankEntity">
+	    SELECT
+            to_date(t.statdate,'yyyy-MM-dd') statDate,
+            to_date(t.statenddate,'yyyy-MM-dd') statEndDate,
+            t.position position,
+            t.app_name appname,
+            t.install_cnt installcnt,
+            t.upgrade_cnt upgradecnt
+	    FROM dm_hive_cos_install_rank t
+	    WHERE t.job_id = #{jobID}
+	    ORDER BY position
+	</select>
+
+	<!-- 安装周排行 -->
+	<select id="getInstallrankweekList" parameterType="ColorosDTO"
+		resultType="COSInstallrankEntity">
+	    SELECT
+	        to_date(t.statdate,'yyyy-MM-dd') statDate,
+            t.position position,
+            t.app_name appname,
+            t.install_cnt installcnt,
+            t.upgrade_cnt upgradecnt
+	    FROM DM_OS_INSTALL_RANK_WEEKLY t
+		where SYSTEM_ID=${systemID}
+            <if test="startDateStr != null">
+            AND t.STATDATE >= #{startDateStr}
+            </if>
+            <if test="endDateStr != null">
+            AND t.STATDATE &lt;= #{endDateStr}
+            </if>
+	    ORDER BY installcnt DESC
+	</select>
+
+	<!-- 人均启动次数排行  -->
+	<select id="getAvgstartcntrank" parameterType="HivejobDTO"
+		resultType="COSAvgstartcntrankEntity">
+		SELECT
+    		to_date(t.statdate,'yyyy-MM-dd') statDate,
+            to_date(t.statenddate,'yyyy-MM-dd') statEndDate,
+    		t.position position,
+    		t.app_name appname,
+        	t.launch_imei startimei,
+        	t.launch_cnt startcnt,
+        	t.launch_rate avgstartcnt
+		FROM dm_hive_cos_avgstart_rank t
+		WHERE t.job_id = #{jobID}
+		ORDER BY t.position
+	</select>
+
+	<!-- 人均启动次数周排行  -->
+	<select id="getAvgstartrankweekList" parameterType="ColorosDTO"
+		resultType="COSAvgstartcntrankEntity">
+		SELECT
+		    to_date(t.statdate,'yyyy-MM-dd') statDate,
+    		t.position position,
+    		t.app_name appname,
+        	t.launch_imei startimei,
+        	t.launch_cnt startcnt,
+        	t.launch_rate avgstartcnt
+		FROM DM_OS_START_AVERANK_WEEKLY t
+		where SYSTEM_ID=${systemID}
+            <if test="startDateStr != null">
+            AND t.STATDATE >= #{startDateStr}
+            </if>
+            <if test="endDateStr != null">
+            AND t.STATDATE &lt;= #{endDateStr}
+            </if>
+		ORDER BY t.launch_rate DESC
+	</select>
+
+	<!-- 删除人均启动次数排行  -->
+	<update id="deleteAvgstartcntrank" parameterType="HivejobDTO">
+		DELETE dm_hive_cos_avgstart_rank t
+		WHERE t.job_id = #{jobID}
+	</update>
+
+	<!-- 删除启动排行  -->
+	<update id="deleteStartrank" parameterType="HivejobDTO">
+		DELETE dm_hive_cos_start_rank t
+		WHERE t.job_id = #{jobID}
+	</update>
+
+	<!-- 删除安装排行  -->
+	<update id="deleteInstallrank" parameterType="HivejobDTO">
+		DELETE dm_hive_cos_install_rank t
+		WHERE t.job_id = #{jobID}
+	</update>
+
+	<!-- 活跃用户地域分布 -->
+	<select id="listAreaStart" parameterType="ColorosDTO" resultType="COSAreaEntity">
+		select STATDATE, SYSTEM_ID systemID, MODEL, APP_VERSION appVersion, COUNTRY, PROVINCE, CITY, START_IMEIS startImeis
+		from DM_AREA_DAILY
+		where SYSTEM_ID=${systemID}
+			AND STATDATE=#{startDateStr}
+		    <if test="model!= null and model!='' and model!='all'">
+	        AND MODEL = #{model}
+	        </if>
+	        <if test="model=='all' or model=='' or model==null">
+	        AND MODEL IS NULL
+	        </if>
+			<if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+           	AND APP_VERSION = #{appVersion}
+           	</if>
+           	<if test="appVersion=='all' or appVersion=='' or appVersion==null">
+           	AND APP_VERSION IS NULL
+           	</if>
+		order by START_IMEIS desc
+	</select>
+
+	<!-- 周新增留存 -->
+	<select id="getWeeknirList" parameterType="ColorosDTO"
+		resultType="COSWeeknirEntity">
+		SELECT
+    		t.statdate statDate,
+    		t.count_imei new_imei,
+    		t.nrr1_imei nrr1_imei,
+    		t.nrr2_imei nrr2_imei,
+    		t.nrr3_imei nrr3_imei
+		FROM dm_os_nrr2_weekly t
+		WHERE t.system_id = ${systemID}
+    		<if test="startDate != null">
+			AND t.statdate >= TRUNC(#{startDate})
+		    </if>
+		    <if test="endDate != null">
+			AND t.statdate &lt; TRUNC(#{endDate}+1)
+		    </if>
+    		<if test="model!= null and model!='' and model!='all'">
+	        AND t.model = #{model}
+	        </if>
+	        <if test="model=='all' or model=='' or model==null">
+	        AND t.model IS NULL
+	        </if>
+			<if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+           	AND t.romversion = #{appVersion}
+           	</if>
+           	<if test="appVersion=='all' or appVersion=='' or appVersion==null">
+           	AND t.romversion IS NULL
+           	</if>
+    	ORDER BY t.statdate DESC
+	</select>
+
+	<!-- 月启动留存 -->
+	<select id="getMonthsrList" parameterType="ColorosDTO"
+		resultType="COSMonthsrEntity">
+		SELECT
+            t.statdate statDate,
+            t.count_imei launch_imei,
+            t.lrr1_imei lrr1_imei,
+            t.lrr2_imei lrr2_imei,
+            t.lrr3_imei lrr3_imei
+        FROM dm_os_lrr2_monthly t
+        WHERE t.system_id = ${systemID}
+            <if test="startDate != null">
+            AND t.statdate >= TRUNC(#{startDate})
+            </if>
+            <if test="endDate != null">
+            AND t.statdate &lt; TRUNC(#{endDate}+1)
+            </if>
+            <if test="model!= null and model!='' and model!='all'">
+            AND t.model = #{model}
+            </if>
+            <if test="model=='all' or model=='' or model==null">
+            AND t.model IS NULL
+            </if>
+            <if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+            AND t.romversion = #{appVersion}
+            </if>
+            <if test="appVersion=='all' or appVersion=='' or appVersion==null">
+            AND t.romversion IS NULL
+            </if>
+    	ORDER BY t.statdate DESC
+	</select>
+
+	<!-- 网络分布 -->
+	<select id="getNetdistributeList" parameterType="ColorosDTO"
+		resultType="COSNetdistributeEntity">
+		SELECT
+    		Y.nettype nettype,
+    		SUM(Y.usercnt) usercnt
+		FROM (
+    		SELECT
+        		(CASE WHEN ROWNUM > 10 THEN '其他' ELSE X.nettype END) nettype,
+        		X.usercnt usercnt
+    		FROM (
+        		SELECT
+            		t.access_type nettype,
+            		t.user_cnt usercnt
+        		FROM dm_os_oper_dist_daily t
+        		WHERE t.system_id = ${systemID}
+        		    <if test="startDate != null">
+			        AND t.statdate = TRUNC(#{startDate})
+		            </if>
+		            <if test="model!= null and model!='' and model!='all'">
+	                AND t.model = #{model}
+	                </if>
+	                <if test="model=='all' or model=='' or model==null">
+	                AND t.model IS NULL
+	                </if>
+        		ORDER BY t.user_cnt DESC
+    		) X
+		) Y
+		GROUP BY Y.nettype
+		ORDER BY 2 DESC
+	</select>
+
+	<!-- 终端占比 -->
+	<select id="getMobilezhanbiList" parameterType="ColorosDTO" resultType="ColumnValueEntity">
+        SELECT
+            M.value1 value1,
+            SUM(M.value2) value2
+        FROM(
+	        SELECT
+	            (CASE WHEN ROWNUM > 25 THEN '其它' ELSE value1 END) value1,
+                value2
+            FROM (
+                SELECT
+                    value1,
+                    value2,
+                    ROWNUM
+                FROM (
+                    SELECT
+                        T.MODEL value1,
+                        <if test="type == 'STARTIMEI'">
+                        T.USERACT value2
+                        </if>
+                        <if test="type == 'NEWIMEI'">
+                        T.USERNEW value2
+                        </if>
+                        <if test="type == 'CUMIMEI'">
+                        T.USERROMNEW value2
+                        </if>
+                    FROM DM_OS_DAILY T
+                    WHERE T.SYSTEM_ID = #{systemID}
+                        AND T.ROMVERSION IS NULL
+                        AND T.MODEL IS NOT NULL
+                        <if test="startDateStr != null">
+                        AND T.STATDATE = #{startDateStr}
+                        </if>
+                        <if test="type == 'STARTIMEI'">
+                        ORDER BY T.USERACT DESC
+                        </if>
+                        <if test="type == 'NEWIMEI'">
+                        ORDER BY T.USERNEW DESC
+                        </if>
+                        <if test="type == 'CUMIMEI'">
+                        ORDER BY T.USERROMNEW DESC
+                        </if>
+                )
+            )
+        )M
+        GROUP BY M.value1
+        ORDER BY value2 DESC
+	</select>
+</mapper>

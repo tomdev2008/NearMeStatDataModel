@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration xmlns:log4j='http://jakarta.apache.org/log4j/'>
+
+	<appender name="stdout" class="org.apache.log4j.ConsoleAppender">
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern"
+				value="[%p:%d{yyyy/MM/dd HH:mm:ss}]%n[THREAD]%t%n[CATEGORY]%c%n[MESSAGE]%m%n%n" />
+		</layout>
+	</appender>
+
+	<appender name="debugLog" class="org.apache.log4j.DailyRollingFileAppender">
+		<param name="File" value="logs/OStatNearMe/Debug.log" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern"
+				value="[%p:%d{yyyy/MM/dd HH:mm:ss}]%n[THREAD]%t%n[CATEGORY]%c%n[MESSAGE]%m%n%n" />
+		</layout>
+		<filter class="org.apache.log4j.varia.LevelRangeFilter">
+			<param name="LevelMax" value="DEBUG" />
+			<param name="LevelMin" value="DEBUG" />
+		</filter>
+	</appender>
+
+	<appender name="infoLog" class="org.apache.log4j.DailyRollingFileAppender">
+		<param name="File" value="logs/OStatNearMe/Info.log" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern"
+				value="[%p:%d{yyyy/MM/dd HH:mm:ss}]%n[THREAD]%t%n[CATEGORY]%c%n[MESSAGE]%m%n%n" />
+		</layout>
+		<filter class="org.apache.log4j.varia.LevelRangeFilter">
+			<param name="LevelMax" value="INFO" />
+			<param name="LevelMin" value="INFO" />
+		</filter>
+	</appender>
+	
+	<appender name="warnLog" class="org.apache.log4j.DailyRollingFileAppender">
+		<param name="File" value="logs/OStatNearMe/Warn.log" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="[%p:%d{yyyy/MM/dd HH:mm:ss}]%n[THREAD]%t%n[CATEGORY]%c%n[MESSAGE]%m%n%n" />
+		</layout>
+		<filter class="org.apache.log4j.varia.LevelRangeFilter">
+			<param name="LevelMax" value="WARN" />
+			<param name="LevelMin" value="WARN" />
+		</filter>
+	</appender>
+
+	<appender name="errorLog" class="org.apache.log4j.DailyRollingFileAppender">
+		<param name="File" value="logs/OStatNearMe/Error.log" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="[%p:%d{yyyy/MM/dd HH:mm:ss}]%n[THREAD]%t%n[CATEGORY]%c%n[MESSAGE]%m%n%n" />
+		</layout>
+		<filter class="org.apache.log4j.varia.LevelRangeFilter">
+			<param name="LevelMax" value="ERROR" />
+			<param name="LevelMin" value="ERROR" />
+		</filter>
+	</appender>
+	
+	<appender name="visitLog" class="org.apache.log4j.DailyRollingFileAppender">
+		<param name="File" value="logs/OStatNearMe/Func_Visit.log" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="[%p:%d{yyyy/MM/dd HH:mm:ss}][MESSAGE]%m%n%n" />
+		</layout>
+		<filter class="org.apache.log4j.varia.LevelRangeFilter">
+			<param name="LevelMax" value="INFO" />
+			<param name="LevelMin" value="INFO" />
+		</filter>
+	</appender>
+	
+	<!-- 指定包输出日志 -->
+	<!-- ibatis & hadoop的日志 -->
+	<logger name="com.mchange"> 
+        <level value="INFO"/> 
+        <appender-ref ref="stdout"/> 
+        <appender-ref ref="infoLog"/> 
+        <appender-ref ref="warnLog"/> 
+        <appender-ref ref="errorLog"/> 
+    </logger>
+	<logger name="org.apache.ibatis"> 
+        <level value="DEBUG"/> 
+        <appender-ref ref="stdout"/> 
+        <appender-ref ref="infoLog"/> 
+        <appender-ref ref="warnLog"/> 
+        <appender-ref ref="errorLog"/> 
+    </logger>
+    <logger name="org.apache.hadoop"> 
+        <level value="INFO"/> 
+        <appender-ref ref="stdout"/> 
+        <appender-ref ref="infoLog"/> 
+        <appender-ref ref="warnLog"/> 
+        <appender-ref ref="errorLog"/> 
+    </logger>
+	<logger name="java.sql"> 
+        <level value="DEBUG"/> 
+        <appender-ref ref="stdout"/> 
+        <appender-ref ref="infoLog"/> 
+        <appender-ref ref="warnLog"/> 
+        <appender-ref ref="errorLog"/> 
+    </logger>
+    <!-- spring的日志 -->
+	<logger name="org.mybatis.spring"> 
+        <level value="INFO"/> 
+        <appender-ref ref="stdout"/> 
+        <appender-ref ref="infoLog"/> 
+        <appender-ref ref="warnLog"/> 
+        <appender-ref ref="errorLog"/> 
+    </logger>
+	<logger name="org.springframework"> 
+        <level value="INFO"/> 
+        <appender-ref ref="stdout"/> 
+        <appender-ref ref="infoLog"/> 
+        <appender-ref ref="warnLog"/> 
+        <appender-ref ref="errorLog"/> 
+    </logger>
+    <!-- struts2日志 -->
+	<logger name="com.opensymphony.xwork2"> 
+        <level value="INFO"/> 
+        <appender-ref ref="stdout"/> 
+        <appender-ref ref="infoLog"/> 
+        <appender-ref ref="warnLog"/> 
+        <appender-ref ref="errorLog"/> 
+    </logger>
+	<logger name="org.apache.struts2"> 
+        <level value="INFO"/> 
+        <appender-ref ref="stdout"/> 
+        <appender-ref ref="infoLog"/> 
+        <appender-ref ref="warnLog"/> 
+        <appender-ref ref="errorLog"/> 
+    </logger>
+    
+	<logger name="com.nearme.statistics.common.CheckAdminAccess"> 
+        <level value="INFO"/> 
+        <appender-ref ref="visitLog"/> 
+    </logger>
+</log4j:configuration>

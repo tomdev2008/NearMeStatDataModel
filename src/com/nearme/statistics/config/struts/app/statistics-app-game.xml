@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<!-- 游戏堂 -->
+	<package name="appGame" namespace="/app/game" extends="statistics-default">
+		<!-- 游戏名 -->
+		<action name="game_queryGamename" class="gamenameAction"
+			method="queryGamename">
+			<result name="success">/WEB-INF/pages/app/game/gameinfo.jsp</result>
+		</action>
+		
+		<!-- 游戏名(游戏堂提供) -->
+		<action name="game_queryGame" class="gameAction"
+			method="queryGame">
+			<result name="success">/WEB-INF/pages/app/game/game.jsp</result>
+		</action>
+				
+		<!-- 游戏下载 -->
+		<action name="game_download_*" class="gameDownloadAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/game/download.jsp</result>
+			<result name="download_down">/WEB-INF/pages/app/game/download_down.jsp</result>
+			<result name="download_down_homepage">/WEB-INF/pages/app/game/download_down_homepage.jsp</result>
+			<result name="download_down_rank">/WEB-INF/pages/app/game/download_down_rank.jsp</result>
+			<result name="download_down_sort">/WEB-INF/pages/app/game/download_down_sort.jsp</result>
+			<result name="download_down_specialtopic">/WEB-INF/pages/app/game/download_down_specialtopic.jsp</result>
+			<result name="download_down_search">/WEB-INF/pages/app/game/download_down_search.jsp</result>
+			<result name="download_down_searchrecommend">/WEB-INF/pages/app/game/download_down_searchrecommend.jsp</result>
+			<result name="download_down_activecenter">/WEB-INF/pages/app/game/download_down_activecenter.jsp</result>
+		</action>
+		
+		<!-- 游戏更新 -->
+		<action name="game_update_*" class="gameUpdateAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/game/update.jsp</result>
+			<result name="update">/WEB-INF/pages/app/game/update_update.jsp</result>
+		</action>
+		
+		<!-- 游戏启动 -->
+		<action name="game_start_*" class="gameStartAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/game/start.jsp</result>
+			<result name="start">/WEB-INF/pages/app/game/start_start.jsp</result>
+		</action>
+		
+		<!-- 排行 -->
+		<action name="game_rank_*" class="gameRankAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/game/rank.jsp</result>
+			<result name="rank_top30">/WEB-INF/pages/app/game/rank_top30.jsp</result>
+			<result name="rank_position">/WEB-INF/pages/app/game/rank_position.jsp</result>
+		</action>
+		
+		<!-- 搜索关键字 -->
+		<action name="game_searchkey_*" class="gameSearchkeyAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/game/searchkey.jsp</result>
+		</action>
+		
+		<!-- 产品日报 -->
+		<action name="game_productreportdaily_*" class="gameProductreportdailyAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/game/productreportdaily.jsp</result>
+		</action>
+		
+		<!-- 产品周报 -->
+		<action name="game_productreportweekly_*" class="gameProductreportweeklyAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/game/productreportweekly.jsp</result>
+		</action>
+		
+		<!-- 产品月报 -->
+		<action name="game_productreportmonthly_*" class="gameProductreportmonthlyAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/game/productreportmonthly.jsp</result>
+		</action>
+		
+		<!-- 联运游戏数据 -->
+		<action name="game_jointgame_*" class="gameJointgameAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/game/jointgame.jsp</result>
+			<result name="query">/WEB-INF/pages/app/game/jointgame_query.jsp</result>
+		</action>
+		
+		<!-- 留存分析 -->
+		<action name="game_remain_*" class="gameRemainAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/game/remain.jsp</result>
+			<result name="query">/WEB-INF/pages/app/game/remain_query.jsp</result>
+		</action>
+		
+		<!-- 付费分析 -->
+		<action name="game_fee_*" class="gameFeeAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/game/fee.jsp</result>
+			<result name="query">/WEB-INF/pages/app/game/fee_query.jsp</result>
+			<result name="fee_user">/WEB-INF/pages/app/game/fee_user.jsp</result>
+		</action>
+	</package>
+</struts>

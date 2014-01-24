@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+	"-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nearme.statistics.dao.app.grzx.GrzxDao">
+	<!-- 账号覆盖率  -->
+	<select id="getUsercoverList" parameterType="GrzxDTO"
+		resultType="GrzxUsercoverEntity">
+		SELECT
+    		t.statdate statDate,
+    		t.imei_count startImei,
+    		t.ssoid_count startUser
+		FROM dm_ssoid_converage_${lidu} t
+		WHERE 1 = 1
+		    <if test="startDate != null">
+    	    AND t.STATDATE >= TRUNC(#{startDate})
+    	    </if>
+    	    <if test="endDate != null">
+    	    AND t.STATDATE &lt; TRUNC(#{endDate}+1)
+    	    </if>
+    	    AND t.STATDATE &lt; TRUNC(SYSDATE)
+    	ORDER BY t.statdate DESC
+	</select>
+	
+	<!-- 新增来源 -->
+	<select id="getNewfromList" parameterType="GrzxDTO"
+		resultType="GrzxNewfromEntity">
+		SELECT
+    		t.statdate statDate,
+    		t.system_name comefrom,
+    		t.ssoid_count newuser
+		FROM dm_ssoid_new_source t
+		WHERE 1 = 1
+		    <if test="startDate != null">
+    	    AND t.STATDATE = TRUNC(#{startDate})
+    	    </if>
+		ORDER BY t.system_name
+	</select>
+	
+	<!-- 注册来源  -->
+	<select id="getRegisterfromList" parameterType="GrzxDTO"
+		resultType="GrzxRegisterfromEntity">
+		SELECT 
+		    t.statdate statDate,
+    		t.phone mobilereg,
+    		t.email emailreg,
+    		t.none nobandreg,
+    		t.visitor visitreg,
+    		t.third thirdreg
+		FROM dm_pc_rg_source_${lidu} t
+		WHERE 1 = 1
+		    <if test="startDate != null">
+    	    AND t.STATDATE >= TRUNC(#{startDate})
+    	    </if>
+    	    <if test="endDate != null">
+    	    AND t.STATDATE &lt; TRUNC(#{endDate}+1)
+    	    </if>
+    	    AND t.STATDATE &lt; TRUNC(SYSDATE)
+    	ORDER BY t.statdate DESC
+	</select>
+</mapper>

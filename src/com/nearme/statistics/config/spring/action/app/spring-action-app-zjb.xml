@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+	<!-- 基础数据 -->
+	<bean id="zjbBasedateAction" class="com.nearme.statistics.action.app.zjb.BasedateAction"
+		scope="prototype">
+		<property name="service">
+			<ref bean="zjbService" />
+		</property>
+	</bean>
+
+	<!-- 分渠道服务数据 -->
+	<bean id="zjbChannelserviceAction" class="com.nearme.statistics.action.app.zjb.ChannelserviceAction"
+		scope="prototype">
+		<property name="service">
+			<ref bean="zjbService" />
+		</property>
+	</bean>
+
+	<!-- 软件安装排行 -->
+	<bean id="zjbSoftinstallAction" class="com.nearme.statistics.action.app.zjb.SoftinstallAction"
+		scope="prototype">
+		<property name="service">
+			<ref bean="zjbService" />
+		</property>
+	</bean>
+
+	<!-- 服务机型 -->
+	<bean id="zjbServermodelAction" class="com.nearme.statistics.action.app.zjb.ServermodelAction"
+		scope="prototype">
+		<property name="service">
+			<ref bean="zjbService" />
+		</property>
+	</bean>
+
+	<!-- 模块安装量 -->
+	<bean id="zjbModuleinstallAction"
+		class="com.nearme.statistics.action.app.zjb.ModuleinstallAction"
+		scope="prototype">
+		<property name="service">
+			<ref bean="zjbService" />
+		</property>
+	</bean>
+
+	<!-- 推广软件安装情况 -->
+	<bean id="zjbTuiguanginstallAction"
+		class="com.nearme.statistics.action.app.zjb.TuiguanginstallAction"
+		scope="prototype">
+		<property name="service">
+			<ref bean="zjbService" />
+		</property>
+	</bean>
+
+	<!-- 性能指标 -->
+	<bean id="zjbPerformanceAction" class="com.nearme.statistics.action.app.zjb.PerformanceAction"
+		scope="prototype">
+		<property name="service">
+			<ref bean="zjbService" />
+		</property>
+	</bean>
+
+	<!-- 月活天数分布 -->
+	<bean id="zjbActivedaysdistributeAction" class="com.nearme.statistics.action.app.zjb.ActivedaysdistributeAction"
+		scope="prototype">
+		<property name="service">
+			<ref bean="zjbService" />
+		</property>
+	</bean>
+
+	<!-- 用户行为分析 -->
+	<bean id="zjbUseractionAction" class="com.nearme.statistics.action.app.zjb.UseractionAction"
+		scope="prototype">
+		<property name="service">
+			<ref bean="zjbService" />
+		</property>
+	</bean>
+
+	<!-- 软件下载 -->
+	<bean id="zjbSoftdownAction" class="com.nearme.statistics.action.app.zjb.SoftdownAction"
+		scope="prototype">
+		<property name="service">
+			<ref bean="zjbService" />
+		</property>
+	</bean>
+
+	<!-- 软件下载top -->
+	<bean id="zjbSoftdowntopAction" class="com.nearme.statistics.action.app.zjb.SoftdowntopAction"
+		scope="prototype">
+		<property name="service">
+			<ref bean="zjbService" />
+		</property>
+	</bean>
+
+	<!-- 资源包安装 -->
+	<bean id="zjbPkginstallAction" class="com.nearme.statistics.action.app.zjb.PkginstallAction"
+		scope="prototype">
+		<property name="service">
+			<ref bean="zjbService" />
+		</property>
+	</bean>
+
+	<!-- 单个资源运营点 -->
+	<bean id="zjbRunpointAction" class="com.nearme.statistics.action.app.zjb.RunpointAction"
+		scope="prototype">
+		<property name="service">
+			<ref bean="zjbService" />
+		</property>
+	</bean>
+
+	<!-- 在线资源包软件安装 -->
+	<bean id="zjbOnlinepkginstallAction" class="com.nearme.statistics.action.app.zjb.OnlinepkginstallAction"
+		scope="prototype">
+		<property name="service">
+			<ref bean="zjbService" />
+		</property>
+	</bean>
+
+	<!-- 在线资源包内软件安装 -->
+	<bean id="zjbOnlinepkginnerinstallAction" class="com.nearme.statistics.action.app.zjb.OnlinepkginnerinstallAction"
+		scope="prototype">
+		<property name="service">
+			<ref bean="zjbService" />
+		</property>
+	</bean>
+
+	<!-- 版本分析 -->
+	<bean id="zjbVersionanalyAction" class="com.nearme.statistics.action.app.zjb.VersionanalyAction"
+		scope="prototype">
+		<property name="service">
+			<ref bean="zjbService" />
+		</property>
+	</bean>
+</beans>

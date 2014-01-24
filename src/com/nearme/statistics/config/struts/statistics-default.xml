@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+
+	<package name="statistics-default" namespace="/" extends="struts-default">
+
+		<interceptors>
+			<interceptor name="authInterceptor"
+				class="com.nearme.statistics.interceptor.AuthenticationInterceptor" />
+
+			<interceptor-stack name="user">
+				<interceptor-ref name="authInterceptor" />
+				<interceptor-ref name="defaultStack" />
+			</interceptor-stack>
+			<interceptor-stack name="user-submit">
+				<interceptor-ref name="tokenSession" />
+				<interceptor-ref name="user" />
+			</interceptor-stack>
+			<interceptor-stack name="guest">
+				<interceptor-ref name="defaultStack" />
+			</interceptor-stack>
+		</interceptors>
+		<default-interceptor-ref name="user" />
+
+
+		<global-results>
+			<result name="tips">/pages/common/tips.jsp</result>
+			<result name="error">/pages/common/error.jsp</result>
+			<result name="invalid.token">/pages/common/error.jsp</result>
+			<result name="noAccess">/pages/common/noAccess.jsp</result>
+			<result name="login" type="redirectAction">login</result>
+			<result name="logout_global">/pages/common/logout.jsp</result>
+		</global-results>
+
+		<global-exception-mappings>
+			<exception-mapping result="error" exception="java.lang.Throwable" />
+		</global-exception-mappings>
+
+		<action name="login" method="execute" class="loginAction">
+			<result name="success">/index.jsp</result>
+			<result name="login">/login.jsp</result>
+		</action>
+		<action name="logout" method="execute" class="logoutAction">
+			<result name="success">/index.jsp</result>
+		</action>
+
+		<action name="menu_select" method="select" class="menuAction">
+			<result name="success">/pages/menu_list.jsp</result>
+		</action>
+		
+		<!-- 反馈 -->
+		<action name="reflect_*" class="reflectAction" method="{1}">
+		</action>
+	</package>
+</struts>

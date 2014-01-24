@@ -1,0 +1,43 @@
+.login {
+	min-height: 613px;
+	outline: medium none;
+	margin: 0px;
+	padding: 0px;
+	border: medium none;
+	vertical-align: top;
+}
+
+.main {
+	width: 400px;
+	margin: auto;
+	margin-top: 200px;
+	text-align: center;
+	font-weight: bold;
+}
+
+.main table {
+	width: 100%;
+	border-collapse: collapse;
+	border: none;
+}
+
+.main td {
+	border: solid #DEEBFB 1px;
+	color: #60aea0;
+}
+
+.main tr {
+    height: 40px;
+}
+
+.main table tr.data-head {
+	background-color: #DEEBFB;
+}
+
+.main input {
+    width: 150px;
+}
+
+.main input.submit {
+    width: 120px;
+}

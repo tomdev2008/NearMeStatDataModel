@@ -1,0 +1,199 @@
+.context {
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+
+.context div,.context form{
+	margin-left: 10px;
+	margin-right: 10px;
+	margin-bottom: 10px;
+}
+
+.context form {
+	border-top-left-radius: 6px;
+	border-top-right-radius: 6px;
+	border-bottom-left-radius: 6px;
+	border-bottom-right-radius: 6px;
+    background-color: #DEDEFF;
+}
+
+.context div.title {
+	color: #60aea0;
+	font-weight: bold;
+}
+
+.context div.data-load {
+    overflow-y: auto;
+}
+
+.context table.data-load {
+	width: 100%;
+	border-collapse: collapse;
+	border-spacing: 0px;
+	min-height: 70px;
+	padding: 0px 22px;
+	font-weight: normal;
+	font-size: 14px;
+	line-height: 20px;
+	color: rgb(51, 51, 51);
+}
+
+.context div.data-grandtotal {
+    overflow-y: auto;
+}
+
+.context table.data-grandtotal {
+	width: 30%;
+	border-collapse: collapse;
+	border-spacing: 0px;
+	min-height: 70px;
+	padding: 0px 22px;
+	font-weight: normal;
+	font-size: 14px;
+	line-height: 20px;
+	color: rgb(51, 51, 51);
+}
+
+.context table tr.data-head,.context table td.data_title {
+    background-color: #DEEBFB
+}
+
+.context table td.data-fixlength {
+    table-layout: fixed;
+    WORD-BREAK: break-all; 
+    WORD-WRAP: break-word;
+}
+
+.context table td.data_title {
+    font-weight: bold;
+    text-align:center;
+}
+
+.context a {
+	color: #2ba7e1;
+}
+
+.context a.pagination {
+    color: rgb(140, 135, 187);
+    text-decoration: none;
+    border: 1px solid rgb(170, 170, 238);
+    line-height: 10px;
+    margin-top: 10px;
+    margin-left: 5px;
+    padding: 0.3em 0.5em;
+    float: left;
+}
+
+.context a.errordetail {
+	color: #2ba7e1;
+	font-weight: normal;
+	text-decoration: none;
+    border: 1px solid rgb(170, 170, 238);
+    line-height: 10px;
+    padding: 0.3em 0.3em;
+    font-size: 12px;
+}
+
+.context span.pagination {
+	padding: 0.3em 0.5em;
+	float: left;
+	display: block;
+	margin-top: 10px;
+	margin-left: 5px;
+	font-size: 12px;
+	color: rgb(51, 51, 51);
+}
+
+.context input.text_input {
+    height: 22px;
+    border-radius: 8px;
+    text-indent: 10px;
+    overflow: hidden;
+    display: inline-block;
+    width: 180px;
+    border: 1px solid rgb(180, 180, 180);
+    box-shadow: 2px 2px 5px rgb(234, 234, 234) inset;
+}
+
+.context form.submit {
+}
+
+.context table.submit {
+    width: 400px;
+    border-collapse: collapse;
+	border-spacing: 0px;
+	min-height: 70px;
+	padding: 0px 22px;
+	font-weight: normal;
+	font-size: 14px;
+	line-height: 20px;
+	color: rgb(51, 51, 51);
+}
+
+.context input {
+}
+
+.context input.btn-style {
+    width: 80px;
+}
+
+.context input.check-box {
+    width: 0px;
+}
+
+.context div.mitem,
+.context div.mtext,
+.context div.mtext1,
+.context div.mtext2,
+.context div.mtext3,
+.context div.mtext4,
+.context div.mtext5 {
+    margin-left: 0px;
+	margin-right: 0px;
+	margin-bottom: 0px;
+}
+
+.context div.mitem {
+	float: left;
+	width: 98%;
+}
+
+.context div.mtext {
+	float: left;
+	margin-left: 10px;
+}
+
+.context div.mtext1 {
+	float: left;
+	margin-left: 40px;
+}
+
+.context div.mtext2 {
+	float: left;
+	margin-left: 70px;
+}
+
+.context div.mtext3 {
+	float: left;
+	margin-left: 100px;
+}
+
+.context div.mtext4 {
+	float: left;
+	margin-left: 130px;
+}
+
+.context div.mtext5 {
+	float: left;
+	margin-left: 160px;
+}
+
+.context div.div_help_content {
+    color: rgb(134, 134, 134);
+    font-size: 12px
+}
+
+.context div.div_descript {
+	color: rgb(56, 56, 56);
+	font-size: 12px;
+}

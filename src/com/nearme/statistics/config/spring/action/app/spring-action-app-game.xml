@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+	<!-- 游戏名 -->
+	<bean id="gamenameAction" class="com.nearme.statistics.action.app.game.GamenameAction"
+		scope="prototype">
+		<property name="service">
+			<ref bean="gameService" />
+		</property>
+	</bean>
+	
+	<!-- 游戏名2 -->
+	<bean id="gameAction" class="com.nearme.statistics.action.app.game.GameAction"
+		scope="prototype">
+		<property name="service">
+			<ref bean="gameService" />
+		</property>
+	</bean>
+	
+	<!-- 游戏下载 -->
+	<bean id="gameDownloadAction" class="com.nearme.statistics.action.app.game.DownloadAction"
+		scope="prototype">
+		<property name="service">
+			<ref bean="gameService" />
+		</property>
+	</bean>
+	
+	<!-- 游戏更新 -->
+	<bean id="gameUpdateAction" class="com.nearme.statistics.action.app.game.UpdateAction"
+		scope="prototype">
+		<property name="service">
+			<ref bean="gameService" />
+		</property>
+	</bean>
+	
+	<!-- 游戏启动 -->
+	<bean id="gameStartAction" class="com.nearme.statistics.action.app.game.StartAction"
+		scope="prototype">
+		<property name="service">
+			<ref bean="gameService" />
+		</property>
+	</bean>
+	
+	<!-- 排行 -->
+	<bean id="gameRankAction" class="com.nearme.statistics.action.app.game.RankAction"
+		scope="prototype">
+		<property name="service">
+			<ref bean="gameService" />
+		</property>
+	</bean>
+	
+	<!-- 搜索关键字 -->
+	<bean id="gameSearchkeyAction" class="com.nearme.statistics.action.app.game.SearchkeyAction"
+		scope="prototype">
+		<property name="service">
+			<ref bean="gameService" />
+		</property>
+	</bean>
+	
+	<!-- 产品日报 -->
+	<bean id="gameProductreportdailyAction" class="com.nearme.statistics.action.app.game.ProductreportdailyAction"
+		scope="prototype">
+		<property name="service">
+			<ref bean="gameService" />
+		</property>
+	</bean>
+	
+	<!-- 产品周报 -->
+	<bean id="gameProductreportweeklyAction" class="com.nearme.statistics.action.app.game.ProductreportweeklyAction"
+		scope="prototype">
+		<property name="service">
+			<ref bean="gameService" />
+		</property>
+	</bean>
+	
+	<!-- 产品月报 -->
+	<bean id="gameProductreportmonthlyAction" class="com.nearme.statistics.action.app.game.ProductreportmonthlyAction"
+		scope="prototype">
+		<property name="service">
+			<ref bean="gameService" />
+		</property>
+	</bean>
+	
+	<!-- 联运游戏数据 -->
+	<bean id="gameJointgameAction" class="com.nearme.statistics.action.app.game.JointgameAction"
+		scope="prototype">
+		<property name="service">
+			<ref bean="gameService" />
+		</property>
+	</bean>
+	
+	<!-- 留存分析 -->
+	<bean id="gameRemainAction" class="com.nearme.statistics.action.app.game.RemainAction"
+		scope="prototype">
+		<property name="service">
+			<ref bean="gameService" />
+		</property>
+	</bean>
+	
+	<!-- 付费分析 -->
+	<bean id="gameFeeAction" class="com.nearme.statistics.action.app.game.FeeAction"
+		scope="prototype">
+		<property name="service">
+			<ref bean="gameService" />
+		</property>
+	</bean>
+</beans>

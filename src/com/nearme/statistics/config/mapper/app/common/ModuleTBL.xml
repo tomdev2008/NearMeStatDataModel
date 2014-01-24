@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+	"-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nearme.statistics.dao.app.common.ModuleDao">
+	<!-- 模块管理 -->
+	<!-- 分组查询 -->
+	<select id="getGroupList" parameterType="ModuleDTO" resultType="ModuleEntity">
+	    SELECT 
+    	    DISTINCT t.group_name groupname
+	    FROM bt_module t
+	    WHERE t.system_id = #{systemID}
+	    ORDER BY t.group_name
+	</select>
+	
+	<!-- 详情查询 -->
+	<select id="getDetailList" parameterType="ModuleDTO" resultType="ModuleEntity">
+	    SELECT 
+            t.id id,
+            t.group_name groupname,
+            t.source_code sourcecode,
+            t.source_desc sourcedesc,
+            t.category_id categoryid,
+            t.downtype downtype
+        FROM bt_module t
+        WHERE t.system_id = #{systemID}
+            AND t.group_name = #{groupname}
+        ORDER BY t.source_code
+	</select>
+	
+	<!-- 全部查询(同步用到) -->
+	<select id="getModuleAllList" resultType="ModuleEntity">
+	    SELECT 
+            t.id id,
+            t.group_name groupname,
+            t.system_id systemID,
+            t.source_code sourcecode,
+            t.source_desc sourcedesc,
+            t.category_id categoryid,
+            t.downtype downtype
+        FROM bt_module t
+        ORDER BY t.system_id, t.group_name
+	</select>
+	
+	<!-- 查询某个system_id对应的记录 -->
+	<select id="getModuleList" parameterType="ModuleDTO" resultType="ModuleEntity">
+	    SELECT 
+            t.id id,
+            t.group_name groupname,
+            t.system_id systemID,
+            t.source_code sourcecode,
+            t.source_desc sourcedesc,
+            t.category_id categoryid,
+            t.downtype downtype
+        FROM bt_module t
+        WHERE t.system_id = #{systemID}
+        ORDER BY t.group_name
+	</select>
+	
+	<!-- 删除分组 -->
+	<delete id="deleteGroup" parameterType="ModuleDTO">
+	    DELETE bt_module t
+		WHERE t.system_id = #{systemID}
+		    AND t.group_name in (${groupname})
+	</delete>
+	
+	<!-- 删除详情 -->
+	<delete id="deleteDetail" parameterType="ModuleDTO">
+	    DELETE bt_module t
+		WHERE t.id in (${id})
+	</delete>
+	
+	<!-- 插入 -->
+	<update id="add" parameterType="ModuleDTO">
+	    INSERT INTO bt_module(id,group_name,system_id,source_code,source_desc,category_id,downtype,updatetime)
+		VALUES(seq_bt_module.nextval,
+		    #{groupname,jdbcType=VARCHAR},
+		    #{systemID,jdbcType=NUMERIC},
+		    #{sourcecode,jdbcType=VARCHAR},
+		    #{sourcedesc,jdbcType=VARCHAR},
+		    #{categoryid,jdbcType=NUMERIC},
+		    #{downtype,jdbcType=VARCHAR},
+		    SYSDATE)	
+	</update>
+	
+	<!-- 更新分组 -->
+	<update id="updateGroup" parameterType="ModuleDTO">
+	    UPDATE bt_module t
+		SET t.group_name = #{groupname,jdbcType=VARCHAR},
+            t.updatetime = SYSDATE
+		WHERE t.group_name = #{groupname}
+	</update>
+	
+	<!-- 更新详情 -->
+	<update id="updateDetail" parameterType="ModuleDTO">
+	    UPDATE bt_module t
+		SET t.group_name = #{groupname,jdbcType=VARCHAR},
+            t.source_code = #{sourcecode,jdbcType=VARCHAR},
+            t.source_desc = #{sourcedesc,jdbcType=VARCHAR},
+            t.category_id = #{categoryid,jdbcType=VARCHAR},
+            t.downtype = #{downtype,jdbcType=VARCHAR},
+            t.updatetime = SYSDATE
+		WHERE t.id = #{id}
+	</update>
+</mapper>

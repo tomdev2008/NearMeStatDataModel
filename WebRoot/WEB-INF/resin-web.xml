@@ -1,0 +1,9 @@
+<web-app xmlns="http://caucho.com/ns/resin">
+<servlet-mapping url-pattern='/struts/*' servlet-name='plugin_match'/>
+<servlet-mapping url-pattern='/other/*' servlet-name='plugin_match'/>
+<servlet-mapping url-pattern='*.action' servlet-name='plugin_match'/>
+<servlet-mapping url-pattern='*.html' servlet-name='plugin_match'/>
+<servlet-mapping url-pattern='*.do' servlet-name='plugin_match'/>
+<servlet-mapping url-pattern='/dwr/*' servlet-name='plugin_match'/>
+</web-app>
+

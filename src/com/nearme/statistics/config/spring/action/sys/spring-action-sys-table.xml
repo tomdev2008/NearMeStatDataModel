@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+	<!-- 联网方式管理 -->
+	<bean id="sysTableNetworkTypeAction" scope="prototype"
+		class="com.nearme.statistics.action.sys.systemTable.NetworkTypeAction">
+		<property name="service">
+			<ref bean="systemTableService" />
+		</property>
+	</bean>
+	<!-- 应用管理 -->
+	<bean id="sysTableAppInfoAction" scope="prototype"
+		class="com.nearme.statistics.action.sys.systemTable.AppInfoAction">
+		<property name="service">
+			<ref bean="systemTableService" />
+		</property>
+	</bean>
+
+	<!-- 渠道管理 -->
+	<bean id="channelInfoAction" scope="prototype"
+		class="com.nearme.statistics.action.sys.systemTable.ChannelTableAction">
+		<property name="service">
+			<ref bean="systemTableService" />
+		</property>
+	</bean>
+	<!-- 游戏中心产品管理 -->
+	<bean id="sysTableGCProductAction" scope="prototype"
+		class="com.nearme.statistics.action.sys.systemTable.GCProductAction">
+		<property name="service">
+			<ref bean="systemTableService" />
+		</property>
+	</bean>
+	
+	<!-- 分类 -->
+	<bean id="categoryInfoAction" scope="prototype"
+		class="com.nearme.statistics.action.sys.systemTable.CategoryInfoAction">
+		<property name="service">
+			<ref bean="systemTableService" />
+		</property>
+	</bean>
+	
+	
+	<!-- 一键清理缓存 -->
+	<bean id="cachecontrolAction" scope="prototype"
+		class="com.nearme.statistics.action.sys.systemTable.CachecontrolAction">
+	</bean>
+
+</beans>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+	<!-- 细分用户客户端行为统计,
+	             首页推荐日报表,
+         push推送报表,
+	            应用榜日报表,
+	            相关推荐日报表,
+	            搜索日报表,
+	            单款资源查询表,
+	            下载有礼日报表,
+	            专题日报表,
+	            活动中心日报表
+	 -->
+	<bean id="storeDao" 
+	    class="com.nearme.statistics.dao.app.store.impl.StoreDaoImpl">
+	    <property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+</beans>

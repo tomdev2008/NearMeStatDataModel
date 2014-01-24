@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+	
+	<!-- 用户行为编码 -->
+	<bean id="settingUseractioncodeAction" class="com.nearme.statistics.action.app.commonsetting.UseractioncodeAction" 
+	    scope="prototype">
+	    <property name="service">
+	        <ref bean="useractionService"/>
+	    </property>
+	</bean>
+	
+	<!-- 渠道管理 -->
+	<bean id="settingChannelinfoAction" class="com.nearme.statistics.action.app.commonsetting.ChannelinfoAction" 
+	    scope="prototype">
+	    <property name="service">
+	        <ref bean="channelinfoService"/>
+	    </property>
+	</bean>
+	
+	<!-- 模块运营点管理 -->
+	<bean id="settingModulerunpointAction" class="com.nearme.statistics.action.app.commonsetting.ModulerunpointAction" 
+	    scope="prototype">
+	    <property name="service">
+	        <ref bean="modulerunpointService"/>
+	    </property>
+	</bean>
+	
+	<!-- 模块管理 -->
+	<bean id="settingModuleAction" class="com.nearme.statistics.action.app.commonsetting.ModuleAction" 
+	    scope="prototype">
+	    <property name="service">
+	        <ref bean="moduleService"/>
+	    </property>
+	</bean>
+	
+	<!-- 自定义事件设置 -->
+	<bean id="settingEventAction" class="com.nearme.statistics.action.app.commonsetting.EventAction" 
+	    scope="prototype">
+	    <property name="service">
+	        <ref bean="eventService"/>
+	    </property>
+	</bean>
+	
+	<!-- 事件流 -->
+	<bean id="settingEventFlowAction" class="com.nearme.statistics.action.app.commonsetting.EventFlowAction" 
+	    scope="prototype">
+	    <property name="service">
+	        <ref bean="eventService"/>
+	    </property>
+	</bean>
+	
+	<!-- 版本管理 -->
+	<bean id="settingVersionAction" class="com.nearme.statistics.action.app.commonsetting.VersionAction" 
+	    scope="prototype">
+	    <property name="service">
+	        <ref bean="versionService"/>
+	    </property>
+	</bean>
+	
+	<!-- 机型管理 -->
+	<bean id="settingModelAction" class="com.nearme.statistics.action.app.commonsetting.ModelAction" 
+	    scope="prototype">
+	    <property name="service">
+	        <ref bean="modelService"/>
+	    </property>
+	</bean>
+</beans>

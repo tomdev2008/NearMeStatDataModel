@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<!-- 设置，公共 -->
+	<package name="appCommonsetting" namespace="/app/commonsetting" extends="statistics-default">
+		<!-- 用户行为编码 -->
+		<action name="setting_useractioncode_*" class="settingUseractioncodeAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/commonsetting/useractioncode.jsp</result>
+			<result name="setting_useractioncode_redirect" type="redirect">setting_useractioncode_init.do?form.systemID=${form.systemID}</result>
+			<result name="setting_useractioncode_detail">/WEB-INF/pages/app/commonsetting/useractioncode_detail.jsp</result>
+		</action>
+		
+		<!-- 渠道管理 -->
+		<action name="setting_channelinfo_*" class="settingChannelinfoAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/commonsetting/channelinfo.jsp</result>
+		</action>
+		
+		<!-- 模块运营点管理 -->
+		<action name="setting_modulerunpoint_*" class="settingModulerunpointAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/commonsetting/modulerunpoint.jsp</result>
+		</action>
+		
+		<!-- 模块管理 -->
+		<action name="setting_module_*" class="settingModuleAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/commonsetting/module.jsp</result>
+			<result name="module_group">/WEB-INF/pages/app/commonsetting/module_group.jsp</result>
+			<result name="module_detail">/WEB-INF/pages/app/commonsetting/module_detail.jsp</result>
+		</action>
+		
+		<!-- 自定义事件设置 -->
+		<action name="setting_event_*" class="settingEventAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/commonsetting/event.jsp</result>
+		</action>
+		
+		<!-- 事件流设置 -->
+		<action name="setting_eventflow_*" class="settingEventFlowAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/commonsetting/event_flow_list.jsp</result>
+			<result name="success_redirect" type="redirect">setting_eventflow_init.do?form.systemID=${form.systemID}&amp;form.tips=${form.tips}</result>
+			<result name="add">/WEB-INF/pages/app/commonsetting/event_flow_add.jsp</result>
+			<result name="edit">/WEB-INF/pages/app/commonsetting/event_flow_edit.jsp</result>
+		</action>
+		
+		<!-- 版本管理 -->
+		<action name="setting_version_*" class="settingVersionAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/commonsetting/version.jsp</result>
+		</action>
+		
+		<!-- 机型管理 -->
+		<action name="setting_model_*" class="settingModelAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/commonsetting/model.jsp</result>
+		</action>
+	</package>
+</struts>

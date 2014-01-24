@@ -1,0 +1,853 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+	"-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nearme.statistics.dao.app.game.GameDao">
+	<!-- 游戏信息 -->
+	<select id="getGameinfoList" parameterType="GameDTO" resultType="GameinfoEntity">
+	    SELECT
+            t.categoryname fenlei,
+            t.product_master_id productMID,
+            t.product_id productID,
+            t.product_name productName,
+            t.product_ver productVersion,
+            t.product_onshelftime uptime,
+            t.charge_type feetype
+        FROM tjt_product_shelf t
+        WHERE t.system_id = 2
+            <if test="gamename != null or gamename = ''">
+            AND t.product_name LIKE '%'||#{gamename}||'%'
+            </if>
+        ORDER BY t.product_name
+	</select>
+	
+	<!-- 游戏名2 -->
+	<select id="getGameList" parameterType="GameDTO" resultType="GameinfoEntity">
+	    SELECT
+            t.system_id productID,
+            t.product_name productName
+        FROM mt_gc_product t
+        WHERE 1 = 1
+            <if test="gamename != null or gamename = ''">
+            AND t.product_name LIKE '%'||#{gamename}||'%'
+            </if>
+        ORDER BY t.product_name
+	</select>
+	
+	<!-- 游戏下载 -->
+	<select id="getDownloadList" parameterType="GameDTO" resultType="DownloadEntity">
+	    SELECT
+            T.STATDATE statdate,
+            SUM(DECODE(t.event_id,'GC_DOWN_BTN_CLICK',1,0)) down,--下载量
+            SUM(CASE WHEN t.event_id = 'GC_DOWN_BTN_CLICK' 
+                         AND t.pre_source = 'MAIN_PAGE'
+                     THEN 1 ELSE 0 END) downHomepage,--首页下载
+            SUM(CASE WHEN t.event_id = 'GC_DOWN_BTN_CLICK'
+                         AND t.pre_source IN ('HOT_RANK','POPULAR_RANK')
+                     THEN 1 ELSE 0 END) downRank,--排行榜下载
+            SUM(CASE WHEN t.event_id = 'GC_DOWN_BTN_CLICK'
+                         AND t.pre_source IN ('CATEGORY_HOT_RANK','CATEGORY_NEW_RANK')
+                     THEN 1 ELSE 0 END) downSort,--分类下载
+            SUM(CASE WHEN t.event_id = 'GC_DOWN_BTN_CLICK' 
+                         AND t.pre_source = 'SPECIAL' 
+                     THEN 1 ELSE 0 END) downSpecialtopic,--专题下载
+            SUM(CASE WHEN t.event_id = 'GC_DOWN_BTN_CLICK'
+                         AND t.pre_source = 'SEARCH_RESULT' 
+                     THEN 1 ELSE 0 END) downSearch,--搜索下载
+            SUM(CASE WHEN t.event_id = 'GC_DOWN_BTN_CLICK'
+                         AND t.pre_source IN ('SEARCH_RECOMMEND')
+                     THEN 1 ELSE 0 END) downSearchrecommend,--搜推下载
+            SUM(CASE WHEN t.event_id = 'GC_LIST_ITEM_CLICK'
+                         AND t.source = 'GAME_DETAIL'
+                     THEN 1 ELSE 0 END) detailBrowse,--详情浏览
+            SUM(CASE WHEN t.event_id = 'GC_DOWN_BTN_CLICK' 
+                         AND t.source = 'GAME_DETAIL'
+                     THEN 1 ELSE 0 END) detailDown,--详情下载
+            SUM(CASE WHEN t.event_id = 'GC_DOWN_BTN_CLICK' 
+                         AND t.pre_source IN ('ACTIVITY_DETAIL','GIFT_BAG_DETAIL')
+                     THEN 1 ELSE 0 END) downActivecenter--活动中心下载
+        FROM DM_GC_RANK T
+        WHERE 1 = 1
+			<if test="startDate != null">
+			AND T.EVENT_TIME >= TRUNC(#{startDate})
+			</if>
+			<if test="endDate != null">
+			AND T.EVENT_TIME &lt; TRUNC(#{endDate}+1)
+			</if>
+			<if test="networkType != null and networkType!='' and networkType!='all'">
+			AND T.NETWORK=#{network}
+			</if>
+			<if test="model != null and model!='' and model!='all'">
+			AND T.MODEL=#{model}
+			</if>
+			<if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+            AND T.APP_VERSION = #{appVersion}
+            </if>
+			<if test="productIDs != null and productIDs!=''">
+		    AND T.GAME_ID IN (${productIDs})
+			</if>
+        GROUP BY statdate
+        ORDER BY statdate DESC
+	</select>
+	
+	<!-- 首页下载 -->
+	<select id="getDownhomepageList" parameterType="GameDTO" resultType="DownhomepageEntity">
+	    SELECT
+            T.STATDATE statdate,
+            SUM(CASE WHEN t.event_id = 'GC_DOWN_BTN_CLICK' 
+                         AND t.pre_source = 'MAIN_PAGE'
+                     THEN 1 ELSE 0 END) down,--首页下载
+            SUM(CASE WHEN t.event_id = 'GC_DOWN_BTN_CLICK' 
+                         AND t.pre_source = 'MAIN_PAGE'
+                         AND t.source = 'MAIN_PAGE'
+                     THEN 1 ELSE 0 END) downdirect,--首页直接下载
+            SUM(CASE WHEN t.event_id = 'GC_LIST_ITEM_CLICK' 
+                         AND t.pre_source = 'MAIN_PAGE'
+                         AND t.source = 'GAME_DETAIL'
+                     THEN 1 ELSE 0 END) detail,--首页详情
+            SUM(CASE WHEN t.event_id = 'GC_DOWN_BTN_CLICK' 
+                         AND t.pre_source = 'MAIN_PAGE'
+                         AND t.source = 'GAME_DETAIL'
+                     THEN 1 ELSE 0 END) downdetail--首页详情
+        FROM DM_GC_RANK T
+        WHERE 1 = 1
+			<if test="startDate != null">
+			AND T.EVENT_TIME >= TRUNC(#{startDate})
+			</if>
+			<if test="endDate != null">
+			AND T.EVENT_TIME &lt; TRUNC(#{endDate}+1)
+			</if>
+			<if test="networkType != null and networkType!='' and networkType!='all'">
+			AND T.NETWORK=#{network}
+			</if>
+			<if test="model != null and model!='' and model!='all'">
+			AND T.MODEL=#{model}
+			</if>
+			<if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+            AND T.APP_VERSION = #{appVersion}
+            </if>
+			<if test="productIDs != null and productIDs!=''">
+		    AND T.GAME_ID IN (${productIDs})
+			</if>
+        GROUP BY statdate
+        ORDER BY statdate DESC
+	</select>
+	
+	<!-- 排行榜下载 -->
+	<select id="getDownrankList" parameterType="GameDTO" resultType="DownrankEntity">
+	    SELECT
+            T.STATDATE statdate,
+            SUM((CASE WHEN t.event_id = 'GC_DOWN_BTN_CLICK'
+                          AND t.pre_source IN ('HOT_RANK','POPULAR_RANK')
+                      THEN 1 ELSE 0 END)) down,--排行榜下载
+            SUM(CASE WHEN t.event_id = 'GC_DOWN_BTN_CLICK' 
+                         AND t.pre_source IN ('HOT_RANK','POPULAR_RANK')
+                         AND t.source IN ('HOT_RANK','POPULAR_RANK')
+                     THEN 1 ELSE 0 END) downdirect,--排行榜直接下载
+            SUM(CASE WHEN t.event_id = 'GC_LIST_ITEM_CLICK' 
+                         AND t.pre_source IN ('HOT_RANK','POPULAR_RANK')
+                         AND t.source = 'GAME_DETAIL'
+                     THEN 1 ELSE 0 END) detail,--排行榜详情
+            SUM(CASE WHEN t.event_id = 'GC_DOWN_BTN_CLICK' 
+                        AND t.pre_source IN ('HOT_RANK','POPULAR_RANK')
+                         AND t.source = 'GAME_DETAIL'
+                     THEN 1 ELSE 0 END) downdetail--排行榜详情下载
+        FROM DM_GC_RANK T
+        WHERE 1 = 1
+			<if test="startDate != null">
+			AND T.EVENT_TIME >= TRUNC(#{startDate})
+			</if>
+			<if test="endDate != null">
+			AND T.EVENT_TIME &lt; TRUNC(#{endDate}+1)
+			</if>
+			<if test="networkType != null and networkType!='' and networkType!='all'">
+			AND T.NETWORK=#{network}
+			</if>
+			<if test="model != null and model!='' and model!='all'">
+			AND T.MODEL=#{model}
+			</if>
+			<if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+            AND T.APP_VERSION = #{appVersion}
+            </if>
+			<if test="productIDs != null and productIDs!=''">
+		    AND T.GAME_ID IN (${productIDs})
+			</if>
+        GROUP BY statdate
+        ORDER BY statdate DESC
+	</select>
+	
+	<!-- 分类下载 -->
+	<select id="getDownsortList" parameterType="GameDTO" resultType="DownsortEntity">
+	    SELECT
+            T.STATDATE statdate,
+            SUM(CASE WHEN t.event_id = 'GC_DOWN_BTN_CLICK'
+                         AND t.pre_source IN ('CATEGORY_HOT_RANK','CATEGORY_NEW_RANK')
+                      THEN 1 ELSE 0 END) down,--分类下载
+            SUM(CASE WHEN t.event_id = 'GC_DOWN_BTN_CLICK' 
+                         AND t.pre_source IN ('CATEGORY_HOT_RANK','CATEGORY_NEW_RANK')
+                         AND t.source IN ('CATEGORY_HOT_RANK','CATEGORY_NEW_RANK')
+                     THEN 1 ELSE 0 END) downdirect,--分类直接下载
+            SUM(CASE WHEN t.event_id = 'GC_LIST_ITEM_CLICK' 
+                         AND t.pre_source IN ('CATEGORY_HOT_RANK','CATEGORY_NEW_RANK')
+                         AND t.source = 'GAME_DETAIL'
+                     THEN 1 ELSE 0 END) detail,--分类详情
+            SUM(CASE WHEN t.event_id = 'GC_DOWN_BTN_CLICK' 
+                         AND t.pre_source IN ('CATEGORY_HOT_RANK','CATEGORY_NEW_RANK')
+                         AND t.source = 'GAME_DETAIL'
+                     THEN 1 ELSE 0 END) downdetail--分类详情下载
+        FROM DM_GC_RANK T
+        WHERE 1 = 1
+			<if test="startDate != null">
+			AND T.EVENT_TIME >= TRUNC(#{startDate})
+			</if>
+			<if test="endDate != null">
+			AND T.EVENT_TIME &lt; TRUNC(#{endDate}+1)
+			</if>
+			<if test="networkType != null and networkType!='' and networkType!='all'">
+			AND T.NETWORK=#{network}
+			</if>
+			<if test="model != null and model!='' and model!='all'">
+			AND T.MODEL=#{model}
+			</if>
+			<if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+            AND T.APP_VERSION = #{appVersion}
+            </if>
+			<if test="productIDs != null and productIDs!=''">
+		    AND T.GAME_ID IN (${productIDs})
+			</if>
+        GROUP BY statdate
+        ORDER BY statdate DESC
+	</select>
+	
+	<!-- 分类下载-top1,2,3 -->
+	<select id="getDownsorttopList" parameterType="GameDTO" resultType="DownsortEntity">
+	    SELECT
+            t.statdate statdate,
+            t.category_name catname,
+            COUNT(1) topvalue
+        FROM dm_gc_rank t
+        WHERE t.event_id = 'GC_DOWN_BTN_CLICK'
+            AND t.pre_source IN ('CATEGORY_HOT_RANK','CATEGORY_NEW_RANK')
+            <if test="startDate != null">
+		    AND T.EVENT_TIME >= TRUNC(#{startDate})
+		    </if>
+		    <if test="endDate != null">
+		    AND T.EVENT_TIME &lt; TRUNC(#{endDate}+1)
+		    </if>
+		    <if test="networkType != null and networkType!='' and networkType!='all'">
+		    AND T.NETWORK=#{network}
+		    </if>
+		    <if test="model != null and model!='' and model!='all'">
+		    AND T.MODEL=#{model}
+		    </if>
+		    <if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+            AND T.APP_VERSION = #{appVersion}
+            </if>
+		    <if test="productIDs != null and productIDs!=''">
+		    AND T.GAME_ID IN (${productIDs})
+		    </if>
+		    AND t.category_name IS NOT NULL
+        GROUP BY t.statdate,t.category_name
+        ORDER BY 1 DESC,3 DESC
+	</select>
+	
+	<!-- 专题下载 -->
+	<select id="getDownspecialtopicList" parameterType="GameDTO" resultType="DownspecialtopicEntity">
+	    SELECT
+            T.STATDATE statdate,
+            SUM(CASE WHEN t.event_id = 'GC_DOWN_BTN_CLICK' 
+                         AND t.pre_source = 'SPECIAL' 
+                     THEN 1 ELSE 0 END) down,--专题下载
+            SUM(CASE WHEN t.event_id = 'GC_DOWN_BTN_CLICK' 
+                         AND t.source = 'SPECIAL'
+                         AND t.pre_source = 'SPECIAL' 
+                     THEN 1 ELSE 0 END) downdirect,--专题直接下载
+            SUM(CASE WHEN t.event_id = 'GC_LIST_ITEM_CLICK' 
+                         AND t.source = 'GAME_DETAIL'
+                         AND t.pre_source = 'SPECIAL' 
+                     THEN 1 ELSE 0 END) detail,--专题详情
+            SUM(CASE WHEN t.event_id = 'GC_DOWN_BTN_CLICK' 
+                         AND t.source = 'GAME_DETAIL'
+                         AND t.pre_source = 'SPECIAL' 
+                     THEN 1 ELSE 0 END) downdetail--专题详情下载
+        FROM DM_GC_RANK T
+        WHERE 1 = 1
+			<if test="startDate != null">
+			AND T.EVENT_TIME >= TRUNC(#{startDate})
+			</if>
+			<if test="endDate != null">
+			AND T.EVENT_TIME &lt; TRUNC(#{endDate}+1)
+			</if>
+			<if test="networkType != null and networkType!='' and networkType!='all'">
+			AND T.NETWORK=#{network}
+			</if>
+			<if test="model != null and model!='' and model!='all'">
+			AND T.MODEL=#{model}
+			</if>
+			<if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+            AND T.APP_VERSION = #{appVersion}
+            </if>
+			<if test="productIDs != null and productIDs!=''">
+		    AND T.GAME_ID IN (${productIDs})
+			</if>
+        GROUP BY statdate
+        ORDER BY statdate DESC
+	</select>
+	
+	<!-- 搜索下载 -->
+	<select id="getDownsearchList" parameterType="GameDTO" resultType="DownsearchEntity">
+	    SELECT
+            T.STATDATE statdate,
+            SUM(CASE WHEN t.event_id = 'GC_DOWN_BTN_CLICK' 
+                         AND t.pre_source = 'SEARCH_RESULT' 
+                     THEN 1 ELSE 0 END) down,--搜索下载
+            SUM(CASE WHEN t.event_id = 'GC_DOWN_BTN_CLICK' 
+                         AND t.source = 'SEARCH_RESULT'
+                         AND t.pre_source = 'SEARCH_RESULT' 
+                     THEN 1 ELSE 0 END) downdirect,--搜索直接下载
+            SUM(CASE WHEN t.event_id = 'GC_LIST_ITEM_CLICK' 
+                         AND t.source = 'GAME_DETAIL'
+                         AND t.pre_source = 'SEARCH_RESULT' 
+                     THEN 1 ELSE 0 END) detail,--搜索详情
+            SUM(CASE WHEN t.event_id = 'GC_DOWN_BTN_CLICK' 
+                         AND t.source = 'GAME_DETAIL'
+                         AND t.pre_source = 'SEARCH_RESULT' 
+                     THEN 1 ELSE 0 END) downdetail--搜索详情下载
+        FROM DM_GC_RANK T
+        WHERE 1 = 1
+			<if test="startDate != null">
+			AND T.EVENT_TIME >= TRUNC(#{startDate})
+			</if>
+			<if test="endDate != null">
+			AND T.EVENT_TIME &lt; TRUNC(#{endDate}+1)
+			</if>
+			<if test="networkType != null and networkType!='' and networkType!='all'">
+			AND T.NETWORK=#{network}
+			</if>
+			<if test="model != null and model!='' and model!='all'">
+			AND T.MODEL=#{model}
+			</if>
+			<if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+            AND T.APP_VERSION = #{appVersion}
+            </if>
+			<if test="productIDs != null and productIDs!=''">
+		    AND T.GAME_ID IN (${productIDs})
+			</if>
+        GROUP BY statdate
+        ORDER BY statdate DESC
+	</select>
+	
+	<!-- 搜推下载 -->
+	<select id="getDownsearchrecommendList" parameterType="GameDTO" resultType="DownsearchrecommendEntity">
+	    SELECT
+            T.STATDATE statdate,
+            SUM(CASE WHEN t.event_id = 'GC_DOWN_BTN_CLICK' 
+                         AND t.pre_source = 'SEARCH_RECOMMEND' 
+                     THEN 1 ELSE 0 END) down,--搜推下载
+            SUM(CASE WHEN t.event_id = 'GC_DOWN_BTN_CLICK' 
+                         AND t.source = 'SEARCH_RECOMMEND'
+                         AND t.pre_source = 'SEARCH_RECOMMEND' 
+                     THEN 1 ELSE 0 END) downdirect,--搜推直接下载
+            SUM(CASE WHEN t.event_id = 'GC_LIST_ITEM_CLICK' 
+                         AND t.source = 'GAME_DETAIL'
+                         AND t.pre_source = 'SEARCH_RECOMMEND' 
+                     THEN 1 ELSE 0 END) detail,--搜推详情
+            SUM(CASE WHEN t.event_id = 'GC_DOWN_BTN_CLICK' 
+                         AND t.source = 'GAME_DETAIL'
+                         AND t.pre_source = 'SEARCH_RECOMMEND' 
+                     THEN 1 ELSE 0 END) downdetail--搜推详情下载
+        FROM DM_GC_RANK T
+        WHERE 1 = 1
+			<if test="startDate != null">
+			AND T.EVENT_TIME >= TRUNC(#{startDate})
+			</if>
+			<if test="endDate != null">
+			AND T.EVENT_TIME &lt; TRUNC(#{endDate}+1)
+			</if>
+			<if test="networkType != null and networkType!='' and networkType!='all'">
+			AND T.NETWORK=#{network}
+			</if>
+			<if test="model != null and model!='' and model!='all'">
+			AND T.MODEL=#{model}
+			</if>
+			<if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+            AND T.APP_VERSION = #{appVersion}
+            </if>
+			<if test="productIDs != null and productIDs!=''">
+		    AND T.GAME_ID IN (${productIDs})
+			</if>
+        GROUP BY statdate
+        ORDER BY statdate DESC
+	</select>
+	
+	<!-- 活动中心下载 -->
+	<select id="getDownactivecenterList" parameterType="GameDTO" resultType="DownactivecenterEntity">
+	    SELECT
+            T.STATDATE statdate,
+            SUM(CASE WHEN t.event_id = 'GC_DOWN_BTN_CLICK' 
+                         AND t.pre_source IN ('ACTIVITY_DETAIL','GIFT_BAG_DETAIL')
+                     THEN 1 ELSE 0 END) down,--活动中心下载
+            SUM(CASE WHEN t.event_id = 'GC_DOWN_BTN_CLICK' 
+                         AND t.pre_source  = 'PRIZE_TASK'
+                         AND t.source = 'PRIZE_TASK'
+                     THEN 1 ELSE 0 END) downtask,--任务下载
+            SUM(CASE WHEN t.event_id = 'GC_DOWN_BTN_CLICK' 
+                         AND t.pre_source  = 'GIFT_BAG_DETAIL'
+                         AND t.source = 'GIFT_BAG_DETAIL'
+                     THEN 1 ELSE 0 END) downgift,--礼包下载
+            SUM(CASE WHEN t.event_id = 'GC_DOWN_BTN_CLICK' 
+                         AND t.pre_source  = 'ACTIVITY_DETAIL'
+                         AND t.source = 'ACTIVITY_DETAIL'
+                     THEN 1 ELSE 0 END) downactive--活动下载
+        FROM DM_GC_RANK T
+        WHERE 1 = 1
+            <if test="startDate != null">
+            AND T.EVENT_TIME >= TRUNC(#{startDate})
+            </if>
+            <if test="endDate != null">
+            AND T.EVENT_TIME &lt; TRUNC(#{endDate}+1)
+            </if>
+            <if test="networkType != null and networkType!='' and networkType!='all'">
+			AND T.NETWORK=#{network}
+			</if>
+			<if test="model != null and model!='' and model!='all'">
+			AND T.MODEL=#{model}
+			</if>
+			<if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+            AND T.APP_VERSION = #{appVersion}
+            </if>
+			<if test="productIDs != null and productIDs!=''">
+		    AND T.GAME_ID IN (${productIDs})
+			</if>
+        GROUP BY statdate
+        ORDER BY statdate DESC
+	</select>
+	
+	<!-- 游戏更新 -->
+	<select id="getUpdateList" parameterType="GameDTO" resultType="UpdateEntity">
+	    SELECT
+            T.STATDATE statdate,
+            SUM(CASE WHEN t.event_id = 'GC_UPDATE_BTN_CLICK' 
+                     THEN 1 ELSE 0 END) updatecnt,--更新量
+            SUM(CASE WHEN t.event_id = 'GC_UPDATE_BTN_CLICK'
+                         AND t.pre_source = 'MAIN_PAGE' 
+                     THEN 1 ELSE 0 END) homepage,--首页更新
+            SUM(CASE WHEN t.event_id = 'GC_UPDATE_BTN_CLICK' 
+                         AND t.pre_source IN ('HOT_RANK','NEW_RANK')  
+                     THEN 1 ELSE 0 END) rank,--排行榜更新
+            SUM(CASE WHEN t.event_id = 'GC_UPDATE_BTN_CLICK' 
+                         AND t.pre_source IN ('CATEGORY_HOT_RANK','CATEGORY_NEW_RANK')  
+                     THEN 1 ELSE 0 END) sort,--分类更新
+            SUM(CASE WHEN t.event_id = 'GC_UPDATE_BTN_CLICK' 
+                         AND t.pre_source = 'SPECIAL'  
+                     THEN 1 ELSE 0 END) specialtopic,--专题更新
+            SUM(CASE WHEN t.event_id = 'GC_UPDATE_BTN_CLICK' 
+                         AND t.pre_source = 'SEARCH_RESULT'  
+                     THEN 1 ELSE 0 END) search,--搜索更新
+            SUM(CASE WHEN t.event_id = 'GC_UPDATE_BTN_CLICK' 
+                         AND t.pre_source = 'MYGAME'  
+                     THEN 1 ELSE 0 END) myupdate,--我的更新
+            SUM(CASE WHEN t.event_id = 'GC_UPDATE_BTN_CLICK' 
+                         AND t.pre_source = 'GAME_DETAIL'  
+                     THEN 1 ELSE 0 END) detail,--详情更新
+            SUM(CASE WHEN t.event_id = 'GC_UPDATE_BTN_CLICK' 
+                         AND ((t.pre_source = 'GIFT_BAG_DETAIL' AND t.source = 'GIFT_BAG_DETAIL')
+                         OR (t.pre_source = 'ACTIVITY_DETAIL' AND t.source = 'ACTIVITY_DETAIL')) 
+                     THEN 1 ELSE 0 END) activecenter--活动中心更新
+        FROM DM_GC_RANK T
+        WHERE 1 = 1
+			<if test="startDate != null">
+			AND T.EVENT_TIME >= TRUNC(#{startDate})
+			</if>
+			<if test="endDate != null">
+			AND T.EVENT_TIME &lt; TRUNC(#{endDate}+1)
+			</if>
+			<if test="networkType != null and networkType!='' and networkType!='all'">
+			AND T.NETWORK=#{network}
+			</if>
+			<if test="model != null and model!='' and model!='all'">
+			AND T.MODEL=#{model}
+			</if>
+			<if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+            AND T.APP_VERSION = #{appVersion}
+            </if>
+			<if test="productIDs != null and productIDs!=''">
+		    AND T.GAME_ID IN (${productIDs})
+			</if>
+        GROUP BY statdate
+        ORDER BY statdate DESC
+	</select>
+	
+	<!-- 游戏启动 -->
+	<select id="getStartList" parameterType="GameDTO" resultType="StartEntity">
+	    SELECT
+            T.STATDATE statdate,
+            SUM(CASE WHEN t.event_id = 'GC_OPEN_BTN_CLICK' 
+                     THEN 1 ELSE 0 END) startcnt,--启动量
+            SUM(CASE WHEN t.event_id = 'GC_OPEN_BTN_CLICK'
+                         AND t.pre_source = 'MAIN_PAGE' 
+                     THEN 1 ELSE 0 END) homepage,--首页启动
+            SUM(CASE WHEN t.event_id = 'GC_OPEN_BTN_CLICK' 
+                         AND t.pre_source IN ('HOT_RANK','NEW_RANK')  
+                     THEN 1 ELSE 0 END) rank,--排行榜启动
+            SUM(CASE WHEN t.event_id = 'GC_OPEN_BTN_CLICK' 
+                         AND t.pre_source IN ('CATEGORY_HOT_RANK','CATEGORY_NEW_RANK')  
+                     THEN 1 ELSE 0 END) sort,--分类启动
+            SUM(CASE WHEN t.event_id = 'GC_OPEN_BTN_CLICK' 
+                         AND t.pre_source = 'SPECIAL'  
+                     THEN 1 ELSE 0 END) specialtopic,--专题启动
+            SUM(CASE WHEN t.event_id = 'GC_OPEN_BTN_CLICK' 
+                         AND t.pre_source = 'SEARCH_RESULT'  
+                     THEN 1 ELSE 0 END) search,--搜索启动
+            SUM(CASE WHEN t.event_id = 'GC_OPEN_BTN_CLICK' 
+                         AND t.pre_source = 'MYGAME'  
+                     THEN 1 ELSE 0 END) mystart,--我的启动
+            SUM(CASE WHEN t.event_id = 'GC_OPEN_BTN_CLICK' 
+                         AND t.source = 'GAME_DETAIL'  
+                     THEN 1 ELSE 0 END) detail,--详情启动
+            SUM(CASE WHEN t.event_id = 'GC_OPEN_BTN_CLICK' 
+                         AND ((t.pre_source = 'GIFT_BAG_DETAIL' AND t.source = 'GIFT_BAG_DETAIL')
+                         OR (t.pre_source = 'ACTIVITY_DETAIL' AND t.source = 'ACTIVITY_DETAIL')) 
+                     THEN 1 ELSE 0 END) activecenter --活动中心启动
+        FROM DM_GC_RANK T
+        WHERE 1 = 1
+			<if test="startDate != null">
+			AND T.EVENT_TIME >= TRUNC(#{startDate})
+			</if>
+			<if test="endDate != null">
+			AND T.EVENT_TIME &lt; TRUNC(#{endDate}+1)
+			</if>
+			<if test="networkType != null and networkType!='' and networkType!='all'">
+			AND T.NETWORK=#{network}
+			</if>
+			<if test="model != null and model!='' and model!='all'">
+			AND T.MODEL=#{model}
+			</if>
+			<if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+            AND T.APP_VERSION = #{appVersion}
+            </if>
+			<if test="productIDs != null and productIDs!=''">
+		    AND T.GAME_ID IN (${productIDs})
+			</if>
+        GROUP BY statdate
+        ORDER BY statdate DESC
+	</select>
+	
+	<!-- 排行top30 -->
+	<select id="getRanktop30List" parameterType="GameDTO" resultType="RankEntity">
+	    SELECT
+            t.position position,
+            SUM(CASE WHEN t.event_id = 'GC_DOWN_BTN_CLICK' 
+                         AND t.pre_source = '${ranktype}'
+                         AND t.source = '${ranktype}'
+                     THEN 1 ELSE 0 END) directdown,--直接下载
+            SUM(CASE WHEN t.event_id = 'GC_LIST_ITEM_CLICK' 
+                         AND t.pre_source = '${ranktype}'
+                         AND t.source = 'GAME_DETAIL'
+                     THEN 1 ELSE 0 END) detailbrowse,--详情浏览
+            SUM(CASE WHEN t.event_id = 'GC_DOWN_BTN_CLICK' 
+                         AND t.pre_source = '${ranktype}'
+                         AND t.source = 'GAME_DETAIL'
+                     THEN 1 ELSE 0 END) detaildown--详情下载
+        FROM DM_GC_RANK T
+        WHERE 1 = 1
+            <if test="startDate != null">
+            AND T.EVENT_TIME >= TRUNC(#{startDate})
+            </if>
+            <if test="endDate != null">
+            AND T.EVENT_TIME &lt; TRUNC(#{endDate}+1)
+            </if>
+            <if test="networkType != null and networkType!='' and networkType!='all'">
+			AND T.NETWORK=#{network}
+			</if>
+			<if test="model != null and model!='' and model!='all'">
+			AND T.MODEL=#{model}
+			</if>
+        GROUP BY t.position
+        ORDER BY t.position
+	</select>
+	
+	<!-- 排行位置 -->
+	<select id="getRankpositionList" parameterType="GameDTO" resultType="RankEntity">
+	    SELECT
+            t.statdate statDate,
+            SUM(CASE WHEN t.event_id = 'GC_DOWN_BTN_CLICK' 
+                         AND t.pre_source = '${ranktype}'
+                         AND t.source = '${ranktype}'
+                     THEN 1 ELSE 0 END) directdown,--直接下载
+            SUM(CASE WHEN t.event_id = 'GC_LIST_ITEM_CLICK' 
+                         AND t.pre_source = '${ranktype}'
+                         AND t.source = 'GAME_DETAIL'
+                     THEN 1 ELSE 0 END) detailbrowse,--详情浏览
+            SUM(CASE WHEN t.event_id = 'GC_DOWN_BTN_CLICK' 
+                         AND t.pre_source = '${ranktype}'
+                         AND t.source = 'GAME_DETAIL'
+                     THEN 1 ELSE 0 END) detaildown--详情下载
+        FROM DM_GC_RANK T
+        WHERE 1 = 1
+            <if test="startDate != null">
+            AND T.EVENT_TIME >= TRUNC(#{startDate})
+            </if>
+            <if test="endDate != null">
+            AND T.EVENT_TIME &lt; TRUNC(#{endDate}+1)
+            </if>
+            <if test="networkType != null and networkType!='' and networkType!='all'">
+			AND T.NETWORK=#{network}
+			</if>
+			<if test="model != null and model!='' and model!='all'">
+			AND T.MODEL=#{model}
+			</if>
+			<if test="position != null and position !='' and position != '-1'">
+			AND t.position=${position}
+			</if>
+        GROUP BY t.statdate
+        ORDER BY t.statdate DESC
+	</select>
+	
+	<!-- 搜索关键字 -->
+	<select id="getSearchkeyList" parameterType="GameDTO" resultType="SearchkeyEntity">
+	    SELECT
+            t.statdate statDate,
+            SUM(CASE WHEN t.position >= 0 THEN 1 ELSE 0 END) positiontotal,
+            SUM(CASE WHEN t.position = 0 THEN 1 ELSE 0 END) position0,
+            SUM(CASE WHEN t.position = 1 THEN 1 ELSE 0 END) position1,
+            SUM(CASE WHEN t.position = 2 THEN 1 ELSE 0 END) position2,
+            SUM(CASE WHEN t.position = 3 THEN 1 ELSE 0 END) position3,
+            SUM(CASE WHEN t.position = 4 THEN 1 ELSE 0 END) position4,
+            SUM(CASE WHEN t.position = 5 THEN 1 ELSE 0 END) position5,
+            SUM(CASE WHEN t.position = 6 THEN 1 ELSE 0 END) position6,
+            SUM(CASE WHEN t.position = 7 THEN 1 ELSE 0 END) position7,
+            SUM(CASE WHEN t.position = 8 THEN 1 ELSE 0 END) position8,
+            SUM(CASE WHEN t.position = 9 THEN 1 ELSE 0 END) position9,
+            SUM(CASE WHEN t.position = 10 THEN 1 ELSE 0 END) position10,
+            SUM(CASE WHEN t.position = 11 THEN 1 ELSE 0 END) position11,
+            SUM(CASE WHEN t.position = 12 THEN 1 ELSE 0 END) position12,
+            SUM(CASE WHEN t.position = 13 THEN 1 ELSE 0 END) position13,
+            SUM(CASE WHEN t.position = 14 THEN 1 ELSE 0 END) position14,
+            SUM(CASE WHEN t.position = 15 THEN 1 ELSE 0 END) position15,
+            SUM(CASE WHEN t.position = 16 THEN 1 ELSE 0 END) position16,
+            SUM(CASE WHEN t.position = 17 THEN 1 ELSE 0 END) position17,
+            SUM(CASE WHEN t.position = 18 THEN 1 ELSE 0 END) position18,
+            SUM(CASE WHEN t.position = 19 THEN 1 ELSE 0 END) position19
+        FROM DM_GC_RANK T
+        WHERE t.event_id = 'GC_LIST_ITEM_CLICK' 
+            AND t.pre_source = 'SEARCH_KEYWORD'
+            AND t.source = 'SEARCH_KEYWORD'
+            <if test="startDate != null">
+            AND T.EVENT_TIME >= TRUNC(#{startDate})
+            </if>
+            <if test="endDate != null">
+            AND T.EVENT_TIME &lt; TRUNC(#{endDate}+1)
+            </if>
+            <if test="networkType != null and networkType!='' and networkType!='all'">
+			AND T.NETWORK=#{network}
+			</if>
+			<if test="model != null and model!='' and model!='all'">
+			AND T.MODEL=#{model}
+			</if>
+        GROUP BY t.statdate
+        ORDER BY t.statdate DESC
+	</select>
+	
+	<!-- 产品列表(菜单选项) -->
+	<select id="getProductList" resultType="ProductEntity">
+		SELECT
+    		t.product_name productname,
+    		t.system_id productid
+		FROM mt_gc_product t
+		WHERE t.system_id > 1000
+		ORDER BY Nlssort(t.product_name,'NLS_SORT = SCHINESE_PINYIN_M')
+	</select>
+
+	<!-- 产品日报-->
+	<select id="getProductreportdailyList"  parameterType="GameDTO" resultType="ProductreportdailyEntity">
+		SELECT 
+		    t.statdate statDate,
+		    t.total_user totaluser,
+		    t.total_download totaldownload,
+		    t.new_imei newimei,
+		    t.new_user newuser,
+		    t.login_user loginuser,
+		    t.download_times downloadtimes,
+		    t.start_imei startimei,
+		    t.start_times starttimes,
+		    t.silent_user silentuser,
+		    t.lost_user lostuser,
+			TRUNC(t.nrr1,2) nrr1,
+			TRUNC(t.nrr2,2) nrr2,
+			TRUNC(t.nrr3,2) nrr3,
+			TRUNC(t.lrr1,2) lrr1,
+			TRUNC(t.lrr2,2) lrr2,
+			TRUNC(t.lrr3,2) lrr3
+		FROM dm_gc_product_stat_daily t
+		WHERE 1 = 1
+		    <if test="productid != null">
+		    AND t.system_id = #{productid}
+		 	</if>
+			<if test="startDate != null">
+            AND t.STATDATE >= TRUNC(#{startDate})
+            </if>
+            <if test="endDate != null">
+            AND t.STATDATE &lt; TRUNC(#{endDate}+1)
+            </if>
+            AND t.STATDATE &lt; TRUNC(SYSDATE)
+		ORDER BY STATDATE DESC
+	</select>
+	
+	<!-- 产品周报-->
+	<select id="getProductreportweeklyList"  parameterType="GameDTO" resultType="ProductreportweeklyEntity">
+		SELECT 
+		    t.statdate statDate,
+		    t.total_user totaluser,
+		    t.total_download totaldownload,
+		    t.new_imei newimei,
+		    t.new_user newuser,
+		    t.login_user loginuser,
+		    t.download_times downloadtimes,
+		    t.start_imei startimei,
+		    t.start_times starttimes,
+		    t.silent_user silentuser,
+		    t.lost_user lostuser,
+			TRUNC(t.nrr1,2) nrr1,
+			TRUNC(t.nrr2,2) nrr2,
+			TRUNC(t.nrr3,2) nrr3,
+			TRUNC(t.lrr1,2) lrr1,
+			TRUNC(t.lrr2,2) lrr2,
+			TRUNC(t.lrr3,2) lrr3
+		FROM dm_gc_product_stat_weekly t
+		WHERE 1 = 1
+		    <if test="productid != null">
+		    AND t.system_id = #{productid}
+		 	</if>
+			<if test="startDate != null">
+            AND t.STATDATE >= TRUNC(#{startDate})
+            </if>
+            <if test="endDate != null">
+            AND t.STATDATE &lt; TRUNC(#{endDate}+1)
+            </if>
+            AND t.STATDATE &lt; TRUNC(SYSDATE)
+		ORDER BY STATDATE DESC
+	</select>
+	
+	<!-- 产品月报-->
+	<select id="getProductreportmonthlyList"  parameterType="GameDTO" resultType="ProductreportmonthlyEntity">
+		SELECT 
+		    t.statdate statDate,
+		    t.total_user totaluser,
+		    t.total_download totaldownload,
+		    t.new_imei newimei,
+		    t.new_user newuser,
+		    t.login_user loginuser,
+		    t.download_times downloadtimes,
+		    t.start_imei startimei,
+		    t.start_times starttimes,
+		    t.silent_user silentuser,
+		    t.lost_user lostuser,
+			TRUNC(t.nrr1,2) nrr1,
+			TRUNC(t.nrr2,2) nrr2,
+			TRUNC(t.nrr3,2) nrr3,
+			TRUNC(t.lrr1,2) lrr1,
+			TRUNC(t.lrr2,2) lrr2,
+			TRUNC(t.lrr3,2) lrr3
+		FROM dm_gc_product_stat_monthly t
+		WHERE 1 = 1
+		    <if test="productid != null">
+		    AND t.system_id = #{productid}
+		 	</if>
+			<if test="startDate != null">
+            AND t.STATDATE >= TRUNC(#{startDate})
+            </if>
+            <if test="endDate != null">
+            AND t.STATDATE &lt; TRUNC(#{endDate}+1)
+            </if>
+            AND t.STATDATE &lt; TRUNC(SYSDATE)
+		ORDER BY STATDATE DESC
+	</select>
+	
+	<!-- 联运游戏数据 -->
+	<select id="getJointgameList" parameterType="GameDTO" resultType="JointgameEntity">
+	    SELECT 
+	        t.statdate statDate,
+    	    t.total_user totaluser,
+    	    t.new_imei newimei,
+    	    t.new_user newuser,
+    	    t.start_user loginuser,
+    	    t.start_times startcnt,
+    	    t.lost_user_7 lost7,
+    	    t.lost_user_30 lost30,
+    	    t.nurr_1 remain2,
+    	    t.nurr_7 remain7,
+    	    t.pay_user feeuser,
+    	    t.pay_money feetotal,
+    	    t.pay_rate feeratio,
+    	    t.arpu arpu,
+    	    t.arpupu arppu
+	    FROM dm_gc_product_operation t
+	    WHERE 1 = 1
+    	    <if test="productid != null and productid != ''">
+    	    AND t.system_id = ${productid}
+	        </if>
+		    <if test="startDate != null">
+    	    AND t.STATDATE >= TRUNC(#{startDate})
+    	    </if>
+    	    <if test="endDate != null">
+    	    AND t.STATDATE &lt; TRUNC(#{endDate}+1)
+    	    </if>
+    	    AND t.STATDATE &lt; TRUNC(SYSDATE)
+    	    <if test="model != null and model != '' and model != 'all'">
+    	    AND t.model = #{model}
+    	    </if>
+    	    <if test="model == null or model == '' or model == 'all'">
+    	    AND t.model is NULL
+    	    </if>
+    	    <if test="qudao != null and qudao != '' and qudao != 'all'">
+    	    AND t.channel_id = #{qudao}
+    	    </if>
+    	    <if test="qudao == null or qudao == '' or qudao == 'all'">
+    	    AND t.channel_id IS NULL
+    	    </if>
+	    ORDER BY t.statdate DESC
+	</select>
+	
+	<!-- 留存分析 -->
+	<select id="getRemainList" parameterType="GameDTO" resultType="GameRemainEntity">
+	    SELECT
+    	    t.nurr_date remainDate,
+    	    t.start_user remain,
+    	    t.nurr remainratio,
+            t.start_imei imeiremain,
+            t.nrr imeiremainratio
+	    FROM dm_gc_product_nurr_${lidu} t
+	    WHERE 1 = 1
+	        <if test="productid != null and productid != ''">
+    	    AND t.system_id = ${productid}
+	        </if>
+	        <if test="model != null and model != '' and model != 'all'">
+    	    AND t.model = #{model}
+    	    </if>
+    	    <if test="model == null or model == '' or model == 'all'">
+    	    AND t.model is NULL
+    	    </if>
+	        <if test="startDate != null and lidu == 'DAILY'">
+    	    AND t.STATDATE = TRUNC(#{startDate})
+    	    </if>
+    	    <if test="startDate != null and lidu == 'WEEKLY'">
+    	    AND t.STATDATE >= TRUNC(#{startDate})
+    	    AND t.STATDATE &lt; TRUNC(#{startDate} + 7)
+    	    </if>
+    	    <if test="startDate != null and lidu == 'MONTHLY'">
+    	    AND t.STATDATE = TRUNC(add_months(last_day(#{startDate}) + 1,-1))
+    	    </if>
+    	    <if test="qudao != null and qudao != '' and qudao != 'all'">
+    	    AND t.channel_id = #{qudao}
+    	    </if>
+    	    <if test="qudao == null or qudao == '' or qudao == 'all'">
+    	    AND t.channel_id IS NULL
+    	    </if>
+	    ORDER BY t.nurr_date
+	</select>
+	
+	<!-- 付费分析 -->
+	<select id="getFeeList" parameterType="GameDTO" resultType="GameFeeEntity">
+	</select>
+</mapper>

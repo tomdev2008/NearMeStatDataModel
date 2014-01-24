@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+	"-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nearme.statistics.dao.app.common.VersionDao">
+	<!-- 版本查询 -->
+	<select id="getVersionList" parameterType="VersionDTO" resultType="VersionEntity">
+	    SELECT
+			T.SYSTEM_ID SYSTEMID,
+			T.APP_VERSION APPVERSION,
+			T.VERSION_NAME versionName,
+			T.HIDE HIDE
+		FROM MT_APPVERSION T
+		WHERE T.SYSTEM_ID=#{systemID}
+		    <if test="hide != null">
+			AND T.HIDE = #{hide}
+		    </if>
+		    AND T.APP_VERSION IS NOT NULL
+		ORDER BY T.HIDE,T.APP_VERSION DESC
+	</select>
+	
+	<!-- 版本更新 -->
+	<update id="update" parameterType="VersionDTO">
+	    UPDATE MT_APPVERSION T
+		SET T.HIDE = #{hide},
+		    <if test="versionName != null and versionName != ''">
+		    T.VERSION_NAME = #{versionName},
+		    </if>
+			T.UPDATE_TIME = SYSDATE
+		WHERE T.SYSTEM_ID = #{systemID}
+			AND T.APP_VERSION in (${appVersion})
+	</update>
+</mapper>

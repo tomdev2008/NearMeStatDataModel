@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+	"-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nearme.statistics.dao.app.common.HivejobDao">
+    <!-- hive任务管理-查询未完成的任务数 -->
+    <select id="getHivejobCnt" resultType="Long" parameterType="HivejobDTO">
+        SELECT 
+            COUNT(1)
+        FROM log_hive_job t
+        WHERE t.state = 0
+            AND t.system_id = #{systemID}
+            AND t.result_table = #{resulttable}
+    </select>
+    
+    <!-- hive任务管理-插入任务 -->
+    <insert id="addHivejob" parameterType="HivejobDTO">
+        INSERT INTO log_hive_job(job_id,system_id,condition,username,start_time,state,result_table,weidu,lidu)
+        VALUES(#{jobID,jdbcType=VARCHAR},
+              #{systemID},
+              #{condition,jdbcType=VARCHAR},
+              #{username,jdbcType=VARCHAR},
+              #{starttime},
+              0,
+              #{resulttable,jdbcType=VARCHAR},
+              #{weidu,jdbcType=VARCHAR},
+              #{lidu,jdbcType=VARCHAR})
+    </insert>
+    
+    <!-- hive任务管理-任务完成 -->
+    <update id="finishHivejob" parameterType="HivejobDTO">
+        UPDATE log_hive_job t
+        SET t.state = 1, 
+            t.finish_time = sysdate,
+            t.last_update_time = sysdate
+        WHERE t.job_id = #{jobID}
+    </update>
+    
+    <!-- hive任务管理-查询所有任务 -->
+    <select id="getHivejobList" resultType="HivejobEntity" parameterType="HivejobDTO">
+        SELECT 
+            t.job_id jobID,
+            t.system_id systemID,
+            t.condition condition,
+            t.username username,
+            t.start_time starttime,
+            t.finish_time finishtime,
+            t.state state,
+            t.result_table resulttable,
+            t.weidu weidu,
+            t.lidu lidu
+        FROM log_hive_job t
+        WHERE t.system_id = #{systemID}
+             AND t.result_table = #{resulttable}
+        ORDER BY t.state,t.start_time DESC
+    </select>
+    
+    <!-- hive任务管理-删除任务 -->
+    <update id="deleteHivejob" parameterType="HivejobDTO">
+        DELETE log_hive_job t
+        WHERE t.job_id = #{jobID}
+    </update>
+</mapper>

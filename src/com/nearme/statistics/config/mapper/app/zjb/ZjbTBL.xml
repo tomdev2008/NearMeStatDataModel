@@ -1,0 +1,799 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+	"-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nearme.statistics.dao.app.zjb.ZjbDao">
+	<!-- 版本 -->
+	<select id="getZjbVersionList" parameterType="ZjbDTO"
+		resultType="ZjbVersionEntity">
+		SELECT
+    		t.zjb_version appVersion
+		FROM dw_zjb_new_version t
+		ORDER BY t.zjb_version DESC
+	</select>
+
+	<!-- 基础数据 -->
+	<select id="getBasedateList" parameterType="ZjbDTO"
+		resultType="BasedateEntity">
+		SELECT
+    		t.statdate statDate,
+    		t.users users,
+    		t.total_users totoalusers,
+    		t.new_users newusers,
+    		t.computers computers,
+    		t.total_pcs totalpcs,
+    		t.new_pcs newpcs,
+    		t.conns conns,
+    		t.apks apks
+		FROM dm_zjb_basic_${lidu}2 t
+		WHERE 1 = 1
+            <if test="startDate != null">
+            AND t.statdate >= TRUNC(#{startDate})
+            </if>
+            <if test="endDate != null">
+            AND t.statdate &lt; TRUNC(#{endDate}+1)
+            </if>
+            AND t.statdate != TRUNC(SYSDATE)
+            <if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+            AND t.zjb_version = #{appVersion}
+            </if>
+            <if test="appVersion=='all' or appVersion=='' or appVersion==null">
+            AND t.zjb_version IS NULL
+            </if>
+            <if test="qudao!=null and qudao!='' and qudao!='all'">
+            AND t.zjb_channel = #{qudao}
+            </if>
+            <if test="qudao=='all' or qudao=='' or qudao==null">
+            AND t.zjb_channel IS NULL
+            </if>
+        ORDER BY t.statdate DESC
+	</select>
+
+	<!-- 分渠道服务数据-->
+	<select id="getChannelserviceList" parameterType="ZjbDTO"
+		resultType="ChannelserviceEntity">
+		SELECT
+    		t.statdate statDate,
+
+    		t.in_users in_users,
+
+    		t.in_not_oppo in_not_oppo,
+    		t.in_not_oppo_bonus in_not_oppo_bonus,
+    		t.in_not_oppo_apps in_not_oppo_apps,
+
+    		t.in_oppo in_oppo,
+    		t.in_oppo_bonus in_oppo_bonus,
+    		t.in_oppo_apps in_oppo_apps,
+
+    		t.out_users out_users,
+
+    		t.out_not_oppo out_not_oppo,
+    		t.out_not_oppo_bonus out_not_oppo_bonus,
+    		t.out_not_oppo_apps out_not_oppo_apps,
+
+    		t.out_oppo out_oppo,
+    		t.out_oppo_bonus out_oppo_bonus,
+    		t.out_oppo_apps out_oppo_apps
+
+		FROM DM_ZJB_CHANNEL_SERVICE t
+		WHERE 1 = 1
+            <if test="startDate != null">
+            AND t.statdate >= TRUNC(#{startDate})
+            </if>
+            <if test="endDate != null">
+            AND t.statdate &lt; TRUNC(#{endDate}+1)
+            </if>
+            AND t.statdate != TRUNC(SYSDATE)
+            <if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+            AND t.zjb_version = #{appVersion}
+            </if>
+            <if test="appVersion=='all' or appVersion=='' or appVersion==null">
+            AND t.zjb_version IS NULL
+            </if>
+            <if test="qudao!=null and qudao!='' and qudao!='all'">
+            AND t.zjb_channel = #{qudao}
+            </if>
+            <if test="qudao=='all' or qudao=='' or qudao==null">
+            AND t.zjb_channel IS NULL
+            </if>
+        ORDER BY t.statdate DESC
+	</select>
+
+	<!-- 软件安装排行 -->
+	<select id="getSoftinstallList" parameterType="ZjbDTO"
+		resultType="SoftinstallEntity">
+		SELECT
+   		    statDate,
+   		    ROWNUM softID,
+   		    softName,
+   		    softInstall
+		FROM (
+    		SELECT
+       		    t.statdate statDate,
+        		t.apk_name softName,
+        		t.apk_sum softInstall
+    		FROM dm_zjb_install_${lidu} t
+    		WHERE 1 = 1
+        		<if test="lidu == 'DAILY'">
+        		AND t.statdate = TRUNC(#{startDate})
+        		</if>
+        		<if test="lidu == 'WEEKLY'">
+        		AND t.statdate &lt;= TRUNC(#{startDate})
+                AND TRUNC(t.statdate + 7) > TRUNC(#{startDate})
+        		</if>
+        		<if test="lidu == 'MONTHLY'">
+        		AND t.statdate = TRUNC(add_months(last_day(#{startDate}) + 1,-1))
+        		</if>
+        		<if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+                AND t.version = #{appVersion}
+                </if>
+                <if test="appVersion=='all' or appVersion=='' or appVersion==null">
+                AND t.version IS NULL
+                </if>
+    		ORDER BY t.statdate DESC,t.apk_sum DESC
+		) X
+		WHERE ROWNUM &lt;= 50
+	</select>
+
+	<!-- 服务机型2(机型) -->
+	<select id="getServermodelList2" parameterType="ZjbDTO"
+		resultType="ServermodelEntity">
+        SELECT
+            statDate,
+            pinpai,
+            model,
+            connectCnt,
+            zhanbi,
+            installcnt,
+            installratio,
+            avginstall
+        FROM (
+            SELECT
+                t.statdate statDate,
+                t.vendor pinpai,
+                t.model model,
+                t.conns connectCnt,
+                t.conns_rate  zhanbi,
+                t.apks installcnt,
+                t.apks_rate installratio,
+                t.avg_apks avginstall
+            FROM dm_zjb_services_daily t
+            WHERE 1 = 1
+                <if test="lidu == 'DAILY'">
+                AND t.statdate = TRUNC(#{startDate})
+                </if>
+                <if test="lidu == 'WEEKLY'">
+                AND t.statdate &lt;= TRUNC(#{startDate})
+                AND TRUNC(t.statdate + 7) > TRUNC(#{startDate})
+                </if>
+                <if test="lidu == 'MONTHLY'">
+                AND t.statdate = TRUNC(add_months(last_day(#{startDate}) + 1,-1))
+                </if>
+                AND t.model IS NOT NULL
+                <if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+                AND t.zjb_version = #{appVersion}
+                </if>
+                <if test="appVersion=='all' or appVersion=='' or appVersion==null">
+                AND t.zjb_version IS NULL
+                </if>
+                <if test="qudao!=null and qudao!='' and qudao!='all'">
+                AND t.zjb_channel = #{qudao}
+                </if>
+                <if test="qudao=='all' or qudao=='' or qudao==null">
+                AND t.zjb_channel IS NULL
+                </if>
+            ORDER BY t.statdate DESC,t.conns DESC, t.vendor DESC,t.model DESC
+        ) X
+        WHERE ROWNUM &lt;= 30
+	</select>
+
+	<!-- 服务机型(品牌) -->
+	<select id="getServermodelList" parameterType="ZjbDTO"
+		resultType="ServermodelEntity">
+        SELECT
+            statDate,
+            pinpai,
+            connectcnt,
+            zhanbi,
+            installcnt,
+            installratio,
+            avginstall
+        FROM (
+            SELECT
+                t.statdate statDate,
+                t.vendor pinpai,
+                t.conns connectCnt,
+                t.conns_rate  zhanbi,
+                t.apks installcnt,
+                t.apks_rate installratio,
+                t.avg_apks avginstall
+            FROM dm_zjb_services_${lidu} t
+            WHERE 1 = 1
+                <if test="lidu == 'DAILY'">
+                AND t.statdate = TRUNC(#{startDate})
+                </if>
+                <if test="lidu == 'WEEKLY'">
+                AND t.statdate &lt;= TRUNC(#{startDate})
+                AND TRUNC(t.statdate + 7) > TRUNC(#{startDate})
+                </if>
+                <if test="lidu == 'MONTHLY'">
+                AND t.statdate = TRUNC(add_months(last_day(#{startDate}) + 1,-1))
+                </if>
+                AND t.model IS NULL
+                <if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+                AND t.zjb_version = #{appVersion}
+                </if>
+                <if test="appVersion=='all' or appVersion=='' or appVersion==null">
+                AND t.zjb_version IS NULL
+                </if>
+                <if test="qudao!=null and qudao!='' and qudao!='all'">
+                AND t.zjb_channel = #{qudao}
+                </if>
+                <if test="qudao=='all' or qudao=='' or qudao==null">
+                AND t.zjb_channel IS NULL
+                </if>
+            ORDER BY t.statdate DESC, t.conns DESC, t.vendor DESC
+        ) X
+        WHERE ROWNUM &lt;= 10
+	</select>
+
+	<!-- 模块安装量 -->
+	<select id="getModuleinstallList" parameterType="ZjbDTO"
+		resultType="ModuleinstallEntity">
+		SELECT
+    		t.statdate statDate,
+            t.totals soft,
+            t.subtotals_official online1,
+            t.subtotals_custom self,
+            t.subtotals_online onlineSoft,
+            t.subtotals_search search,
+            t.subtotals_update upgrade,
+            t.subtotals_game bigGame,
+            t.subtotals_navi daohang,
+            t.subtotals_installer installer
+		FROM dm_zjb_module_install_${lidu} t
+		WHERE 1 = 1
+            <if test="startDate != null">
+            AND t.statdate >= TRUNC(#{startDate})
+            </if>
+            <if test="endDate != null">
+            AND t.statdate &lt; TRUNC(#{endDate}+1)
+            </if>
+            AND t.statdate != TRUNC(SYSDATE)
+            <if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+            AND t.zjb_version = #{appVersion}
+            </if>
+            <if test="appVersion=='all' or appVersion=='' or appVersion==null">
+            AND t.zjb_version IS NULL
+            </if>
+            <if test="qudao!=null and qudao!='' and qudao!='all'">
+            AND t.zjb_channel = #{qudao}
+            </if>
+            <if test="qudao=='all' or qudao=='' or qudao==null">
+            AND t.zjb_channel IS NULL
+            </if>
+        ORDER BY t.statdate DESC
+	</select>
+
+	<!-- 推广软件安装 -->
+	<select id="getTuiguanginstallList" parameterType="ZjbDTO"
+		resultType="TuiguanginstallEntity">
+		SELECT
+    		t.statdate statDate,
+    		t.app_name softname,
+    		t.app_sum downcnt
+		FROM dm_zjb_recommendation_${lidu} t
+		WHERE 1 = 1
+		    <if test="startDate != null">
+            AND t.statdate >= TRUNC(#{startDate})
+            </if>
+            <if test="endDate != null">
+            AND t.statdate &lt; TRUNC(#{endDate}+1)
+            </if>
+            AND t.statdate != TRUNC(SYSDATE)
+            <if test="softName != null and softName != ''">
+            AND t.app_name = #{softName}
+            </if>
+            <if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+            AND t.version = #{appVersion}
+            </if>
+            <if test="appVersion=='all' or appVersion=='' or appVersion==null">
+            AND t.version IS NULL
+            </if>
+		ORDER BY t.statdate DESC,t.app_name DESC
+	</select>
+
+	<!-- 性能指标 -->
+	<select id="getPerformanceList" parameterType="ZjbDTO"
+		resultType="PerformanceEntity">
+		 SELECT
+            t.statdate statDate,
+            t.conn connectCnt,
+            t.conn_succ connectSuccess,
+            t.download downCnt,
+            t.download_succ downSuccess,
+            t.install installCnt,
+            t.install_succ installSuccess,
+            t.startups softStart,
+            t.crashes softCrash,
+            t.recover restoreCnt,
+            t.recover_succ restoreSuccess
+        FROM dm_zjb_perf_${lidu} t
+        WHERE 1 = 1
+            <if test="startDate != null">
+            AND t.statdate >= TRUNC(#{startDate})
+            </if>
+            <if test="endDate != null">
+            AND t.statdate &lt; TRUNC(#{endDate}+1)
+            </if>
+            AND t.statdate != TRUNC(SYSDATE)
+            <if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+            AND t.zjb_version = #{appVersion}
+            </if>
+            <if test="appVersion=='all' or appVersion=='' or appVersion==null">
+            AND t.zjb_version IS NULL
+            </if>
+            <if test="qudao!=null and qudao!='' and qudao!='all'">
+            AND t.zjb_channel = #{qudao}
+            </if>
+            <if test="qudao=='all' or qudao=='' or qudao==null">
+            AND t.zjb_channel IS NULL
+            </if>
+        ORDER BY t.statdate DESC
+	</select>
+
+	<!-- 月活天数分布 -->
+	<select id="getActivedaysdistributeList" parameterType="ZjbDTO"
+		resultType="ZJBActivedaysdistributeEntity">
+		SELECT
+    		t.flag activedays,
+    		t.computers usercnt,
+    		t.new_pcs newusercnt,
+    		t.users loginuser,
+    		t.new_users newloginuser,
+    		--t. startcnt,--不支持
+    		t.apks installapp,
+    		--t. installratio,--计算得出
+            t.conns servemobile,
+            t.avg_act_days avgactdays
+		FROM dm_zjb_active_dist t
+		WHERE 1 = 1
+            <if test="startDate != null">
+            AND t.statdate = TRUNC(#{startDate})
+            </if>
+            <if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+            AND t.zjb_version = #{appVersion}
+            </if>
+            <if test="appVersion=='all' or appVersion=='' or appVersion==null">
+            AND t.zjb_version IS NULL
+            </if>
+            <if test="qudao!=null and qudao!='' and qudao!='all'">
+            AND t.zjb_channel = #{qudao}
+            </if>
+            <if test="qudao=='all' or qudao=='' or qudao==null">
+            AND t.zjb_channel IS NULL
+            </if>
+        ORDER BY t.flag DESC
+	</select>
+
+	<!-- 用户行为分析 -->
+	<select id="getUseractionList" parameterType="ZjbDTO"
+		resultType="ZJBUseractionEntity">
+		SELECT
+    		t.statdate statDate,
+    		t.users loginuser,
+    		t.computers usercnt,
+    		--t. startcnt,
+    		t.events eventtotal
+    		--t. logineventcnt,
+    		--t. logineventratio,
+    		--t. nologineventcnt,
+    		--t. nologineventratio
+		FROM dm_zjb_user_action_${lidu} t
+		WHERE 1 = 1
+            <if test="startDate != null">
+            AND t.statdate >= TRUNC(#{startDate})
+            </if>
+            <if test="endDate != null">
+            AND t.statdate &lt; TRUNC(#{endDate}+1)
+            </if>
+            AND t.statdate != TRUNC(SYSDATE)
+            <if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+            AND t.zjb_version = #{appVersion}
+            </if>
+            <if test="appVersion=='all' or appVersion=='' or appVersion==null">
+            AND t.zjb_version IS NULL
+            </if>
+            <if test="qudao!=null and qudao!='' and qudao!='all'">
+            AND t.zjb_channel = #{qudao}
+            </if>
+            <if test="qudao=='all' or qudao=='' or qudao==null">
+            AND t.zjb_channel IS NULL
+            </if>
+            <if test="actioncode!=null and actioncode!='' and actioncode!='all'">
+            AND t.event_id = #{actioncode}
+            </if>
+            <if test="actioncode=='all' or actioncode=='' or actioncode==null">
+            AND t.event_id IS NOT NULL
+            </if>
+        ORDER BY t.statdate DESC
+	</select>
+
+	<!-- 软件下载 -->
+	<select id="getSoftdownList" parameterType="ZjbDTO"
+		resultType="ZJBSoftdownEntity">
+		SELECT
+    		t.statdate statDate,
+    		t.total_downs downtotal,
+    		SUM(CASE WHEN t.event_id = 1001 THEN t.event_downs ELSE 0 END) backupdatecnt,
+    		SUM(CASE WHEN t.event_id = 1001 THEN t.event_rate ELSE 0 END) backupdateratio,
+    		SUM(CASE WHEN t.event_id = 2001 THEN t.event_downs ELSE 0 END) selfdown,
+    		SUM(CASE WHEN t.event_id = 2001 THEN t.event_rate ELSE 0 END) selfdownratio,
+    		SUM(CASE WHEN t.event_id = 3001 THEN t.event_downs ELSE 0 END) selfresdown,
+    		SUM(CASE WHEN t.event_id = 3001 THEN t.event_rate ELSE 0 END) selfresdownratio
+		FROM dm_zjb_download_${lidu} t
+    	WHERE 1 = 1
+            <if test="startDate != null">
+            AND t.statdate >= TRUNC(#{startDate})
+            </if>
+            <if test="endDate != null">
+            AND t.statdate &lt; TRUNC(#{endDate}+1)
+            </if>
+            AND t.statdate != TRUNC(SYSDATE)
+            <if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+            AND t.zjb_version = #{appVersion}
+            </if>
+            <if test="appVersion=='all' or appVersion=='' or appVersion==null">
+            AND t.zjb_version IS NULL
+            </if>
+            <if test="qudao!=null and qudao!='' and qudao!='all'">
+            AND t.zjb_channel = #{qudao}
+            </if>
+            <if test="qudao=='all' or qudao=='' or qudao==null">
+            AND t.zjb_channel IS NULL
+            </if>
+		GROUP BY t.statdate,t.total_downs
+		ORDER BY t.statdate DESC,t.total_downs DESC
+	</select>
+
+	<!-- 软件下载top -->
+	<select id="getSoftdowntopList" parameterType="ZjbDTO"
+		resultType="ZJBSoftdowntopEntity">
+		SELECT
+            statDate,
+            softname,
+            sum(downcnt) downcnt
+        FROM (
+            SELECT
+                statDate,
+                (CASE WHEN ROWNUM &lt;= 30 THEN softname ELSE '其他' END) softname,
+                downcnt
+            FROM (
+                SELECT
+                    t.statdate statDate,
+                    t.app_name softname,
+                    t.downloads downcnt
+                FROM dm_zjb_download_top_${lidu} t
+                WHERE 1 = 1
+                    <if test="lidu == 'DAILY'">
+                    AND t.statdate = TRUNC(#{startDate})
+                    </if>
+                    <if test="lidu == 'WEEKLY'">
+                    AND t.statdate &lt;= TRUNC(#{startDate})
+                    AND TRUNC(t.statdate + 7) > TRUNC(#{startDate})
+                    </if>
+                    <if test="lidu == 'MONTHLY'">
+                    AND t.statdate = TRUNC(add_months(last_day(#{startDate}) + 1,-1))
+                    </if>
+                    <if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+                    AND t.zjb_version = #{appVersion}
+                    </if>
+                    <if test="appVersion=='all' or appVersion=='' or appVersion==null">
+                    AND t.zjb_version IS NULL
+                    </if>
+                    <if test="qudao!=null and qudao!='' and qudao!='all'">
+                    AND t.zjb_channel = #{qudao}
+                    </if>
+                    <if test="qudao=='all' or qudao=='' or qudao==null">
+                    AND t.zjb_channel IS NULL
+                    </if>
+                ORDER BY t.statdate DESC,t.downloads DESC
+           ) X
+        ) Y
+        GROUP BY statDate,softname
+        ORDER BY statDate DESC,downcnt DESC
+	</select>
+
+	<!-- 资源包安装 -->
+	<select id="getPkginstallList" parameterType="ZjbDTO"
+		resultType="ZJBPkginstallEntity">
+		SELECT
+    		t.statdate,
+    		t.totals installtotal,
+    		t.subtotals_ok keycnt,
+    		t.subtotals_ok_custom selfcnt,
+    		t.subtotals_ok_online onlinecnt,
+    		t.subtotals_in innercnt,
+    		t.subtotals_in_custom selfinnercnt,
+    		t.subtotals_in_online onlineinnercnt
+		FROM dm_zjb_install_action_${lidu} t
+		WHERE 1 = 1
+            <if test="startDate != null">
+            AND t.statdate >= TRUNC(#{startDate})
+            </if>
+            <if test="endDate != null">
+            AND t.statdate &lt; TRUNC(#{endDate}+1)
+            </if>
+            AND t.statdate != TRUNC(SYSDATE)
+            <if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+            AND t.zjb_version = #{appVersion}
+            </if>
+            <if test="appVersion=='all' or appVersion=='' or appVersion==null">
+            AND t.zjb_version IS NULL
+            </if>
+            <if test="qudao!=null and qudao!='' and qudao!='all'">
+            AND t.zjb_channel = #{qudao}
+            </if>
+            <if test="qudao=='all' or qudao=='' or qudao==null">
+            AND t.zjb_channel IS NULL
+            </if>
+        ORDER BY t.statdate DESC
+	</select>
+
+	<!-- 单个资源运营点-默认 -->
+	<select id="getRunpointList" parameterType="ZjbDTO"
+		resultType="ZJBRunpointEntity">
+		SELECT
+            softname,
+            sum(installtotal) installtotal,
+            sum(selfcnt) selfcnt,
+            sum(onlinerescnt) onlinerescnt,
+            sum(searchcnt) searchcnt,
+            sum(onlinesoftcnt) onlinesoftcnt,
+            sum(pushinstall) pushinstall,
+            sum(installercnt) installercnt
+        FROM (
+            SELECT
+                (CASE WHEN ROWNUM &lt;= 200 THEN softname ELSE N'其他' END) softname,
+                installtotal,
+                selfcnt,
+                onlinerescnt,
+                searchcnt,
+                onlinesoftcnt,
+                pushinstall,
+                installercnt
+            FROM (
+				SELECT
+    				t.app_name softname,
+    				t.totals installtotal,
+    				t.subtotals_custom selfcnt,
+    				t.subtotals_offical onlinerescnt,
+    				t.subtotals_search searchcnt,
+    				t.subtotals_online onlinesoftcnt,
+    				t.subtotals_recomm pushinstall,
+    				t.subtotals_install installercnt
+				FROM dm_zjb_resouce_${lidu} t
+				WHERE 1 = 1
+            		<if test="lidu == 'DAILY'">
+            		AND t.statdate = TRUNC(#{startDate})
+            		</if>
+            		<if test="lidu == 'WEEKLY'">
+            		AND t.statdate &lt;= TRUNC(#{startDate})
+            		AND TRUNC(t.statdate + 7) > TRUNC(#{startDate})
+            		</if>
+            		<if test="lidu == 'MONTHLY'">
+            		AND t.statdate = TRUNC(add_months(last_day(#{startDate}) + 1,-1))
+            		</if>
+            		<if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+            		AND t.zjb_version = #{appVersion}
+            		</if>
+            		<if test="appVersion=='all' or appVersion=='' or appVersion==null">
+            		AND t.zjb_version IS NULL
+            		</if>
+            		<if test="qudao!=null and qudao!='' and qudao!='all'">
+            		AND t.zjb_channel = #{qudao}
+            		</if>
+            		<if test="qudao=='all' or qudao=='' or qudao==null">
+            		AND t.zjb_channel IS NULL
+            		</if>
+				ORDER BY t.statdate DESC,t.totals DESC
+           ) X
+        ) Y
+        GROUP BY softname
+        ORDER BY installtotal DESC,softname DESC
+	</select>
+
+	<!-- 单个资源运营点-附加- -->
+	<select id="getRunpointAddList" parameterType="ZjbDTO"
+		resultType="ZJBRunpointEntity">
+		SELECT
+    		t.app_name softname,
+    		t.totals installtotal,
+    		t.subtotals_custom selfcnt,
+    		t.subtotals_offical onlinerescnt,
+    		t.subtotals_search searchcnt,
+    		t.subtotals_online onlinesoftcnt,
+    		t.subtotals_recomm pushinstall,
+    		t.subtotals_install installercnt
+		FROM dm_zjb_resouce_${lidu} t
+		WHERE 1 = 1
+            <if test="lidu == 'DAILY'">
+            AND t.statdate = TRUNC(#{startDate})
+            </if>
+            <if test="lidu == 'WEEKLY'">
+            AND t.statdate &lt;= TRUNC(#{startDate})
+            AND TRUNC(t.statdate + 7) > TRUNC(#{startDate})
+            </if>
+            <if test="lidu == 'MONTHLY'">
+            AND t.statdate = TRUNC(add_months(last_day(#{startDate}) + 1,-1))
+            </if>
+            <if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+            AND t.zjb_version = #{appVersion}
+            </if>
+            <if test="appVersion=='all' or appVersion=='' or appVersion==null">
+            AND t.zjb_version IS NULL
+            </if>
+            <if test="qudao!=null and qudao!='' and qudao!='all'">
+            AND t.zjb_channel = #{qudao}
+            </if>
+            <if test="qudao=='all' or qudao=='' or qudao==null">
+            AND t.zjb_channel IS NULL
+            </if>
+            AND t.state = 1
+		ORDER BY t.totals DESC,t.app_name
+	</select>
+
+	<!-- 单个资源运营点-搜索 -->
+	<select id="getRunpointSearchList" parameterType="ZjbDTO"
+		resultType="ZJBRunpointEntity">
+		SELECT
+    		t.app_name softname,
+    		t.totals installtotal,
+    		t.subtotals_custom selfcnt,
+    		t.subtotals_offical onlinerescnt,
+    		t.subtotals_search searchcnt,
+    		t.subtotals_online onlinesoftcnt,
+    		t.subtotals_recomm pushinstall,
+    		t.subtotals_install installercnt
+		FROM dm_zjb_resouce_${lidu} t
+		WHERE 1 = 1
+            <if test="lidu == 'DAILY'">
+            AND t.statdate = TRUNC(#{startDate})
+            </if>
+            <if test="lidu == 'WEEKLY'">
+            AND t.statdate &lt;= TRUNC(#{startDate})
+            AND TRUNC(t.statdate + 7) > TRUNC(#{startDate})
+            </if>
+            <if test="lidu == 'MONTHLY'">
+            AND t.statdate = TRUNC(add_months(last_day(#{startDate}) + 1,-1))
+            </if>
+            <if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+            AND t.zjb_version = #{appVersion}
+            </if>
+            <if test="appVersion=='all' or appVersion=='' or appVersion==null">
+            AND t.zjb_version IS NULL
+            </if>
+            <if test="qudao!=null and qudao!='' and qudao!='all'">
+            AND t.zjb_channel = #{qudao}
+            </if>
+            <if test="qudao=='all' or qudao=='' or qudao==null">
+            AND t.zjb_channel IS NULL
+            </if>
+            <if test="softName!=null">
+            AND t.app_name LIKE '${softName}%'
+            </if>
+		ORDER BY t.totals DESC,t.app_name
+	</select>
+
+	<!-- 单个资源运营点-添加搜索项 -->
+	<select id="addRunpointsoft" parameterType="ZjbDTO">
+	    UPDATE dm_zjb_resouce_${lidu} t
+        SET t.state = 1
+        WHERE t.app_name = #{softName}
+	</select>
+
+	<!-- 单个资源运营点-删除添加项 -->
+	<select id="deleteRunpointsoft" parameterType="ZjbDTO">
+	    UPDATE dm_zjb_resouce_${lidu} t
+        SET t.state = 0
+        WHERE t.app_name = #{softName}
+	</select>
+
+	<!-- 在线资源包软件安装 -->
+	<select id="getOnlinepkginstallList" parameterType="ZjbDTO"
+		resultType="ZJBOnlinepkginstallEntity">
+		SELECT
+    		t.app_source softname,--资源包名
+    		t.subtotals installcnt,--软件安装量
+    		t.apks innerpkgcnt,--包内软件数
+    		t.one_key clickinstall,--一键安装量
+    		t.inner_pkg pkginnerinstall --包内安装量
+		FROM dm_zjb_pck_stat_${lidu} t
+		WHERE 1 = 1
+            <if test="lidu == 'DAILY'">
+            AND t.statdate = TRUNC(#{startDate})
+            </if>
+            <if test="lidu == 'WEEKLY'">
+            AND t.statdate &lt;= TRUNC(#{startDate})
+            AND TRUNC(t.statdate + 7) > TRUNC(#{startDate})
+            </if>
+            <if test="lidu == 'MONTHLY'">
+            AND t.statdate = TRUNC(add_months(last_day(#{startDate}) + 1,-1))
+            </if>
+            <if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+            AND t.zjb_version = #{appVersion}
+            </if>
+            <if test="appVersion=='all' or appVersion=='' or appVersion==null">
+            AND t.zjb_version IS NULL
+            </if>
+            <if test="qudao!=null and qudao!='' and qudao!='all'">
+            AND t.zjb_channel = #{qudao}
+            </if>
+            <if test="qudao=='all' or qudao=='' or qudao==null">
+            AND t.zjb_channel IS NULL
+            </if>
+        ORDER BY t.subtotals DESC
+	</select>
+
+	<!-- 在线资源包内软件安装 -->
+	<select id="getOnlinepkginnerinstallList" parameterType="ZjbDTO"
+		resultType="ZJBOnlinepkginnerinstallEntity">
+		SELECT
+    		t.app_name softname,
+    		t.pkg_name pkgname,
+    		t.subtotals innerinstallcnt,
+    		t.totals installtotal
+		FROM dm_zjb_pkg_res_${lidu} t
+		WHERE 1 = 1
+            <if test="lidu == 'DAILY'">
+            AND t.statdate = TRUNC(#{startDate})
+            </if>
+            <if test="lidu == 'WEEKLY'">
+            AND t.statdate &lt;= TRUNC(#{startDate})
+            AND TRUNC(t.statdate + 7) > TRUNC(#{startDate})
+            </if>
+            <if test="lidu == 'MONTHLY'">
+            AND t.statdate = TRUNC(add_months(last_day(#{startDate}) + 1,-1))
+            </if>
+            <if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+            AND t.zjb_version = #{appVersion}
+            </if>
+            <if test="appVersion=='all' or appVersion=='' or appVersion==null">
+            AND t.zjb_version IS NULL
+            </if>
+            <if test="qudao!=null and qudao!='' and qudao!='all'">
+            AND t.zjb_channel = #{qudao}
+            </if>
+            <if test="qudao=='all' or qudao=='' or qudao==null">
+            AND t.zjb_channel IS NULL
+            </if>
+            AND t.app_name = #{softName}
+        ORDER BY t.subtotals DESC, t.app_name, t.pkg_name
+	</select>
+
+	<!-- 版本分析 -->
+	<select id="getVersionanalyList" parameterType="ZjbDTO"
+		resultType="ZJBVersionanalyEntity">
+		SELECT
+    		t.zjb_version version,
+    		sum(t.computers) startcomp,
+    		sum(t.users) startuser
+		FROM dm_zjb_basic_daily2 t
+		WHERE t.zjb_version IS NOT NULL
+            <if test="startDate != null">
+            AND t.statdate >= TRUNC(#{startDate})
+            </if>
+            <if test="endDate != null">
+            AND t.statdate &lt; TRUNC(#{endDate}+1)
+            </if>
+            AND t.statdate != TRUNC(SYSDATE)
+            <if test="qudao!=null and qudao!='' and qudao!='all'">
+            AND t.zjb_channel = #{qudao}
+            </if>
+            <if test="qudao=='all' or qudao=='' or qudao==null">
+            AND t.zjb_channel IS NULL
+            </if>
+		GROUP BY t.zjb_version
+		ORDER BY t.zjb_version DESC
+	</select>
+</mapper>

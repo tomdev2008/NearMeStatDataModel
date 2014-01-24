@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration PUBLIC
+	"-//mybatis.org//DTD Config 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<typeAliases>
+	    <!-- 【行为日志：DTO】 -->
+	    <typeAlias alias="LogDTO" type="com.nearme.statistics.dto.LogDTO" />
+
+	    <!-- 【hive任务日志：DTO】 -->
+	    <typeAlias alias="HivejobDTO" type="com.nearme.statistics.dto.HivejobDTO" />
+
+		<!-- 【输入区:DTO】 -->
+		<typeAlias alias="BaseDTO" type="com.nearme.statistics.dto.BaseDTO" />
+		<typeAlias alias="ProductinfoDTO" type="com.nearme.statistics.dto.app.common.ProductinfoDTO" />
+		<typeAlias alias="UseractionDTO" type="com.nearme.statistics.dto.app.common.UseractionDTO" />
+		<typeAlias alias="ChannelinfoDTO" type="com.nearme.statistics.dto.app.common.ChannelinfoDTO" />
+		<typeAlias alias="VersionDTO" type="com.nearme.statistics.dto.app.common.VersionDTO" />
+		<typeAlias alias="ModelDTO" type="com.nearme.statistics.dto.app.common.ModelDTO" />
+		<typeAlias alias="ZJBChannelinfoDTO" type="com.nearme.statistics.dto.app.zjb.ZJBChannelinfoDTO" />
+		<typeAlias alias="ZJBUseractioncodeDTO" type="com.nearme.statistics.dto.app.zjb.ZJBUseractioncodeDTO" />
+		<typeAlias alias="ModulerunpointDTO" type="com.nearme.statistics.dto.app.common.ModulerunpointDTO" />
+		<typeAlias alias="ModuleDTO" type="com.nearme.statistics.dto.app.common.ModuleDTO" />
+		<typeAlias alias="MeasureDTO" type="com.nearme.statistics.dto.app.common.MeasureDTO" />
+		<typeAlias alias="EventDTO" type="com.nearme.statistics.dto.app.common.EventDTO" />
+		<typeAlias alias="EventFlowDTO" type="com.nearme.statistics.dto.app.common.EventFlowDTO" />
+		<typeAlias alias="PvDTO" type="com.nearme.statistics.dto.app.common.PvDTO" />
+		<typeAlias alias="ReflectDTO" type="com.nearme.statistics.dto.ReflectDTO" />
+		<typeAlias alias="StoreDTO" type="com.nearme.statistics.dto.app.store.StoreDTO" />
+		<typeAlias alias="GameDTO" type="com.nearme.statistics.dto.app.game.GameDTO" />
+		<typeAlias alias="ZjbDTO" type="com.nearme.statistics.dto.app.zjb.ZjbDTO" />
+		<typeAlias alias="LirenDTO" type="com.nearme.statistics.dto.app.liren.LirenDTO" />
+		<typeAlias alias="GrzxDTO" type="com.nearme.statistics.dto.app.grzx.GrzxDTO" />
+		<typeAlias alias="CloudDTO" type="com.nearme.statistics.dto.app.cloud.CloudDTO" />
+		<typeAlias alias="ColorosDTO" type="com.nearme.statistics.dto.app.coloros.ColorosDTO" />
+		<typeAlias alias="KkdeskDTO" type="com.nearme.statistics.dto.app.kkdesk.KkdeskDTO" />
+		<typeAlias alias="RequestjobDTO" type="com.nearme.statistics.dto.RequestjobDTO" />
+		<typeAlias alias="InstallSourceDTO" type="com.nearme.statistics.dto.app.common.InstallSourceDTO" />
+
+		<!-- 【输出区:MODEL】 -->
+		<typeAlias alias="BaseFxModel" type="com.nearme.statistics.model.BaseFxModel" />
+
+
+		<!-- 【common公共统计区域】 -->
+		<typeAlias alias="ColumnValueEntity" type="com.nearme.statistics.model.ColumnValueEntity" />
+		<typeAlias alias="DetaildayEntity" type="com.nearme.statistics.model.common.DetaildayEntity" />
+		<typeAlias alias="DetailweekEntity" type="com.nearme.statistics.model.common.DetailweekEntity" />
+		<typeAlias alias="DetailmonthEntity" type="com.nearme.statistics.model.common.DetailmonthEntity" />
+		<typeAlias alias="GrandTotalEntity" type="com.nearme.statistics.model.common.GrandtotalEntity" />
+		<typeAlias alias="MonthhealthEntity" type="com.nearme.statistics.model.common.MonthhealthEntity" />
+		<typeAlias alias="ActivedaysEntity" type="com.nearme.statistics.model.common.ActivedaysEntity" />
+		<typeAlias alias="IncreaseremainEntity" type="com.nearme.statistics.model.common.IncreaseremainEntity" />
+		<typeAlias alias="StartremainEntity" type="com.nearme.statistics.model.common.StartremainEntity" />
+		<typeAlias alias="UserlifecycleTotalEntity" type="com.nearme.statistics.model.common.UserlifecycleTotalEntity" />
+		<typeAlias alias="UserlifecycleDecayEntity" type="com.nearme.statistics.model.common.UserlifecycleDecayEntity" />
+		<typeAlias alias="ChannelgeneralEntity" type="com.nearme.statistics.model.common.ChannelgeneralEntity" />
+		<typeAlias alias="ChannelqualityEntity" type="com.nearme.statistics.model.common.ChannelqualityEntity" />
+		<typeAlias alias="ChanneldailyEntity" type="com.nearme.statistics.model.common.ChanneldailyEntity" />
+		<typeAlias alias="ChannelhealthEntity" type="com.nearme.statistics.model.common.ChannelhealthEntity" />
+		<typeAlias alias="PagevisitEntity" type="com.nearme.statistics.model.common.PagevisitEntity" />
+		<typeAlias alias="PagejumpEntity" type="com.nearme.statistics.model.common.PagejumpEntity" />
+		<typeAlias alias="SelfeventEntity" type="com.nearme.statistics.model.common.SelfeventEntity" />
+		<typeAlias alias="ErrorEntity" type="com.nearme.statistics.model.common.ErrorEntity" />
+		<typeAlias alias="ErrorDetailEntity" type="com.nearme.statistics.model.common.ErrorDetailEntity" />
+		<typeAlias alias="VersiondayEntity" type="com.nearme.statistics.model.common.VersiondayEntity" />
+		<typeAlias alias="NetdayEntity" type="com.nearme.statistics.model.common.NetdayEntity" />
+		<typeAlias alias="ModuledayEntity" type="com.nearme.statistics.model.common.ModuledayEntity" />
+		<typeAlias alias="UactionEntity" type="com.nearme.statistics.model.common.UactionEntity" />
+		<typeAlias alias="WholeuserlifecycleEntity" type="com.nearme.statistics.model.common.WholeuserlifecycleEntity" />
+		<typeAlias alias="ActivedaysdistributeEntity" type="com.nearme.statistics.model.common.ActivedaysdistributeEntity" />
+		<typeAlias alias="NewuseractiveEntity" type="com.nearme.statistics.model.common.NewuseractiveEntity" />
+		<typeAlias alias="ProductinfoEntity" type="com.nearme.statistics.model.common.ProductinfoEntity" />
+		<typeAlias alias="ProductrunEntity" type="com.nearme.statistics.model.common.ProductrunEntity" />
+		<typeAlias alias="FSResourcetypeChildEntity" type="com.nearme.statistics.model.common.FSResourcetypeChildEntity" />
+		<typeAlias alias="FSTopresourceEntity" type="com.nearme.statistics.model.common.FSTopresourceEntity" />
+		<typeAlias alias="FSNaturemodleChildEntity" type="com.nearme.statistics.model.common.FSNaturemodleChildEntity" />
+		<typeAlias alias="FSNaturemodlenumEntity" type="com.nearme.statistics.model.common.FSNaturemodlenumEntity" />
+		<typeAlias alias="FSUpdatenumEntity" type="com.nearme.statistics.model.common.FSUpdatenumEntity" />
+		<typeAlias alias="ProductrunEntity" type="com.nearme.statistics.model.common.ProductrunEntity" />
+		<typeAlias alias="KVEventEntity" type="com.nearme.statistics.model.common.KVEventEntity" />
+		<typeAlias alias="KVEventIndexEntity" type="com.nearme.statistics.model.common.KVEventIndexEntity" />
+		<typeAlias alias="KVEventDetailEntity" type="com.nearme.statistics.model.common.KVEventDetailEntity" />
+		<typeAlias alias="KVEventFlowEntity" type="com.nearme.statistics.model.common.KVEventFlowEntity" />
+		<typeAlias alias="ModuledownChildEntity" type="com.nearme.statistics.model.common.ModuledownChildEntity" />
+		<typeAlias alias="ModuledownEntity" type="com.nearme.statistics.model.common.ModuledownEntity" />
+		<typeAlias alias="ModulepositionChildEntity" type="com.nearme.statistics.model.common.ModulepositionChildEntity" />
+		<typeAlias alias="ModulepositionEntity" type="com.nearme.statistics.model.common.ModulepositionEntity" />
+		<typeAlias alias="DowndayEntity" type="com.nearme.statistics.model.common.DowndayEntity" />
+		<typeAlias alias="DownweekEntity" type="com.nearme.statistics.model.common.DownweekEntity" />
+		<typeAlias alias="DownmonthEntity" type="com.nearme.statistics.model.common.DownmonthEntity" />
+		<typeAlias alias="DownremainEntity" type="com.nearme.statistics.model.common.DownremainEntity" />
+		<typeAlias alias="DownsourceEntity" type="com.nearme.statistics.model.common.DownsourceEntity" />
+		<typeAlias alias="DownsourceCPTEntity" type="com.nearme.statistics.model.common.DownsourceCPTEntity" />
+		<typeAlias alias="DownleijiEntity" type="com.nearme.statistics.model.common.DownleijiEntity" />
+		<typeAlias alias="HHStartEntity" type="com.nearme.statistics.model.common.HHStartEntity" />
+		<typeAlias alias="RequestEntity" type="com.nearme.statistics.model.common.RequestEntity" />
+		<typeAlias alias="PvEntity" type="com.nearme.statistics.model.common.PvEntity" />
+		<typeAlias alias="VisitPathEntity" type="com.nearme.statistics.model.common.VisitPathEntity" />
+		<typeAlias alias="Remain30daysEntity" type="com.nearme.statistics.model.common.Remain30daysEntity" />
+
+
+		<!-- 【common hive】 -->
+		<typeAlias alias="HivejobEntity" type="com.nearme.statistics.model.common.HivejobEntity" />
+
+		<!-- 【common公共设置】 -->
+		<typeAlias alias="UseractionEntity" type="com.nearme.statistics.model.commonsetting.UseractionEntity" />
+		<typeAlias alias="ChannelinfoEntity" type="com.nearme.statistics.model.commonsetting.ChannelinfoEntity" />
+		<typeAlias alias="VersionEntity" type="com.nearme.statistics.model.commonsetting.VersionEntity" />
+		<typeAlias alias="ModelEntity" type="com.nearme.statistics.model.commonsetting.ModelEntity" />
+		<typeAlias alias="ModulerunpointEntity" type="com.nearme.statistics.model.commonsetting.ModulerunpointEntity" />
+		<typeAlias alias="ModuleEntity" type="com.nearme.statistics.model.commonsetting.ModuleEntity" />
+		<typeAlias alias="MeasureEntity" type="com.nearme.statistics.model.commonsetting.MeasureEntity" />
+		<typeAlias alias="InstallSourceEntity" type="com.nearme.statistics.model.commonsetting.InstallSourceEntity" />
+
+
+		<!-- 【应用统计区域】 -->
+		<!-- Nearme商店 -->
+		<typeAlias alias="DetailuserclientEntity" type="com.nearme.statistics.model.store.DetailuserclientEntity" />
+		<typeAlias alias="HomepagerecommendEntity" type="com.nearme.statistics.model.store.HomepagerecommendEntity" />
+		<typeAlias alias="PushEntity" type="com.nearme.statistics.model.store.PushEntity" />
+		<typeAlias alias="AppEntity" type="com.nearme.statistics.model.store.AppEntity" />
+		<typeAlias alias="GameEntity" type="com.nearme.statistics.model.store.GameEntity" />
+		<typeAlias alias="TuijianEntity" type="com.nearme.statistics.model.store.TuijianEntity" />
+		<typeAlias alias="SearchEntity" type="com.nearme.statistics.model.store.SearchEntity" />
+		<typeAlias alias="DowngiftEntity" type="com.nearme.statistics.model.store.DowngiftEntity" />
+		<typeAlias alias="ZuantiEntity" type="com.nearme.statistics.model.store.ZuantiEntity" />
+		<typeAlias alias="ActivecenterEntity" type="com.nearme.statistics.model.store.ActivecenterEntity" />
+		<typeAlias alias="InstallmustEntity" type="com.nearme.statistics.model.store.InstallmustEntity" />
+		<typeAlias alias="PoprecentEntity" type="com.nearme.statistics.model.store.PoprecentEntity" />
+		<typeAlias alias="SortEntity" type="com.nearme.statistics.model.store.SortEntity" />
+		<typeAlias alias="ClientcontentEntity" type="com.nearme.statistics.model.store.ClientcontentEntity" />
+		<typeAlias alias="DownInstallEntity" type="com.nearme.statistics.model.store.DownInstallEntity" />
+		<typeAlias alias="InstallStatEntity" type="com.nearme.statistics.model.store.InstallStatEntity" />
+		<typeAlias alias="StoreEditorrecommendEntity" type="com.nearme.statistics.model.store.StoreEditorrecommendEntity" />
+		<typeAlias alias="StoreHotsearchEntity" type="com.nearme.statistics.model.store.StoreHotsearchEntity" />
+		<typeAlias alias="StoreTypeselectEntity" type="com.nearme.statistics.model.store.StoreTypeselectEntity" />
+
+		<!-- Nearme书城 -->
+        <!-- Nearme音乐 -->
+		<!-- 女性市场 -->
+		<!-- 游戏堂 -->
+		<typeAlias alias="GameinfoEntity" type="com.nearme.statistics.model.game.GameinfoEntity" />
+		<typeAlias alias="DownloadEntity" type="com.nearme.statistics.model.game.DownloadEntity" />
+		<typeAlias alias="DownhomepageEntity" type="com.nearme.statistics.model.game.DownhomepageEntity" />
+		<typeAlias alias="DownrankEntity" type="com.nearme.statistics.model.game.DownrankEntity" />
+		<typeAlias alias="DownsortEntity" type="com.nearme.statistics.model.game.DownsortEntity" />
+		<typeAlias alias="DownspecialtopicEntity" type="com.nearme.statistics.model.game.DownspecialtopicEntity" />
+		<typeAlias alias="DownsearchEntity" type="com.nearme.statistics.model.game.DownsearchEntity" />
+		<typeAlias alias="DownsearchrecommendEntity" type="com.nearme.statistics.model.game.DownsearchrecommendEntity" />
+		<typeAlias alias="DownactivecenterEntity" type="com.nearme.statistics.model.game.DownactivecenterEntity" />
+		<typeAlias alias="UpdateEntity" type="com.nearme.statistics.model.game.UpdateEntity" />
+		<typeAlias alias="StartEntity" type="com.nearme.statistics.model.game.StartEntity" />
+		<typeAlias alias="RankEntity" type="com.nearme.statistics.model.game.RankEntity" />
+		<typeAlias alias="SearchkeyEntity" type="com.nearme.statistics.model.game.SearchkeyEntity" />
+		<typeAlias alias="ProductEntity" type="com.nearme.statistics.model.game.ProductEntity" />
+		<typeAlias alias="ProductreportdailyEntity" type="com.nearme.statistics.model.game.ProductreportdailyEntity" />
+		<typeAlias alias="ProductreportweeklyEntity" type="com.nearme.statistics.model.game.ProductreportweeklyEntity" />
+		<typeAlias alias="ProductreportmonthlyEntity" type="com.nearme.statistics.model.game.ProductreportmonthlyEntity" />
+		<typeAlias alias="JointgameEntity" type="com.nearme.statistics.model.game.JointgameEntity" />
+		<typeAlias alias="GameRemainEntity" type="com.nearme.statistics.model.game.GameRemainEntity" />
+		<typeAlias alias="GameFeeEntity" type="com.nearme.statistics.model.game.GameFeeEntity" />
+
+		<!-- AnyPhoto乐图 -->
+		<!-- 同步 -->
+		<!-- 纳米笔记 -->
+		<!-- OTA -->
+		<!-- FindPhone -->
+		<!-- IM云信 -->
+		<!-- 云相册 -->
+		<typeAlias alias="CloudFlowdistributeEntity" type="com.nearme.statistics.model.cloud.CloudFlowdistributeEntity" />
+		<typeAlias alias="CloudDayincreaseEntity" type="com.nearme.statistics.model.cloud.CloudDayincreaseEntity" />
+		<typeAlias alias="CloudRemainEntity" type="com.nearme.statistics.model.cloud.CloudRemainEntity" />
+		<typeAlias alias="CloudPathEntity" type="com.nearme.statistics.model.cloud.CloudPathEntity" />
+
+		<!-- OPPO浏览器 -->
+		<!-- 网盘 -->
+		<!-- 云备份 -->
+		<!-- NearMe云 -->
+		<!-- 个人中心 -->
+		<typeAlias alias="GrzxUsercoverEntity" type="com.nearme.statistics.model.grzx.GrzxUsercoverEntity" />
+		<typeAlias alias="GrzxNewfromEntity" type="com.nearme.statistics.model.grzx.GrzxNewfromEntity" />
+		<typeAlias alias="GrzxRegisterfromEntity" type="com.nearme.statistics.model.grzx.GrzxRegisterfromEntity" />
+
+		<!-- OPPO乐园 -->
+		<!-- ULIKE丽人 -->
+		<typeAlias alias="LRHomepageEntity" type="com.nearme.statistics.model.liren.LRHomepageEntity" />
+		<typeAlias alias="LRCategoryEntity" type="com.nearme.statistics.model.liren.LRCategoryEntity" />
+		<typeAlias alias="LRGoodsEntity" type="com.nearme.statistics.model.liren.LRGoodsEntity" />
+		<typeAlias alias="LRGoodsqualityEntity" type="com.nearme.statistics.model.liren.LRGoodsqualityEntity" />
+		<typeAlias alias="LRTaghotEntity" type="com.nearme.statistics.model.liren.LRTaghotEntity" />
+		<typeAlias alias="LRPushEntity" type="com.nearme.statistics.model.liren.LRPushEntity" />
+		<typeAlias alias="LRCatchgoodsEntity" type="com.nearme.statistics.model.liren.LRCatchgoodsEntity" />
+		<typeAlias alias="LRVersion4upEntity" type="com.nearme.statistics.model.liren.LRVersion4upEntity" />
+		<!-- 天气 -->
+
+		<!-- 装机宝 -->
+		<typeAlias alias="ZjbVersionEntity" type="com.nearme.statistics.model.zjb.ZjbVersionEntity" />
+		<typeAlias alias="BasedateEntity" type="com.nearme.statistics.model.zjb.BasedateEntity" />
+		<typeAlias alias="ChannelserviceEntity" type="com.nearme.statistics.model.zjb.ChannelserviceEntity" />
+		<typeAlias alias="SoftinstallEntity" type="com.nearme.statistics.model.zjb.SoftinstallEntity" />
+		<typeAlias alias="ServermodelEntity" type="com.nearme.statistics.model.zjb.ServermodelEntity" />
+		<typeAlias alias="ModuleinstallEntity" type="com.nearme.statistics.model.zjb.ModuleinstallEntity" />
+		<typeAlias alias="TuiguanginstallEntity" type="com.nearme.statistics.model.zjb.TuiguanginstallEntity" />
+		<typeAlias alias="ZjbVersionEntity" type="com.nearme.statistics.model.zjb.ZjbVersionEntity" />
+		<typeAlias alias="PerformanceEntity" type="com.nearme.statistics.model.zjb.PerformanceEntity" />
+		<typeAlias alias="ZJBActivedaysdistributeEntity" type="com.nearme.statistics.model.zjb.ZJBActivedaysdistributeEntity" />
+		<typeAlias alias="ZJBUseractionEntity" type="com.nearme.statistics.model.zjb.ZJBUseractionEntity" />
+		<typeAlias alias="ZJBSoftdownEntity" type="com.nearme.statistics.model.zjb.ZJBSoftdownEntity" />
+		<typeAlias alias="ZJBSoftdowntopEntity" type="com.nearme.statistics.model.zjb.ZJBSoftdowntopEntity" />
+		<typeAlias alias="ZJBPkginstallEntity" type="com.nearme.statistics.model.zjb.ZJBPkginstallEntity" />
+		<typeAlias alias="ZJBRunpointEntity" type="com.nearme.statistics.model.zjb.ZJBRunpointEntity" />
+		<typeAlias alias="ZJBOnlinepkginstallEntity" type="com.nearme.statistics.model.zjb.ZJBOnlinepkginstallEntity" />
+		<typeAlias alias="ZJBOnlinepkginnerinstallEntity" type="com.nearme.statistics.model.zjb.ZJBOnlinepkginnerinstallEntity" />
+		<typeAlias alias="ZJBVersionanalyEntity" type="com.nearme.statistics.model.zjb.ZJBVersionanalyEntity" />
+		<typeAlias alias="ZJBChannelinfoEntity" type="com.nearme.statistics.model.zjbsetting.ZJBChannelinfoEntity" />
+		<typeAlias alias="ZJBUseractioncodeEntity" type="com.nearme.statistics.model.zjbsetting.ZJBUseractioncodeEntity" />
+
+		<!-- PC主题编辑器 -->
+		<!-- 享说 -->
+		<!-- 小欧助手 -->
+		<!-- 小欧酷讯 -->
+		<!-- 主题商店 -->
+		<!-- 可可桌面 -->
+
+		<!-- color OS -->
+		<typeAlias alias="COSAvgstartcntrankEntity" type="com.nearme.statistics.model.coloros.COSAvgstartcntrankEntity" />
+		<typeAlias alias="COSStartrankEntity" type="com.nearme.statistics.model.coloros.COSStartrankEntity" />
+		<typeAlias alias="COSInstallrankEntity" type="com.nearme.statistics.model.coloros.COSInstallrankEntity" />
+		<typeAlias alias="COSDetailEntity" type="com.nearme.statistics.model.coloros.COSDetailEntity" />
+		<typeAlias alias="COSVersionActiveEntity" type="com.nearme.statistics.model.coloros.COSVersionActiveEntity" />
+		<typeAlias alias="COSAreaEntity" type="com.nearme.statistics.model.coloros.COSAreaEntity" />
+		<typeAlias alias="COSWeeknirEntity" type="com.nearme.statistics.model.coloros.COSWeeknirEntity" />
+		<typeAlias alias="COSMonthsrEntity" type="com.nearme.statistics.model.coloros.COSMonthsrEntity" />
+		<typeAlias alias="COSNetdistributeEntity" type="com.nearme.statistics.model.coloros.COSNetdistributeEntity" />
+
+		<!-- 【系统维护区域】 -->
+		<!-- 系统维护区域 - 基础码表区域 -->
+		<typeAlias alias="AppInfoDTO" type="com.nearme.statistics.dto.sys.AppInfoDTO" />
+		<typeAlias alias="AppVersionDTO" type="com.nearme.statistics.dto.sys.AppVersionDTO" />
+		<typeAlias alias="CategoryDTO" type="com.nearme.statistics.dto.sys.CategoryDTO" />
+		<typeAlias alias="ChannelDTO" type="com.nearme.statistics.dto.sys.ChannelDTO" />
+		<typeAlias alias="GCProductDTO" type="com.nearme.statistics.dto.sys.GCProductDTO" />
+		<typeAlias alias="NetworkTypeDTO" type="com.nearme.statistics.dto.sys.NetworkTypeDTO" />
+		<typeAlias alias="AdminDTO" type="com.nearme.statistics.dto.sys.AdminDTO" />
+		<typeAlias alias="AppInfoEntity" type="com.nearme.statistics.model.sys.systemTable.AppInfoEntity" />
+		<typeAlias alias="AppVersionEntity" type="com.nearme.statistics.model.sys.systemTable.AppVersionEntity" />
+		<typeAlias alias="CategoryEntity" type="com.nearme.statistics.model.sys.systemTable.CategoryEntity" />
+		<typeAlias alias="ChannelEntity" type="com.nearme.statistics.model.sys.systemTable.ChannelEntity" />
+		<typeAlias alias="GCProductEntity" type="com.nearme.statistics.model.sys.systemTable.GCProductEntity" />
+		<typeAlias alias="NetworkTypeEntity" type="com.nearme.statistics.model.sys.systemTable.NetworkTypeEntity" />
+		<!-- 系统维护区域 - 权限管理区域 -->
+		<typeAlias alias="Admin" type="com.nearme.statistics.model.sys.admin.Admin" />
+		<typeAlias alias="Role" type="com.nearme.statistics.model.sys.admin.Role" />
+		<typeAlias alias="Group" type="com.nearme.statistics.model.sys.admin.Group" />
+		<typeAlias alias="IpFilter" type="com.nearme.statistics.model.sys.admin.IpFilter" />
+		<typeAlias alias="Parameters" type="com.nearme.statistics.model.sys.admin.Parameters" />
+		<typeAlias alias="SystemGCProductInfoEntity" type="com.nearme.statistics.model.sys.systemTable.SystemGCProductInfoEntity" />
+		<typeAlias alias="MenuItem" type="com.nearme.statistics.model.sys.MenuItem" />
+		<!-- 【系统维护区域】END -->
+	</typeAliases>
+	<mappers>
+		<!-- 【公共统计区域】 -->
+		<mapper resource="com/nearme/statistics/config/mapper/app/common/CommonTBL.xml" />
+		<mapper resource="com/nearme/statistics/config/mapper/app/common/UseractionTBL.xml" />
+		<mapper resource="com/nearme/statistics/config/mapper/app/common/ChannelinfoTBL.xml" />
+		<mapper resource="com/nearme/statistics/config/mapper/app/common/VersionTBL.xml" />
+		<mapper resource="com/nearme/statistics/config/mapper/app/common/ModelTBL.xml" />
+		<mapper resource="com/nearme/statistics/config/mapper/app/common/ModulerunpointTBL.xml" />
+		<mapper resource="com/nearme/statistics/config/mapper/app/common/ModuleTBL.xml" />
+		<mapper resource="com/nearme/statistics/config/mapper/app/common/EventTBL.xml" />
+		<mapper resource="com/nearme/statistics/config/mapper/app/common/MeasureTBL.xml" />
+		<mapper resource="com/nearme/statistics/config/mapper/app/common/PvTBL.xml" />
+		<mapper resource="com/nearme/statistics/config/mapper/app/common/InstallSourceTBL.xml" />
+
+		<!-- 【反馈】 -->
+		<mapper resource="com/nearme/statistics/config/mapper/sys/ReflectTBL.xml" />
+
+		<!-- 【用户行为log】 -->
+		<mapper resource="com/nearme/statistics/config/mapper/sys/LogTBL.xml" />
+
+		<!-- 【hive 任务job】 -->
+		<mapper resource="com/nearme/statistics/config/mapper/app/common/HivejobTBL.xml" />
+
+		<!-- 【应用统计区域】 -->
+		<!-- Nearme商店 -->
+		<mapper resource="com/nearme/statistics/config/mapper/app/store/StoreTBL.xml" />
+		<!-- Nearme书城 -->
+        <!-- Nearme音乐 -->
+		<!-- 女性市场 -->
+		<!-- 游戏堂 -->
+		<mapper resource="com/nearme/statistics/config/mapper/app/game/GameTBL.xml" />
+		<!-- AnyPhoto乐图 -->
+		<!-- 同步 -->
+		<!-- 纳米笔记 -->
+		<!-- OTA -->
+		<!-- FindPhone -->
+		<!-- IM云信 -->
+		<!-- 云相册 -->
+		<mapper resource="com/nearme/statistics/config/mapper/app/cloud/CloudTBL.xml" />
+		<!-- OPPO浏览器 -->
+		<!-- 网盘 -->
+		<!-- 云备份 -->
+		<!-- NearMe云 -->
+		<!-- 个人中心 -->
+		<mapper resource="com/nearme/statistics/config/mapper/app/grzx/GrzxTBL.xml" />
+		<!-- OPPO乐园 -->
+		<!-- ULIKE丽人 -->
+		<mapper resource="com/nearme/statistics/config/mapper/app/liren/LirenTBL.xml" />
+		<!-- 天气 -->
+		<!-- PC手机助手 -->
+		<!-- PC主题编辑器 -->
+		<!-- 享说 -->
+		<!-- 小欧助手 -->
+		<!-- 小欧酷讯 -->
+		<!-- 主题商店 -->
+		<!-- 装机宝 -->
+		<mapper resource="com/nearme/statistics/config/mapper/app/zjb/ZjbTBL.xml" />
+		<mapper resource="com/nearme/statistics/config/mapper/app/zjb/ZjbChannelinfoTBL.xml" />
+		<mapper resource="com/nearme/statistics/config/mapper/app/zjb/ZjbUseractioncodeTBL.xml" />
+
+		<!-- 可可桌面 -->
+		<mapper resource="com/nearme/statistics/config/mapper/app/kkdesk/KkdeskTBL.xml" />
+
+		<!-- color OS -->
+		<mapper resource="com/nearme/statistics/config/mapper/app/coloros/ColorosTBL.xml" />
+
+
+		<!-- 【系统维护区域】 -->
+		<mapper resource="com/nearme/statistics/config/mapper/sys/AdminTBL.xml" />
+		<mapper resource="com/nearme/statistics/config/mapper/sys/SystemManageTBL.xml" />
+	</mappers>
+</configuration>

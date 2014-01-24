@@ -1,0 +1,427 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+	<!-- 日明细数据 -->
+	<bean id="commonDetaildayAction" class="com.nearme.statistics.action.app.common.DetaildayAction"
+	    scope="prototype">
+	    <property name="service">
+	        <ref bean="commonService"/>
+	    </property>
+	</bean>
+	<!-- 周明细数据 -->
+	<bean id="commonDetailweekAction" class="com.nearme.statistics.action.app.common.DetailweekAction"
+	    scope="prototype">
+	    <property name="service">
+	        <ref bean="commonService" />
+	    </property>
+	</bean>
+	<!-- 月明细数据 -->
+	<bean id="commonDetailmonthAction" class="com.nearme.statistics.action.app.common.DetailmonthAction"
+	    scope="prototype">
+	    <property name="service">
+	        <ref bean="commonService" />
+	    </property>
+	</bean>
+	<!-- 累计数据 -->
+	<bean id="commonGrandtotalAction" class="com.nearme.statistics.action.app.common.GrandtotalAction"
+	    scope="prototype">
+	    <property name="service">
+	        <ref bean="commonService" />
+	    </property>
+	</bean>
+	<!-- 月健康度数据 -->
+	<bean id="commonMonthhealthAction" class="com.nearme.statistics.action.app.common.MonthhealthAction"
+	    scope="prototype">
+	    <property name="service">
+	        <ref bean="commonService" />
+	    </property>
+	</bean>
+	<!-- 活跃天数 -->
+	<bean id="commonActivedaysAction" class="com.nearme.statistics.action.app.common.ActivedaysAction"
+	    scope="prototype">
+	    <property name="service">
+	        <ref bean="commonService" />
+	    </property>
+	</bean>
+	<!-- 新增留存 -->
+	<bean id="commonIncreaseremainAction" class="com.nearme.statistics.action.app.common.IncreaseremainAction"
+	    scope="prototype">
+	    <property name="service">
+	        <ref bean="commonService" />
+	    </property>
+	</bean>
+	<!-- 启动留存 -->
+	<bean id="commonStartremainAction" class="com.nearme.statistics.action.app.common.StartremainAction"
+	    scope="prototype">
+	    <property name="service">
+	        <ref bean="commonService" />
+	    </property>
+	</bean>
+	<!-- 用户生命周期 -->
+	<bean id="commonUserlifecycleAction" class="com.nearme.statistics.action.app.common.UserlifecycleAction"
+	    scope="prototype">
+	    <property name="service">
+	        <ref bean="commonService" />
+	    </property>
+	</bean>
+	<!-- 渠道概况 -->
+	<bean id="commonChannelgeneralAction" class="com.nearme.statistics.action.app.common.ChannelgeneralAction"
+	    scope="prototype">
+	    <property name="service">
+	        <ref bean="commonService" />
+	    </property>
+	</bean>
+	<!-- 渠道质量 -->
+	<bean id="commonChannelqualityAction" class="com.nearme.statistics.action.app.common.ChannelqualityAction"
+	    scope="prototype">
+	    <property name="service">
+	        <ref bean="commonService" />
+	    </property>
+	</bean>
+	<!-- 渠道日明细 -->
+	<bean id="commonChanneldailyAction" class="com.nearme.statistics.action.app.common.ChanneldailyAction"
+	    scope="prototype">
+	    <property name="service">
+	        <ref bean="commonService"/>
+	    </property>
+	</bean>
+	<!-- 渠道健康度 -->
+	<bean id="commonChannelhealthAction" class="com.nearme.statistics.action.app.common.ChannelhealthAction"
+	    scope="prototype">
+	    <property name="service">
+	        <ref bean="commonService"/>
+	    </property>
+	</bean>
+	<!-- 页面访问分析 -->
+	<bean id="commonPagevisitAction" class="com.nearme.statistics.action.app.common.PagevisitAction"
+	    scope="prototype">
+	    <property name="service">
+	        <ref bean="commonService" />
+	    </property>
+	</bean>
+	<!-- 自定义事件 -->
+	<bean id="commonSelfeventAction" class="com.nearme.statistics.action.app.common.SelfeventAction"
+	    scope="prototype">
+	    <property name="service">
+	        <ref bean="commonService" />
+	    </property>
+	</bean>
+	<!-- 地区分析 -->
+	<bean id="commonAreaanalyAction" class="com.nearme.statistics.action.app.common.AreaanalyAction"
+	    scope="prototype">
+	    <property name="service">
+	        <ref bean="commonService" />
+	    </property>
+	</bean>
+	<!-- 使用频率时长分析 -->
+	<bean id="commonUseoftenanalyAction" class="com.nearme.statistics.action.app.common.UseoftenanalyAction"
+	    scope="prototype">
+	    <property name="service">
+	        <ref bean="commonService" />
+	    </property>
+	</bean>
+	<!-- 错误分析 -->
+	<bean id="commonErroranalyAction" class="com.nearme.statistics.action.app.common.ErroranalyAction"
+	    scope="prototype">
+	    <property name="service">
+	        <ref bean="commonService" />
+	    </property>
+	</bean>
+
+	<!-- 版本占比 -->
+	<bean id="commonVersionzhanbiAction" class="com.nearme.statistics.action.app.common.VersionzhanbiAction"
+	    scope="prototype">
+	    <property name="service">
+	        <ref bean="commonService" />
+	    </property>
+	</bean>
+	<!-- 网络占比 -->
+	<bean id="commonNetzhanbiAction" class="com.nearme.statistics.action.app.common.NetzhanbiAction"
+	    scope="prototype">
+	    <property name="service">
+	        <ref bean="commonService" />
+	    </property>
+	</bean>
+	<!-- 终端占比 -->
+	<bean id="commonModulezhanbiAction" class="com.nearme.statistics.action.app.common.ModulezhanbiAction"
+	    scope="prototype">
+	    <property name="service">
+	        <ref bean="commonService" />
+	    </property>
+	</bean>
+
+	<!-- 版本日明细 -->
+	<bean id="commonVersiondayAction" class="com.nearme.statistics.action.app.common.VersiondayAction"
+	    scope="prototype">
+	    <property name="service">
+	        <ref bean="commonService" />
+	    </property>
+	</bean>
+	<!-- 网络日明细 -->
+	<bean id="commonNetdayAction" class="com.nearme.statistics.action.app.common.NetdayAction"
+	    scope="prototype">
+	    <property name="service">
+	        <ref bean="commonService" />
+	    </property>
+	</bean>
+	<!-- 终端日明细 -->
+	<bean id="commonModuledayAction" class="com.nearme.statistics.action.app.common.ModuledayAction"
+	    scope="prototype">
+	    <property name="service">
+	        <ref bean="commonService" />
+	    </property>
+	</bean>
+
+	<!-- 用户行为分析 -->
+	<bean id="commonUseractionAction" class="com.nearme.statistics.action.app.common.UseractionAction"
+	    scope="prototype">
+	    <property name="service">
+	        <ref bean="commonService" />
+	    </property>
+	    <property name="actionService">
+	        <ref bean="useractionService" />
+	    </property>
+	</bean>
+
+	<!-- 整体用户生命周期 -->
+	<bean id="commonWholeuserlifecycleAction" class="com.nearme.statistics.action.app.common.WholeuserlifecycleAction"
+	    scope="prototype">
+	    <property name="service">
+	        <ref bean="hivecommonService" />
+	    </property>
+	    <property name="jobservice">
+	        <ref bean="hivejobService" />
+	    </property>
+	</bean>
+
+	<!-- 月活天数和分布 -->
+	<bean id="commonActivedaysdistributeAction" class="com.nearme.statistics.action.app.common.ActivedaysdistributeAction"
+	    scope="prototype">
+	    <property name="service">
+	        <ref bean="hivecommonService" />
+	    </property>
+	    <property name="jobservice">
+	        <ref bean="hivejobService" />
+	    </property>
+	</bean>
+
+	<!-- 新用户活跃 -->
+	<bean id="commonNewuseractiveAction" class="com.nearme.statistics.action.app.common.NewuseractiveAction"
+	    scope="prototype">
+	    <property name="service">
+	        <ref bean="hivecommonService" />
+	    </property>
+	    <property name="jobservice">
+	        <ref bean="hivejobService" />
+	    </property>
+	</bean>
+
+	<!-- 流量结构分析 -->
+	<bean id="commonFlowstructAction" class="com.nearme.statistics.action.app.common.FlowstructAction"
+	    scope="prototype">
+	    <property name="service">
+	        <ref bean="hivecommonService" />
+	    </property>
+	    <property name="jobservice">
+	        <ref bean="hivejobService" />
+	    </property>
+	</bean>
+
+	<!-- 模块下载量分析 -->
+	<bean id="commonModuledownAction" class="com.nearme.statistics.action.app.common.ModuleDownAction"
+	    scope="prototype">
+	    <property name="service">
+	        <ref bean="hivecommonService" />
+	    </property>
+	    <property name="jobservice">
+	        <ref bean="hivejobService" />
+	    </property>
+	    <property name="moduleservice">
+	        <ref bean="moduleService" />
+	    </property>
+	</bean>
+
+	<!-- 模块位置下载分析 -->
+	<bean id="commonModulepositionAction" class="com.nearme.statistics.action.app.common.ModulePositionAction"
+	    scope="prototype">
+	    <property name="service">
+	        <ref bean="hivecommonService" />
+	    </property>
+	    <property name="jobservice">
+	        <ref bean="hivejobService" />
+	    </property>
+	    <property name="moduleservice">
+	        <ref bean="moduleService" />
+	    </property>
+	</bean>
+
+	<!-- 产品名 -->
+	<bean id="commonProductAction" class="com.nearme.statistics.action.app.common.ProductAction"
+	    scope="prototype">
+	    <property name="service">
+	        <ref bean="hivecommonService" />
+	    </property>
+	</bean>
+
+	<!-- 单个资源运营 -->
+	<bean id="commonProductrunAction" class="com.nearme.statistics.action.app.common.ProductrunAction"
+	    scope="prototype">
+	    <property name="service">
+	        <ref bean="hivecommonService" />
+	    </property>
+	    <property name="jobservice">
+	        <ref bean="hivejobService" />
+	    </property>
+	</bean>
+
+	<!-- 自定义事件 -->
+	<bean id="commonEventAction" class="com.nearme.statistics.action.app.common.EventAction"
+	    scope="prototype">
+	    <property name="service">
+	        <ref bean="eventService" />
+	    </property>
+	</bean>
+
+	<!-- 事件转化率 -->
+	<bean id="commonEventConversionAction" class="com.nearme.statistics.action.app.common.EventConversionAction"
+	    scope="prototype">
+	    <property name="service">
+	        <ref bean="eventService" />
+	    </property>
+	</bean>
+
+	<!-- 下载日明细 -->
+	<bean id="commonDowndayAction" class="com.nearme.statistics.action.app.common.DowndayAction"
+	    scope="prototype">
+	    <property name="service">
+	        <ref bean="commonService"/>
+	    </property>
+	</bean>
+	<!-- 下载周明细 -->
+	<bean id="commonDownweekAction" class="com.nearme.statistics.action.app.common.DownweekAction"
+	    scope="prototype">
+	    <property name="service">
+	        <ref bean="commonService" />
+	    </property>
+	</bean>
+	<!-- 下载月明细 -->
+	<bean id="commonDownmonthAction" class="com.nearme.statistics.action.app.common.DownmonthAction"
+	    scope="prototype">
+	    <property name="service">
+	        <ref bean="commonService" />
+	    </property>
+	</bean>
+	<!-- 下载终端占比 -->
+	<bean id="commonDownmobilezhanbiAction" class="com.nearme.statistics.action.app.common.DownmobilezhanbiAction"
+	    scope="prototype">
+	    <property name="service">
+	        <ref bean="commonService" />
+	    </property>
+	</bean>
+	<!-- 下载渠道占比 -->
+	<bean id="commonDownqudaozhanbiAction" class="com.nearme.statistics.action.app.common.DownqudaozhanbiAction"
+	    scope="prototype">
+	    <property name="service">
+	        <ref bean="commonService" />
+	    </property>
+	</bean>
+	<!-- 下载版本占比 -->
+	<bean id="commonDownversionzhanbiAction" class="com.nearme.statistics.action.app.common.DownversionzhanbiAction"
+	    scope="prototype">
+	    <property name="service">
+	        <ref bean="commonService" />
+	    </property>
+	</bean>
+	<!-- 下载留存-->
+	<bean id="commonDownremainAction" class="com.nearme.statistics.action.app.common.DownremainAction"
+	    scope="prototype">
+	    <property name="service">
+	        <ref bean="commonService" />
+	    </property>
+	</bean>
+	<!-- 单个资源下载-->
+	<bean id="commonDownsourceAction" class="com.nearme.statistics.action.app.common.DownsourceAction"
+	    scope="prototype">
+	    <property name="service">
+	        <ref bean="commonService" />
+	    </property>
+	    <property name="moduleservice">
+	        <ref bean="moduleService" />
+	    </property>
+	</bean>
+	<!-- 下载累计 -->
+	<bean id="commonDownleijiAction" class="com.nearme.statistics.action.app.common.DownleijiAction"
+	    scope="prototype">
+	    <property name="service">
+	        <ref bean="commonService" />
+	    </property>
+	</bean>
+
+	<!-- 时段分析-->
+	<bean id="commonHHStartAction" class="com.nearme.statistics.action.app.common.HHStartAction"
+	    scope="prototype">
+	    <property name="service">
+	        <ref bean="commonService" />
+	    </property>
+	</bean>
+	<!-- 使用时长-->
+	<bean id="commonPVDurationAction" class="com.nearme.statistics.action.app.common.PVDurationAction"
+	    scope="prototype">
+	    <property name="service">
+	        <ref bean="pvService" />
+	    </property>
+	</bean>
+	<!-- 使用频率-->
+	<bean id="commonPVFrequencyAction" class="com.nearme.statistics.action.app.common.PVFrequencyAction"
+	    scope="prototype">
+	    <property name="service">
+	        <ref bean="pvService" />
+	    </property>
+	</bean>
+	<!-- 访问页面-->
+	<bean id="commonPVVisitpageAction" class="com.nearme.statistics.action.app.common.PVVisitpageAction"
+	    scope="prototype">
+	    <property name="service">
+	        <ref bean="pvService" />
+	    </property>
+	</bean>
+
+	<!-- 需求提交-->
+	<bean id="commonRequestAction" class="com.nearme.statistics.action.app.common.RequestAction"
+	    scope="prototype">
+	    <property name="service">
+	        <ref bean="commonService" />
+	    </property>
+	    <property name="measureservice">
+	        <ref bean="measureService" />
+	    </property>
+	</bean>
+	<!-- 对比使用时长、使用频率-->
+	<bean id="commonPVCpAction" class="com.nearme.statistics.action.app.common.PVCpAction"
+	    scope="prototype">
+	    <property name="service">
+	        <ref bean="pvService" />
+	    </property>
+	</bean>
+	<!-- 页面访问路径-->
+	<bean id="commonPVPathAction" class="com.nearme.statistics.action.app.common.PVPathAction"
+	    scope="prototype">
+	    <property name="service">
+	        <ref bean="pvService" />
+	    </property>
+	</bean>
+	
+	<!-- 30天留存-->
+	<bean id="commonRemain30daysAction" class="com.nearme.statistics.action.app.common.Remain30daysAction"
+	    scope="prototype">
+	    <property name="service">
+	        <ref bean="commonService" />
+	    </property>
+	</bean>
+</beans>

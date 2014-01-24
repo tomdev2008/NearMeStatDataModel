@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+	<!-- 版本,
+	             基础数据,
+	             软件安装排行,
+	             服务机型,
+	             模块安装量,
+	             推广软件安装,
+	             性能指标
+	 -->
+	<bean id="zjbService" 
+	    class="com.nearme.statistics.service.app.zjb.impl.ZjbServiceImpl" 
+	    scope="prototype">
+	    <property name="dao">
+	        <ref bean="zjbDao"/>
+	    </property>
+	</bean>
+	
+	<!-- 渠道 -->
+	<bean id="zjbchannelinfoService" 
+	    class="com.nearme.statistics.service.app.zjb.impl.ZJBChannelinfoServiceImpl" 
+	    scope="prototype">
+	    <property name="dao">
+	        <ref bean="zjbchannelinfoDao"/>
+	    </property>
+	</bean>
+	
+	<!-- 用户行为编码 -->
+	<bean id="zjbuseractioncodeService" 
+	    class="com.nearme.statistics.service.app.zjb.impl.ZJBUseractioncodeServiceImpl" 
+	    scope="prototype">
+	    <property name="dao">
+	        <ref bean="zjbuseractioncodeDao"/>
+	    </property>
+	</bean>
+</beans>

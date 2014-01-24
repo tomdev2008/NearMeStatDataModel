@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+	"-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nearme.statistics.dao.app.cloud.CloudDao">
+	<!-- 流量分配 -->
+	<select id="getFlowdistributeList" parameterType="CloudDTO"
+		resultType="CloudFlowdistributeEntity">
+		SELECT
+    		t.statdate ,
+    		sum(CASE WHEN t.action_code IN ('20110001') THEN 1 ELSE 0 END) contectbak,
+    		sum(CASE WHEN t.action_code IN ('20110002') THEN 1 ELSE 0 END) smsbak,
+    		sum(CASE WHEN t.action_code IN ('20110003') THEN 1 ELSE 0 END) cloadphoto,
+    		sum(CASE WHEN t.action_code IN ('20110004') THEN 1 ELSE 0 END) netdisk,
+    		sum(CASE WHEN t.action_code IN ('20110005') THEN 1 ELSE 0 END) cloudnote,
+    		sum(CASE WHEN t.action_code IN ('20110006') THEN 1 ELSE 0 END) findphone,
+    		sum(CASE WHEN t.action_code IN ('20110205') THEN 1 ELSE 0 END) keybak,
+    		sum(CASE WHEN t.action_code IN ('20110206') THEN 1 ELSE 0 END) keyreturn,
+    		sum(CASE WHEN t.action_code IN ('20110007') THEN 1 ELSE 0 END) personal,
+    		sum(CASE WHEN t.action_code IN ('20110008') THEN 1 ELSE 0 END) cloudspace,
+    		sum(CASE WHEN t.action_code IN ('20110009') THEN 1 ELSE 0 END) help 
+		FROM dm_useraction t
+		WHERE t.system_id = TRUNC(#{systemID})
+		    <if test="startDate != null">
+			AND t.statdate >= TRUNC(#{startDate})
+			</if>
+			<if test="endDate != null">
+			AND t.statdate &lt; TRUNC(#{endDate}+1)
+			</if>
+		GROUP BY t.statdate
+		ORDER BY t.statdate DESC
+	</select>
+	
+	<!-- 日增情况 -->
+	<select id="getDayincreaseList" parameterType="CloudDTO"
+		resultType="CloudDayincreaseEntity">
+		SELECT
+    		t.statdate statDate,
+    		t.new_upload_user increaseuser,
+    		t.new_upload_num increasecnt
+		FROM dm_album_upload_daily t
+		WHERE 1 = 1
+		    <if test="startDate != null">
+			AND t.statdate >= TRUNC(#{startDate})
+			</if>
+			<if test="endDate != null">
+			AND t.statdate &lt; TRUNC(#{endDate}+1)
+			</if>
+			<if test="model!= null and model!='' and model!='all'">
+            AND T.MODEL = #{model}
+            </if>
+            <if test="model=='all' or model=='' or model==null">
+            AND T.MODEL IS NULL
+            </if>
+            <if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+            AND T.APP_VERSION = #{appVersion}
+            </if>
+            <if test="appVersion=='all' or appVersion=='' or appVersion==null">
+            AND T.APP_VERSION IS NULL
+            </if>
+		ORDER BY t.statdate DESC
+	</select>
+	
+	<!-- 存储留存-->
+	<select id="getRemainList" parameterType="CloudDTO"
+		resultType="CloudRemainEntity">
+		SELECT
+    		t.statdate statDate,
+    		t.upload_user storeuser,
+    		t.uurr1 remain1x,
+    		t.uurr2 remain2x,
+    		t.uurr3 remain3x
+		FROM dm_album_upload_${lidu} t
+		WHERE 1 = 1
+		    <if test="startDate != null">
+			AND t.statdate >= TRUNC(#{startDate})
+			</if>
+			<if test="endDate != null">
+			AND t.statdate &lt; TRUNC(#{endDate}+1)
+			</if>
+			<if test="model!= null and model!='' and model!='all'">
+            AND T.MODEL = #{model}
+            </if>
+            <if test="model=='all' or model=='' or model==null">
+            AND T.MODEL IS NULL
+            </if>
+            <if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+            AND T.APP_VERSION = #{appVersion}
+            </if>
+            <if test="appVersion=='all' or appVersion=='' or appVersion==null">
+            AND T.APP_VERSION IS NULL
+            </if>
+		ORDER BY t.statdate DESC
+	</select>
+	
+	<!-- 路径统计 -->
+	<select id="getPathList" parameterType="CloudDTO"
+		resultType="CloudPathEntity">
+		SELECT
+            t.statdate,
+            sum(CASE WHEN t.action_code IN ('20060001') THEN 1 ELSE 0 END) entermainpage,
+            sum(CASE WHEN t.action_code IN ('20060002') THEN 1 ELSE 0 END) fileup,
+            sum(CASE WHEN t.action_code IN ('20060003') THEN 1 ELSE 0 END) filedown,
+            sum(CASE WHEN t.action_code IN ('20060004') THEN 1 ELSE 0 END) filedelete,
+            sum(CASE WHEN t.action_code IN ('20060005') THEN 1 ELSE 0 END) wifiopen
+        FROM dm_useraction t
+        WHERE t.system_id = TRUNC(#{systemID})
+            <if test="startDate != null">
+            AND t.statdate >= TRUNC(#{startDate})
+            </if>
+            <if test="endDate != null">
+            AND t.statdate &lt; TRUNC(#{endDate}+1)
+            </if>
+        GROUP BY t.statdate
+        ORDER BY t.statdate DESC
+	</select>
+</mapper>

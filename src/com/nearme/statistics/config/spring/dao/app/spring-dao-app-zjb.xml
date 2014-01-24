@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+	<!-- 版本,
+	             基础数据,
+	             软件安装排行,
+	             服务机型,
+	             模块安装量,
+	             推广软件安装,
+	             性能指标
+	 -->
+	<bean id="zjbDao" 
+	    class="com.nearme.statistics.dao.app.zjb.impl.ZjbDaoImpl">
+	    <property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	
+	<!-- 渠道 -->
+	<bean id="zjbchannelinfoDao" 
+	    class="com.nearme.statistics.dao.app.zjb.impl.ZjbChannelinfoDaoImpl">
+	    <property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	
+	<!-- 用户行为编码 -->
+	<bean id="zjbuseractioncodeDao" 
+	    class="com.nearme.statistics.dao.app.zjb.impl.ZjbUseractiontcodeDaoImpl">
+	    <property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+</beans>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+	"-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nearme.statistics.dao.app.zjb.ZjbChannelinfoDao">
+	<!-- 渠道查询 -->
+	<select id="getZJBChnnelinfoList" parameterType="ZJBChannelinfoDTO" resultType="ZJBChannelinfoEntity">
+	    SELECT
+    	    t.channel_id channelID,
+    	    t.channel_name channelName,
+    	    t.channel_desc channelDesc
+	    FROM bt_zjb_channel t
+	    ORDER BY t.channel_id
+	</select>
+	
+	<!-- 渠道删除 -->
+	<delete id="delete" parameterType="ZJBChannelinfoDTO">
+	    DELETE FROM bt_zjb_channel t
+		WHERE t.channel_id = #{channelID}
+	</delete>
+	
+	<!-- 渠道插入 -->
+	<update id="add" parameterType="ZJBChannelinfoDTO">
+	    INSERT INTO bt_zjb_channel(channel_id,channel_name,channel_desc)
+		VALUES(seq_bt_zjb_channel.nextval,#{channelName},#{channelDesc})
+	</update>
+	
+	<!-- 渠道更新 -->
+	<update id="update" parameterType="ZJBChannelinfoDTO">
+	    UPDATE bt_zjb_channel t
+		SET t.channel_name = #{channelName},
+		    t.channel_desc = #{channelDesc}
+		WHERE t.channel_id = #{channelID}
+	</update>
+</mapper>

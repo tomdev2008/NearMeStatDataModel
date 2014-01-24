@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+	"-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nearme.statistics.dao.app.common.ModulerunpointDao">
+	<!-- 模块运营点查询 -->
+	<select id="getModulerunpointList" parameterType="ModulerunpointDTO" resultType="ModulerunpointEntity">
+	    SELECT 
+    	    t.id id,
+    	    t.package_name packagename,
+    	    t.system_id systemID,
+    	    t.group_name groupname,
+    	    t.source_code sourcecode,
+    	    t.source_desc sourcedesc,
+    	    t.category_id categoryid,
+    	    t.click_index clickindex,
+    	    t.tag tag
+	    FROM bt_source_code_group t
+	    WHERE t.system_id = #{systemID}
+	    ORDER BY t.group_name,t.source_code,t.category_id,t.tag
+	</select>
+	
+	<!-- 模块运营点删除 -->
+	<delete id="delete" parameterType="ModulerunpointDTO">
+	    DELETE FROM bt_source_code_group t
+		WHERE t.id = #{id}
+	</delete>
+	
+	<!-- 模块运营点插入 -->
+	<update id="add" parameterType="ModulerunpointDTO">
+	    INSERT INTO bt_source_code_group(id,package_name,group_name,system_id,source_code,source_desc,category_id,click_index,tag,updatetime)
+		VALUES(seq_bt_source_code_group.nextval,
+		    #{packagename,jdbcType=VARCHAR},
+		    #{groupname,jdbcType=VARCHAR},
+		    #{systemID,jdbcType=NUMERIC},
+		    #{sourcecode,jdbcType=VARCHAR},
+		    #{sourcedesc,jdbcType=VARCHAR},
+		    #{categoryid,jdbcType=NUMERIC},
+		    #{clickindex,jdbcType=VARCHAR},
+		    #{tag,jdbcType=VARCHAR},
+		    SYSDATE)	
+	</update>
+	
+	<!-- 模块运营点更新 -->
+	<update id="update" parameterType="ModulerunpointDTO">
+	    UPDATE bt_source_code_group t
+		SET t.package_name = #{packagename,jdbcType=VARCHAR},
+            t.group_name = #{groupname,jdbcType=VARCHAR},
+            t.source_code = #{sourcecode,jdbcType=VARCHAR},
+            t.source_desc = #{sourcedesc,jdbcType=VARCHAR},
+            t.category_id = #{categoryid,jdbcType=VARCHAR},
+            t.click_index = #{clickindex,jdbcType=NUMERIC},
+            t.tag = #{tag},
+            t.updatetime = SYSDATE
+		WHERE t.id = #{id}
+	</update>
+</mapper>

@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+	<!-- 细分用户客户端行为统计 -->
+	<bean id="storeDetailuserclientAction" class="com.nearme.statistics.action.app.store.DetailuserclientAction"
+		scope="prototype">
+		<property name="service">
+			<ref bean="storeService" />
+		</property>
+	</bean>
+
+	<!-- 首页推荐报表 -->
+	<bean id="storeHomepagerecommendAction" class="com.nearme.statistics.action.app.store.HomepagerecommendAction"
+		scope="prototype">
+		<property name="service">
+			<ref bean="storeService" />
+		</property>
+	</bean>
+
+	<!-- push推送报表 -->
+	<bean id="storePushAction" class="com.nearme.statistics.action.app.store.PushAction"
+		scope="prototype">
+		<property name="service">
+			<ref bean="storeService" />
+		</property>
+	</bean>
+
+	<!-- 应用榜报表 -->
+	<bean id="storeAppAction" class="com.nearme.statistics.action.app.store.AppAction"
+		scope="prototype">
+		<property name="service">
+			<ref bean="storeService" />
+		</property>
+	</bean>
+	
+	<!-- 游戏榜报表 -->
+	<bean id="storeGameAction" class="com.nearme.statistics.action.app.store.GameAction"
+		scope="prototype">
+		<property name="service">
+			<ref bean="storeService" />
+		</property>
+	</bean>
+
+	<!-- 相关推荐报表 -->
+	<bean id="storeTuijianAction" class="com.nearme.statistics.action.app.store.TuijianAction"
+		scope="prototype">
+		<property name="service">
+			<ref bean="storeService" />
+		</property>
+	</bean>
+
+	<!--  搜索报表 -->
+	<bean id="storeSearchAction" class="com.nearme.statistics.action.app.store.SearchAction"
+		scope="prototype">
+		<property name="service">
+			<ref bean="storeService" />
+		</property>
+	</bean>
+
+	<!-- 下载有礼报表 -->
+	<bean id="storeDowngiftAction" class="com.nearme.statistics.action.app.store.DowngiftAction"
+		scope="prototype">
+		<property name="service">
+			<ref bean="storeService" />
+		</property>
+	</bean>
+
+	<!-- 专题报表 -->
+	<bean id="storeZuantiAction" class="com.nearme.statistics.action.app.store.ZuantiAction"
+		scope="prototype">
+		<property name="service">
+			<ref bean="storeService" />
+		</property>
+	</bean>
+	
+	<!-- 活动中心报表 -->
+	<bean id="storeActivecenterAction" class="com.nearme.statistics.action.app.store.ActivecenterAction"
+		scope="prototype">
+		<property name="service">
+			<ref bean="storeService" />
+		</property>
+	</bean>
+	
+	<!-- 装机必备 -->
+	<bean id="storeInstallmustAction" class="com.nearme.statistics.action.app.store.InstallmustAction"
+		scope="prototype">
+		<property name="service">
+			<ref bean="storeService" />
+		</property>
+	</bean>
+	
+	<!-- 最近流行 -->
+	<bean id="storePoprecentAction" class="com.nearme.statistics.action.app.store.PoprecentAction"
+		scope="prototype">
+		<property name="service">
+			<ref bean="storeService" />
+		</property>
+	</bean>
+	
+	<!-- 分类 -->
+	<bean id="storeSortAction" class="com.nearme.statistics.action.app.store.SortAction"
+		scope="prototype">
+		<property name="service">
+			<ref bean="storeService" />
+		</property>
+	</bean>
+	
+	<!-- 客户端内容分布 -->
+	<bean id="storeClientcontentAction" class="com.nearme.statistics.action.app.store.ClientcontentAction"
+		scope="prototype">
+		<property name="service">
+			<ref bean="storeService" />
+		</property>
+	</bean>
+	
+	<!-- 小编推荐 -->
+	<bean id="storeEditorrecommendAction" class="com.nearme.statistics.action.app.store.EditorrecommendAction"
+		scope="prototype">
+		<property name="service">
+			<ref bean="storeService" />
+		</property>
+	</bean>
+	
+	<!-- 48小时热搜榜 -->
+	<bean id="storeHotsearchAction" class="com.nearme.statistics.action.app.store.HotsearchAction"
+		scope="prototype">
+		<property name="service">
+			<ref bean="storeService" />
+		</property>
+	</bean>
+	
+	<!-- 分类精选 -->
+	<bean id="storeTypeselectAction" class="com.nearme.statistics.action.app.store.TypeselectAction"
+		scope="prototype">
+		<property name="service">
+			<ref bean="storeService" />
+		</property>
+	</bean>
+	
+	<!-- 下载安装成功率  -->
+	<bean id="storeDowninstallAction" class="com.nearme.statistics.action.app.store.DownInstallAction"
+		scope="prototype">
+		<property name="service">
+			<ref bean="storeService" />
+		</property>
+	</bean>
+	
+	<!-- 安装统计  -->
+	<bean id="installStatAction" class="com.nearme.statistics.action.app.store.InstallStatAction"
+		scope="prototype">
+		<property name="service">
+			<ref bean="storeService" />
+		</property>
+	</bean>
+
+</beans>

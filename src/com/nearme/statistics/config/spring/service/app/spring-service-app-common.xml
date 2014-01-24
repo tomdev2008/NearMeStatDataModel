@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+	<!-- 日明细数据,周明细数据,月明细数据,累计数据,
+	             月健康度数据,活跃天数,新增留存,启动留存,用户生命周期,
+	              渠道概况,渠道明细,
+	             页面访问分析,自定义事件,
+	             版本分析,网络分析,终端分析,地区分析,使用频率时长分析,错误分析 -->
+	<bean id="commonService" 
+	    class="com.nearme.statistics.service.app.common.impl.CommonServiceImpl" 
+	    scope="prototype">
+	    <property name="dao">
+	        <ref bean="commonDao"/>
+	    </property>
+	</bean>
+	
+	<bean id="hivecommonService" 
+	    class="com.nearme.statistics.service.hiveapp.common.impl.CommonServiceImpl" 
+	    scope="prototype">
+	    <property name="dao">
+	        <ref bean="hivecommonDao"/>
+	    </property>
+	</bean>
+	
+	<!-- hive job service -->
+	<bean id="hivejobService" 
+	    class="com.nearme.statistics.service.hiveapp.common.impl.HivejobServiceImpl" 
+	    scope="prototype">
+	    <property name="dao">
+	        <ref bean="hivejobDao"/>
+	    </property>
+	</bean>
+	
+	<!-- 用户行为编码 -->
+	<bean id="useractionService" 
+	    class="com.nearme.statistics.service.app.common.impl.UseractionServiceImpl" 
+	    scope="prototype">
+	    <property name="dao">
+	        <ref bean="useractionDao"/>
+	    </property>
+	</bean>
+	
+	<!-- 渠道管理 -->
+	<bean id="channelinfoService" 
+	    class="com.nearme.statistics.service.app.common.impl.ChannelinfoServiceImpl" 
+	    scope="prototype">
+	    <property name="dao">
+	        <ref bean="channelinfoDao"/>
+	    </property>
+	</bean>
+	
+	<!-- 模块运营点管理 -->
+	<bean id="modulerunpointService" 
+	    class="com.nearme.statistics.service.app.common.impl.ModulerunpointServiceImpl" 
+	    scope="prototype">
+	    <property name="dao">
+	        <ref bean="modulerunpointDao"/>
+	    </property>
+	</bean>
+	
+	<!-- 模块运营点管理 -->
+	<bean id="moduleService" 
+	    class="com.nearme.statistics.service.app.common.impl.ModuleServiceImpl" 
+	    scope="prototype">
+	    <property name="dao">
+	        <ref bean="moduleDao"/>
+	    </property>
+	</bean>
+	
+	<!-- 自定义事件 -->
+	<bean id="eventService" 
+	    class="com.nearme.statistics.service.app.common.impl.EventServiceImpl" 
+	    scope="prototype">
+	    <property name="dao">
+	        <ref bean="eventDao"/>
+	    </property>
+	</bean>
+	
+	<!-- 版本管理 -->
+	<bean id="versionService" 
+	    class="com.nearme.statistics.service.app.common.impl.VersionServiceImpl" 
+	    scope="prototype">
+	    <property name="dao">
+	        <ref bean="versionDao"/>
+	    </property>
+	</bean>
+	
+	<!-- 机型管理 -->
+	<bean id="modelService" 
+	    class="com.nearme.statistics.service.app.common.impl.ModelServiceImpl" 
+	    scope="prototype">
+	    <property name="dao">
+	        <ref bean="modelDao"/>
+	    </property>
+	</bean>
+	
+	<!-- 指标管理 -->
+	<bean id="measureService" 
+	    class="com.nearme.statistics.service.app.common.impl.MeasureServiceImpl" 
+	    scope="prototype">
+	    <property name="dao">
+	        <ref bean="measureDao"/>
+	    </property>
+	</bean>
+	
+	<!-- 页面访问 -->
+	<bean id="pvService" 
+	    class="com.nearme.statistics.service.app.common.impl.PvServiceImpl" 
+	    scope="prototype">
+	    <property name="dao">
+	        <ref bean="pvDao"/>
+	    </property>
+	</bean>
+</beans>

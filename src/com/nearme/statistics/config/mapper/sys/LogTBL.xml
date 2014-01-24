@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+	"-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nearme.statistics.dao.sys.LogDao">
+	<!-- 用户操作行为记录 -->
+	<insert id="logInfo" parameterType="LogDTO">
+	    INSERT INTO LOG_USERACTION (
+	        STATDATE, 
+	        ENDDATE, 
+	        USERNAME, 
+	        VISITURL, 
+	        SYSTEMID, 
+	        LIDU, 
+	        MODEL, 
+	        APP_VERSION, 
+	        NETWORKTYPE, 
+	        Channel, 
+	        Imeitype, 
+	        Groupcode, 
+	        Actioncode,
+            Condition_1, 
+            Condition_2, 
+            Condition_3, 
+            Condition_4, 
+            Condition_5
+        )
+        VALUES(
+            #{statDate,jdbcType=DATE},
+            #{endDate,jdbcType=DATE},
+            #{username,jdbcType=VARCHAR},
+            #{visiturl,jdbcType=VARCHAR},
+            #{systemID,jdbcType=NUMERIC},
+            #{lidu,jdbcType=VARCHAR},
+            #{model,jdbcType=VARCHAR},
+            #{appVersion,jdbcType=VARCHAR},
+            #{networkType,jdbcType=VARCHAR},
+            #{channel,jdbcType=VARCHAR},
+            #{imeitype,jdbcType=VARCHAR},
+            #{groupcode,jdbcType=VARCHAR},
+            #{actioncode,jdbcType=VARCHAR},
+            #{condition1,jdbcType=VARCHAR},
+            #{condition2,jdbcType=VARCHAR},
+            #{condition3,jdbcType=VARCHAR},
+            #{condition4,jdbcType=VARCHAR},
+            #{condition5,jdbcType=VARCHAR}
+        )
+	</insert>
+</mapper>

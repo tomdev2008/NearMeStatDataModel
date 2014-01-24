@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<!-- 公共区域，统计概况 -->
+	<!-- 用户统计概况 -->
+	<package name="personInfo" namespace="/sys/personInfo" extends="statistics-default">
+		
+		<!-- 修改密码 -->
+		<action name="UserPassModify_*" class="sysAdminUserPassModifyAction" method="{1}">
+			<result name="success">/WEB-INF/pages/sys/personInfo/userPassModify.jsp</result>
+		</action>
+		
+		<!-- 更改个人信息 -->
+		<action name="UserInfoModify_*" class="sysAdminUserInfoModifyAction" method="{1}">
+			<result name="success">/WEB-INF/pages/sys/personInfo/userInfoModify.jsp</result>
+		</action>
+		
+	</package>
+</struts>

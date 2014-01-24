@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+	"-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nearme.statistics.dao.app.zjb.ZjbUseractioncodeDao">
+    <!-- 用户行为编码管理 -->
+	<!-- 查询 -->
+	<select id="getZJBUseractioncodeList" parameterType="ZJBUseractioncodeDTO" resultType="ZJBUseractioncodeEntity">
+	    SELECT
+    	    t.action_id actionID,
+    	    t.action_code actioncode,
+    	    t.action_name actionname
+	    FROM bt_zjb_useraction t
+	    ORDER BY t.action_id
+	</select>
+	
+	<!-- 删除 -->
+	<delete id="delete" parameterType="ZJBUseractioncodeDTO">
+	    DELETE FROM bt_zjb_useraction t
+		WHERE t.action_id = #{actionID}
+	</delete>
+	
+	<!-- 插入 -->
+	<update id="add" parameterType="ZJBUseractioncodeDTO">
+	    INSERT INTO bt_zjb_useraction(action_id,action_code,action_name)
+		VALUES(seq_bt_zjb_useraction.nextval,#{actioncode},#{actionname})
+	</update>
+	
+	<!-- 更新 -->
+	<update id="update" parameterType="ZJBUseractioncodeDTO">
+	    UPDATE bt_zjb_useraction t
+		SET t.action_code = #{actioncode},
+		    t.action_name = #{actionname}
+		WHERE t.action_id = #{actionID}
+	</update>
+</mapper>

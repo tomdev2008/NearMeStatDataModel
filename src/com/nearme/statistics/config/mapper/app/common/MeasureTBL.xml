@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+	"-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nearme.statistics.dao.app.common.MeasureDao">
+	<!-- 指标管理 -->
+	<!-- 指标查询 -->
+	<select id="getMeasureList" parameterType="MeasureDTO" resultType="MeasureEntity">
+	    SELECT
+    	    t.m_name name
+	    FROM bt_measure t
+	    ORDER BY t.id_measure
+	</select>
+</mapper>

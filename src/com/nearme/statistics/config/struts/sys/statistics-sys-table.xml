@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<!-- 系统码表管理-->
+	<!-- 机型 -->
+	<package name="systemTable" namespace="/sys/systemTable" extends="statistics-default">
+		<!-- 手机型号列表维护 -->
+		<action name="model" class="sysTableModelAction" >
+			<result name="success">/WEB-INF/pages/sys/systemTable/model.jsp</result>
+		</action>
+		<!-- 联网方式系统表 -->
+		<action name="networkType" class="sysTableNetworkTypeAction" >
+			<result name="success">/WEB-INF/pages/sys/systemTable/networkType.jsp</result>
+		</action>
+		<!-- 应用名称系统表 -->
+		<action name="appInfo" class="sysTableAppInfoAction" >
+			<result name="success">/WEB-INF/pages/sys/systemTable/appInfo.jsp</result>
+		</action>
+		<!-- 游戏中心产品信息表 -->
+		<action name="gcProduct" class="sysTableGCProductAction" >
+			<result name="success">/WEB-INF/pages/sys/systemTable/gcProduct.jsp</result>
+		</action>
+		<!-- 渠道系统表 -->
+		<action name="channelType" class="channelInfoAction" >
+			<result name="success">/WEB-INF/pages/sys/systemTable/channelInfo.jsp</result>
+		</action>
+		<!-- 分类信息表 -->
+		<action name="categoryInfo" class="categoryInfoAction" >
+			<result name="success">/WEB-INF/pages/sys/systemTable/categoryInfo.jsp</result>
+		</action>
+		
+		<!-- 一键清理缓存 -->
+		<action name="system_cachecontrol_*" class="cachecontrolAction" method="{1}">
+			<result name="success">/WEB-INF/pages/sys/systemTable/cachecontrol.jsp</result>
+		</action>
+	</package>
+</struts>

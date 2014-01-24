@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<!-- 公共区域，统计概况 -->
+	<!-- 用户统计概况 -->
+	<package name="sys" namespace="/sys/admin" extends="statistics-default">
+		<!-- 管理员管理 -->
+		<action name="admin_*" class="sysAdminListAction" method="{1}">
+		    <result name="admin_init" type="redirect">admin_init.do</result>
+			<result name="admins">/WEB-INF/pages/sys/admin/adminList.jsp</result>
+			<result name="add">/WEB-INF/pages/sys/admin/adminAdd.jsp</result>
+			<result name="modifyPasswd">/WEB-INF/pages/sys/admin/adminModifyPass.jsp</result>
+			<result name="modify">/WEB-INF/pages/sys/admin/adminModify.jsp</result>
+		</action>
+		
+		<!-- 权限管理 -->
+		<action name="grantPermission" class="sysAdminGrantPermissionAction" >
+			<result name="success">/WEB-INF/pages/sys/admin/grantPermission.jsp</result>
+		</action>
+		
+		<!-- IP黑名单 -->
+		<action name="ipBlack" class="sysAdminIpBlackAction" >
+			<result name="success">/WEB-INF/pages/sys/admin/ipBlack.jsp</result>
+		</action>
+		
+		<!-- IP白名单 -->
+		<action name="ipWhite" class="sysAdminIpWhiteAction" >
+			<result name="success">/WEB-INF/pages/sys/admin/ipWhite.jsp</result>
+		</action>
+		
+		<!-- 角色管理 -->
+		<action name="roleList" class="sysAdminRoleListAction" >
+			<result name="success">/WEB-INF/pages/sys/admin/roleList.jsp</result>
+		</action>
+		
+	</package>
+</struts>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+	"-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nearme.statistics.dao.app.common.InstallSourceDao">
+	<!-- 安装来源查询 -->
+	<select id="listInstallSource" parameterType="InstallSourceDTO" resultType="InstallSourceEntity">
+	    SELECT SYSTEM_ID systemID,PACKAGE_NAME packageName,APP_NAME appName,APP_TYPE appType
+		FROM BT_INSTALL_SOURCE
+		WHERE SYSTEM_ID=#{systemID}
+		ORDER BY NLSSORT(APP_NAME,'NLS_SORT=SCHINESE_PINYIN_M')
+	</select>
+	
+</mapper>

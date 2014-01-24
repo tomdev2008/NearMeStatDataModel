@@ -1,0 +1,459 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+	"-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nearme.statistics.dao.sys.AdminDao">
+	<!-- 登录 -->
+	<select id="Login" parameterType="map" resultType="Admin">
+		SELECT
+    		t.state,
+    		t.id id,
+    		t.user_name userName,
+    		t.real_name realName,
+    		t.email email,
+    		t.mobile mobileNumber,
+    		t.ip_limit ipLimit,
+    		t.update_by updateBy,
+    		t.update_time updateTime
+		FROM bt_admin_user t
+		WHERE t.user_name = #{adminName}
+    		AND t.user_pass = #{passwd}
+    		AND t.user_pass IS NOT NULL
+    		AND t.state = 0
+	</select>
+	
+	
+	
+	<!-- 查询所有账号 -->
+	<select id="getAdminAll" resultType="Admin">
+		SELECT 
+            t.id id,
+            t.user_name userName,
+            t.user_pass userPasswd,
+            t.real_name realName,
+            t.email email,
+            t.mobile mobileNumber,       
+            t.state state,
+            t.update_time updateTime,
+            t.ip_limit ipLimit
+        FROM bt_admin_user t --用户表
+        WHERE t.state=0
+        ORDER BY NLSSORT(t.real_name,'NLS_SORT = SCHINESE_PINYIN_M')
+	</select>
+	<!-- 查询所有角色  -->
+	<select id="getRoleAll" resultType="Role">
+		SELECT 
+            t.id id,
+            t.role_name roleName,
+            t.role_desc roleDesc,
+            t.systemid systemID
+        FROM bt_admin_role t
+        WHERE t.state = 0
+        ORDER BY t.id
+	</select>
+	<!-- 查询所有分组 -->
+	<select id="getGroupAll" resultType="Group">
+		SELECT
+    		t.id id,
+    		t.group_name groupname,
+    		t.group_desc groupdesc
+		FROM bt_admin_group t --用户分组映射表
+		WHERE t.state = 0
+		ORDER BY t.id
+	</select>
+	
+	
+	
+	
+	
+	<!-- 查询指定用户的账号信息 -->
+	<select id="getAdminFixedUsername" parameterType="AdminDTO" resultType="Admin">
+		SELECT 
+            t.id id,
+            t.user_name userName,
+            t.user_pass userPasswd,
+            t.real_name realName,
+            t.email email,
+            t.mobile mobileNumber,       
+            t.state state,
+            t.update_time updateTime,
+            t.ip_limit ipLimit
+        FROM bt_admin_user t --用户表
+        WHERE t.state=0
+        <if test="username != null">
+            AND t.user_name = #{username}
+        </if>
+        ORDER BY t.user_name
+	</select>
+	<!-- 查询指定账号id对应的角色信息 -->
+	<select id="getRoleFixedUser" parameterType="AdminDTO" resultType="Role">
+		<if test="username != null and username == 'admin'">
+		SELECT 
+		    t.id id,
+    		t.role_name roleName,
+    		t.role_desc roleDesc,
+    		t.systemid systemID
+		FROM bt_admin_role t
+        WHERE t.state = 0
+        ORDER BY CAST(t.systemid AS INT), NLSSORT(t.role_name,'NLS_SORT = SCHINESE_PINYIN_M')
+		</if>
+		<if test="username != null and username != 'admin'">
+		SELECT 
+		    DISTINCT t2.id id,
+    		t2.role_name rolename,
+    		t2.role_desc roledesc,
+    		t2.systemid systemID
+		FROM bt_user_role t
+		LEFT JOIN bt_admin_role t2
+		ON t.role_id = t2.id AND t2.state = 0
+		WHERE 1 = 1 
+		    <if test="id > 0">
+		    AND t.admin_id = #{id}
+		    </if>
+		ORDER BY CAST(t2.systemid AS INT),NLSSORT(t2.role_name,'NLS_SORT = SCHINESE_PINYIN_M')
+		</if>
+	</select>
+	<!-- 查询指定账号id对应的分组信息 -->
+	<select id="getGroupFixedUser" parameterType="AdminDTO" resultType="Group">
+		<if test="username != null and username == 'admin'">
+		SELECT
+		    t.id id,
+    		t.group_name groupname,
+    		t.group_desc groupdesc
+		FROM bt_admin_group t --用户分组映射表
+		WHERE t.state = 0
+		ORDER BY NLSSORT(t.group_name,'NLS_SORT = SCHINESE_PINYIN_M')
+		</if>
+		<if test="username != null and username != 'admin'">
+		SELECT
+    		DISTINCT t2.id id,
+    		t2.group_name groupname,
+    		t2.group_desc groupdesc
+		FROM bt_user_group t --用户分组映射表
+		LEFT JOIN bt_admin_group t2
+		ON t.group_id = t2.id AND t2.state = 0
+		WHERE 1 = 1 
+		    <if test="id > 0">
+		    AND t.admin_id = #{id}
+		    </if>
+		ORDER BY NLSSORT(t2.group_name,'NLS_SORT = SCHINESE_PINYIN_M')
+		</if>
+	</select>
+	
+	
+	
+	
+	
+	<!-- 查询指定账号id的(用户-角色)信息 -->
+	<select id="getRoles" parameterType="AdminDTO" resultType="Role">
+		SELECT
+            t.admin_id id, --账号id
+            t2.id roleID,  --角色id
+            t2.role_name rolename,
+            t2.role_desc roledesc,
+            t2.systemid systemID
+		FROM bt_user_role t
+		LEFT JOIN bt_admin_role t2
+		ON t.role_id = t2.id AND t2.state = 0
+		<if test="username != null and username != 'admin'">
+		WHERE t2.id IN (
+    		SELECT 
+        		t2.id
+    		FROM bt_user_role t
+    		LEFT JOIN bt_admin_role t2
+    		ON t.role_id = t2.id AND t2.state = 0
+    		WHERE 1 = 1
+        		<if test="id > 0">
+        		AND t.admin_id = #{id}
+        		</if>
+		)
+		</if>
+		ORDER BY t.id
+	</select>
+	<!-- 查询指定账号id的(用户-角色)信息 -->
+	<select id="getGroups" parameterType="AdminDTO" resultType="Group">
+		SELECT
+    		t.admin_id id, --账号id
+    		t2.id groupID, --角色id
+    		t2.group_name groupname,
+    		t2.group_desc groupdesc
+		FROM bt_user_group t --用户分组映射表
+		LEFT JOIN bt_admin_group t2
+		ON t.group_id = t2.id AND t2.state = 0
+		<if test="username != null and username != 'admin'">
+		WHERE 1 = 1
+		    AND t2.id IN (
+		        SELECT
+    		        t2.id
+		        FROM bt_user_group t --用户分组映射表
+		        LEFT JOIN bt_admin_group t2
+		        ON t.group_id = t2.id AND t2.state = 0
+		        WHERE 1 = 1
+		            <if test="id > 0">
+		            AND t.admin_id = #{id}
+		            </if>
+		    )
+		</if>
+		ORDER BY t.id
+	</select>
+	
+	
+	
+	
+	
+	<!-- ==============================账号管理============================= -->
+	<!-- 检查账号是否存在(查询指定账号的id) -->
+	<select id="checkAdminNameExists" parameterType="String" resultType="int">
+		SELECT t.id
+		FROM bt_admin_user t
+		WHERE t.user_name = #{value}
+    		AND t.state = 0
+	</select>
+	<!-- 添加账号 -->
+	<insert id="addAdmin" parameterType="Admin">
+		INSERT INTO bt_admin_user(id,user_name,user_pass,real_name,email,mobile,state,update_by,update_time,ip_limit)
+		VALUES(SEQ_GLT_ADMINUSER.NEXTVAL,
+			#{userName},
+			#{userPasswd,jdbcType=VARCHAR},
+			#{realName,jdbcType=VARCHAR},
+			#{email,jdbcType=VARCHAR},
+			#{mobileNumber,jdbcType=VARCHAR},
+			0,
+			#{updateBy},
+			SYSDATE,
+			#{ipLimit})
+	</insert>
+	<!-- 更改密码 -->
+	<update id="updateAdminPasswd" parameterType="Admin">
+		UPDATE bt_admin_user t
+		SET t.user_pass = #{userPasswd},
+		    t.update_by = #{updateBy},
+		    t.update_time = SYSDATE
+		WHERE t.id = #{id}
+	</update>
+	<!-- 超级管理员更改用户信息 -->
+	<update id="updateAdminInfo" parameterType="Admin">
+		UPDATE bt_admin_user t
+		SET t.real_name = #{realName,jdbcType=VARCHAR},
+			t.email = #{email,jdbcType=VARCHAR},
+			t.mobile = #{mobileNumber,jdbcType=VARCHAR},
+			t.ip_limit = #{ipLimit},
+			t.update_by = #{updateBy},
+			t.update_time = SYSDATE
+		WHERE t.id = #{id}
+	</update>
+	<!-- 用户更改自己的信息 -->
+	<update id="modifyMyInfo" parameterType="Admin">
+		UPDATE bt_admin_user t
+		SET t.real_name = #{realName,jdbcType=VARCHAR},
+			t.email = #{email,jdbcType=VARCHAR},
+			t.mobile = #{mobileNumber,jdbcType=VARCHAR}
+		WHERE t.id = #{id}
+	</update>
+	<!-- 删除管理员 -->
+	<update id="deleteAdmin" parameterType="int">
+		UPDATE bt_admin_user t
+		SET t.state = 1
+		WHERE t.id = #{value}
+			AND t.user_name &lt;&gt; 'admin'
+	</update>
+	<!-- ==============================账号管理============================= -->
+	
+	
+	
+	
+	
+	<!-- ==============================角色管理============================= -->
+    <!-- 查询角色是否存在 -->
+	<select id="checkRoleNameExists" parameterType="string" resultType="int">
+		SELECT t.id
+		FROM bt_admin_role t
+		WHERE t.role_name=#{value}
+			AND t.state=0
+	</select>
+	<!-- 添加角色 -->
+	<insert id="addRole" parameterType="Role">
+		INSERT INTO bt_admin_role(id,role_name,role_desc,systemID,update_by,update_time,state)
+		VALUES(SEQ_BT_ADMIN_ROLE.NEXTVAL,
+			#{roleName},
+			#{roleDesc,jdbcType=VARCHAR},
+			#{systemID},
+			#{updateBy},
+			SYSDATE,
+			0)
+	</insert>
+	<!-- 删除角色 -->
+	<update id="deleteRole" parameterType="int">
+		UPDATE bt_admin_role t
+		SET t.state = 1
+		WHERE t.id = #{value}
+	</update>
+	<!-- =============================角色管理============================= -->
+	
+	
+	
+	
+	<!-- =============================用户+角色映射管理============================= -->
+	<!-- 删除用户+角色映射关系 -->
+	<update id="deleteAdminRole" parameterType="int">
+		DELETE FROM bt_user_role t
+		WHERE t.admin_id = #{value}
+	</update>
+	<!-- 添加用户+角色映射关系 -->
+	<insert id="addAdminRole" parameterType="map">
+		INSERT INTO bt_user_role(id,admin_id,update_by,update_time,role_id)
+		VALUES (SEQ_BT_USER_ROLE.NEXTVAL,
+			#{adminID},
+			0,
+			SYSDATE,
+			#{roleID})
+	</insert>
+	<!-- =============================用户+角色映射管理============================= -->
+	
+	
+	
+	
+	
+	<!-- =============================用户+分组映射管理============================= -->
+	<!-- 删除用户+角色映射关系 -->
+	<update id="deleteAdminGroup" parameterType="int">
+		DELETE FROM bt_user_group t
+		WHERE t.admin_id = #{value}
+	</update>
+	<!-- 添加用户+角色映射关系 -->
+	<insert id="addAdminGroup" parameterType="map">
+		INSERT INTO bt_user_group(id,admin_id,update_by,update_time,group_id)
+		VALUES (SEQ_BT_USER_GROUP.NEXTVAL,
+			#{adminID},
+			0,
+			SYSDATE,
+			#{groupID})
+	</insert>
+	<!-- =============================用户+分组映射管理============================= -->
+	
+	
+	
+	
+	
+	
+	<!-- =============================权限管理============================= -->
+	<!-- 删除角色权限 -->
+	<update id="deletePermission" parameterType="int">
+		DELETE FROM bt_role_perm t
+		WHERE t.role_id = #{value}
+	</update>
+	<!-- 给角色添加权限 -->
+	<insert id="grantPermission" parameterType="map">
+		INSERT INTO bt_role_perm(id,role_id,perm_code,update_by,update_time)
+		VALUES (SEQ_BT_ROLE_PERM.NEXTVAL,
+			#{roleID},
+			#{permCode},
+			#{updateBy},
+			SYSDATE)
+	</insert>
+	<!-- 查询用户权限 -->
+	<select id="getAdminPermissions" parameterType="int" resultType="string">
+		SELECT DISTINCT(t.perm_code)
+		FROM bt_role_perm t
+		WHERE t.role_id IN (
+			SELECT tt.role_id
+			FROM bt_user_role tt
+			WHERE tt.admin_id = #{value})
+	</select>
+	<!-- 查询角色权限 -->
+	<select id="getRolePermissions" parameterType="int" resultType="string">
+		SELECT DISTINCT(t.perm_code)
+		FROM bt_role_perm t
+		WHERE t.role_id = #{value}
+	</select>
+	<!-- =============================权限管理============================= -->
+	
+	
+	
+	
+	<!-- =============================IP限制管理============================= -->
+	<insert id="addIPFilter" parameterType="IpFilter">
+		INSERT INTO ${tableName}(RULE_SERIAL,IP_START,IP_END,IP_REGEX,IP_START_NUM,IP_END_NUM,UPDATE_BY,UPDATE_TIME)
+		VALUES(SEQ_GLT_IP_FILTER.NEXTVAL,
+			#{filter.strIpStart,jdbcType=VARCHAR},
+			#{filter.strIpEnd,jdbcType=VARCHAR},
+			#{filter.strIpRegex,jdbcType=VARCHAR},
+			#{filter.numIpStart,jdbcType=INTEGER},
+			#{filter.numIpEnd,jdbcType=INTEGER},
+			0,
+			SYSDATE)
+	</insert>
+	<select id="getFilterList" parameterType="string" resultType="IpFilter">
+		SELECT L.RULE_SERIAL ID,
+			L.IP_START strIpStart,
+			L.IP_END strIpEnd,
+			L.IP_REGEX strIpRegex,
+			L.IP_START_NUM numIpStart,
+			L.IP_END_NUM numIpEnd,
+			ROWNUM RN
+		FROM ${value} L
+		ORDER BY L.RULE_SERIAL
+	</select>
+	<update id="deleteIPFilter" parameterType="map">
+		DELETE FROM ${tableName}
+		WHERE RULE_SERIAL=#{id}
+	</update>
+	<!-- =============================IP限制管理============================= -->
+	
+	
+	
+	
+	<!-- 获取全部菜单 -->
+	<select id="listAllMenus" resultType="MenuItem">
+		SELECT 
+		    t.func_code menuKey, 
+		    t.func_parent_code menuParentKey, 
+		    t.func_name menuText, 
+		    t.func_url menuUrl,
+		    t.func_level menuTabIndex,
+		    t.func_type menuType,
+		    t.is_used isUsed,
+		    t.order_num orderNum
+		FROM bt_menus t
+		WHERE t.is_used = 1
+		ORDER BY orderNum, menukey
+	</select>
+	
+	<!-- 查询角色菜单 -->
+	<select id="listMenus" parameterType="String" resultType="MenuItem">
+		SELECT 
+            (CASE WHEN t.func_code LIKE '010001%' THEN CONCAT('${value}',SUBSTR(t.func_code,7)) ELSE t.func_code END) menuKey, 
+            (CASE WHEN t.func_parent_code LIKE '010001%' THEN CONCAT('${value}',SUBSTR(t.func_parent_code,7)) ELSE t.func_parent_code END) menuParentKey, 
+            t.func_name menuText, 
+            t.func_url menuUrl,
+            t.func_level menuTabIndex,
+            t.func_type menuType,
+            t.is_used isUsed,
+            t.order_num orderNum
+        FROM bt_menus t
+        WHERE t.is_used = 1
+            AND (t.func_code like '${value}%' --指定systemID私有菜单
+            OR t.func_code like '010001%' --通用菜单
+            OR t.func_code like '9%') --管理菜单
+            AND t.func_code != '010001'
+        ORDER BY t.order_num, menuKey
+	</select>
+	
+	<!-- 查询菜单systemID对应的func_code -->
+	<select id="getMenuKey" parameterType="String" resultType="String">
+	    SELECT t.func_code
+        FROM bt_menus t
+        WHERE t.func_url = #{value}
+	</select>
+	
+	<!-- 获取参数 -->
+	<select id="listParameters" parameterType="string" resultType="Parameters">
+		select 
+		    P_CODE pCode, 
+		    P_NAME pName, 
+		    P_DESC pDesc, 
+		    UPDATE_TIME updateTime
+		from GLT_PARAMETERS
+		where P_CODE = #{value}
+	</select>
+</mapper>

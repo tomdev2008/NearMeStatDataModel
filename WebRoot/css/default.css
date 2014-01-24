@@ -1,0 +1,6 @@
+/****各种方框文字帮助****/
+.div_help{margin: 15px 0 8px;padding: 0 5px 0px;float: none;border:1px solid #F0AE35;color:#868686;}
+.div_help_close{cursor: pointer;display: block;height: 18px;float:right;width: 48px;}
+.div_help_content{margin:5px 5px 5px 5px;}
+.div_help_content .title{float:none;font-size:23px;font-color:#000;}
+.div_help_content .body{margin-left:25px;}

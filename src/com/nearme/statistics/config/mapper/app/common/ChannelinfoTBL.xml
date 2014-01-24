@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+	"-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nearme.statistics.dao.app.common.ChannelinfoDao">
+	<!-- 渠道查询 -->
+	<select id="getChnnelinfoList" parameterType="ChannelinfoDTO" resultType="ChannelinfoEntity">
+	    SELECT
+    	    t.system_id systemID,
+    	    t.channel_id channelID,
+    	    t.channel_name channelName,
+    	    t.channel_desc channelDesc
+	    FROM bt_channel t
+	    WHERE t.system_id = #{systemID}
+	    ORDER BY t.channel_id
+	</select>
+	
+	<!-- 渠道删除 -->
+	<delete id="delete" parameterType="ChannelinfoDTO">
+	    DELETE FROM bt_channel t
+		WHERE t.system_id = #{systemID}
+			AND t.channel_id = #{channelID}
+	</delete>
+	
+	<!-- 渠道插入 -->
+	<update id="add" parameterType="ChannelinfoDTO">
+	    INSERT INTO bt_channel(system_id,channel_id,channel_name,channel_desc)
+		VALUES(#{systemID},#{channelID},#{channelName},#{channelDesc})
+	</update>
+	
+	<!-- 渠道更新 -->
+	<update id="update" parameterType="ChannelinfoDTO">
+	    UPDATE bt_channel t
+		SET t.channel_name = #{channelName},
+		    t.channel_desc = #{channelDesc}
+		WHERE t.system_id = #{systemID}
+			AND t.channel_id = #{channelID}
+	</update>
+</mapper>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<!-- 丽人 -->
+	<package name="appLiren" namespace="/app/liren" extends="statistics-default">
+		<!-- 首页 -->
+		<action name="liren_homepage_*" class="lirenHomepageAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/liren/homepage.jsp</result>
+		</action>
+		
+		<!-- 类目 -->
+		<action name="liren_category_*" class="lirenCategoryAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/liren/category.jsp</result>
+		</action>
+		
+		<!-- 商店 -->
+		<action name="liren_goods_*" class="lirenGoodsAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/liren/goods.jsp</result>
+		</action>
+		
+		<!-- 商店质量 -->
+		<action name="liren_goodsquality_*" class="lirenGoodsqualityAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/liren/goodsquality.jsp</result>
+		</action>
+		
+		<!-- 标签热度 -->
+		<action name="liren_taghot_*" class="lirenTaghotAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/liren/taghot.jsp</result>
+		</action>
+		
+		<!-- push数据 -->
+		<action name="liren_push_*" class="lirenPushAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/liren/push.jsp</result>
+		</action>
+		
+		<!-- 抓取商品 -->
+		<action name="liren_catchgoods_*" class="lirenCatchgoodsAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/liren/catchgoods.jsp</result>
+		</action>
+		
+		<!-- V4.0以上版本数据 -->
+		<action name="liren_version4up_*" class="lirenVersion4upAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/liren/version4up.jsp</result>
+		</action>
+	</package>
+</struts>

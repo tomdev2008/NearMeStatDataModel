@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.nearme.statistics.dao.sys.SystemTableDao">
+	<!-- 应用:增删查改 -->
+	<select id="getAppInfoList" parameterType="AppInfoDTO" resultType="AppInfoEntity">
+		SELECT 
+            t.id seqID,
+            t.system_id systemID,
+            t.system_group systemGroup,
+            t.system_name systemName,
+            t.system_desc systemDesc,
+            t.update_time updateDate,
+            t.update_by updateBy
+        FROM bt_apps t
+        ORDER BY cast(t.system_id as number)
+	</select>
+	<insert id="addAppInfo" parameterType="AppInfoDTO">
+		INSERT INTO bt_apps(id,system_id,system_group,system_name,system_desc,update_time,update_by)
+		VALUES(seq_bt_apps.nextval,
+			#{systemID},
+			#{systemGroup},
+			#{systemName},
+			#{systemDesc},
+			SYSDATE,
+			#{updateBy})
+	</insert>
+	<update id="updateAppInfo" parameterType="AppInfoDTO">
+		UPDATE bt_apps T
+		SET t.system_group=#{systemGroup},
+			t.system_name=#{systemName},
+			t.system_desc=#{systemDesc},
+			t.update_time=SYSDATE,
+			t.update_by=#{updateBy}
+		WHERE T.SYSTEM_ID=#{systemID}
+	</update>
+	<delete id="deleteAppInfo" parameterType="AppInfoDTO">
+		DELETE FROM bt_apps T
+		WHERE t.system_id=#{systemID}
+	</delete>
+
+	<!-- 渠道:增删查改 -->
+	<select id="getChannelList"  parameterType="ChannelDTO" resultType="ChannelEntity">
+		SELECT 
+		    T.SEQ_ID SEQID,
+		    T.CHANNEL_ID CHANNELID,
+		    T.CHANNEL_NAME CHANNELNAME,
+		    T.CHANNEL_DESC CHANNELDESC,
+		    T.UPDATE_TIME UPDATETIME,
+		    T.UPDATE_BY UPDATEBY
+		FROM MT_CHANNEL T
+		ORDER BY T.CHANNEL_ID
+	</select>
+	<insert id="addChannel" parameterType="ChannelDTO" >
+		INSERT INTO MT_CHANNEL(SEQ_ID,CHANNEL_ID,CHANNEL_NAME,CHANNEL_DESC,UPDATE_TIME,UPDATE_BY)
+		VALUES(SEQ_MAP_TABLES.NEXTVAL,
+		 	 	#{channelID},
+		 	 	#{channelName},
+		 	 	#{channelDesc},
+		 	 	SYSDATE,
+		 	 	#{updateBy})	 
+	</insert>
+	<update id="updateChannel" parameterType="ChannelDTO" >
+		UPDATE MT_CHANNEL T
+		SET	T.CHANNEL_NAME=#{channelName},
+			T.CHANNEL_DESC=#{channelDesc},
+			T.UPDATE_TIME=SYSDATE,
+			T.UPDATE_BY=#{updateBy}
+		WHERE T.CHANNEL_ID=#{channelID}
+	</update>
+	<delete id="deleteChannel" parameterType="ChannelDTO">
+		DELETE FROM MT_CHANNEL T
+		WHERE T.CHANNEL_ID=#{channelID}
+	</delete>
+	<!-- 版本:增删查改 -->
+	<select id="getAppVersionList" parameterType="AppVersionDTO" resultType="AppVersionEntity">
+		SELECT
+			T.SYSTEM_ID SYSTEMID,
+			T.APP_VERSION APPVERSION,
+			T.VERSION_NAME versionName,
+			T.DETECT_DATE DETECTDATE,
+			T.DETECT_TYPE DETECTTYPE,
+			T.HIDE HIDE,
+			T.UPDATE_TIME UPDATEDATE,
+			T.UPDATE_BY UPDATEBY
+		FROM MT_APPVERSION T
+		WHERE T.SYSTEM_ID=#{systemID}
+		    <if test="hide != null">
+			AND T.HIDE = #{hide}
+		    </if>
+		ORDER BY T.APP_VERSION DESC
+	</select>
+	<insert id="addAppVersion" parameterType="AppVersionDTO">
+		INSERT INTO MT_APPVERSION(SYSTEM_ID,APP_VERSION,VERSION_NAME,DETECT_DATE,DETECT_TYPE,HIDE,UPDATE_TIME,UPDATE_BY)
+		VALUES(
+			#{systemID},
+			#{appVersion},
+			#{versionName}
+			SYSDATE,
+			'M',
+			#{hide},
+			SYSDATE,
+			#{updateBy})
+	</insert>
+	<update id="updateAppVersion" parameterType="AppVersionDTO">
+		UPDATE MT_APPVERSION T
+		SET T.HIDE=#{hide},
+		    T.VERSION_NAME=#{versionName},
+			T.UPDATE_TIME=SYSDATE,
+			T.UPDATE_BY=#{updateBy}
+		WHERE T.SYSTEM_ID=#{systemID}
+			AND T.APP_VERSION=#{appVersion}
+	</update>
+	<delete id="deleteAppVersion" parameterType="AppVersionDTO">
+		DELETE FROM MT_APPVERSION T
+		WHERE T.SYSTEM_ID=#{systemID}
+			AND T.APP_VERSION=#{appVersion}
+	</delete>
+
+	<!-- 资源分类:增删查改 -->
+	<select id="getCategoryList" parameterType="CategoryDTO" resultType="CategoryEntity">
+		SELECT 
+		    T.SEQ_ID SEQID,
+			T.SYSTEM_ID SYSTEMID,
+		    T.CATEGORY_ID CATEGORYID,
+		    T.CATEGORY_NAME CATEGORYNAME,
+		    T.CATEGORY_LEVEL CATEGORYLEVEL,
+		    T.CATEGORY_PARENT_ID CATEGORYPARENTID,
+		    T.UPDATE_TIME UPDATEDATE,
+		    T.UPDATE_BY UPDATEBY
+		FROM MT_CATEGORY T
+		ORDER BY T.SEQ_ID
+	</select>
+	<insert id="addCategory" parameterType="CategoryDTO">
+		INSERT INTO MT_CATEGORY(SEQ_ID,SYSTEM_ID,CATEGORY_ID,CATEGORY_NAME,CATEGORY_LEVEL,
+								CATEGORY_PARENT_ID,UPDATE_TIME,UPDATE_BY)
+		VALUES(SEQ_MAP_TABLES.NEXTVAL,
+			   #{systemID},
+			   #{categoryID},
+			   #{categoryName},
+			   #{categoryLevel},
+			   #{categoryParentID},
+			   SYSDATE,
+			   #{updateBy})
+	</insert>
+	<insert id="updateCategory" parameterType="CategoryDTO">
+		UPDATE MT_CATEGORY T
+		SET T.CATEGORY_NAME=#{categoryName},
+		    T.CATEGORY_LEVEL=#{categoryLevel},
+		    T.CATEGORY_PARENT_ID=#{categoryParentID},
+		    T.UPDATE_TIME=SYSDATE,
+		    T.UPDATE_BY=#{updateBy}
+		 WHERE T.CATEGORY_ID=#{categoryID}
+	</insert>
+	<delete id="deleteCategory" parameterType="CategoryDTO">
+		DELETE FROM MT_CATEGORY T
+  		WHERE T.CATEGORY_ID=#{categoryID}
+	</delete>
+	<!-- 网络:增删查改 -->
+	<select id="getNetworkTypeList" parameterType="NetworkTypeDTO" resultType="NetworkTypeEntity">
+		SELECT 
+		    T.SEQ_ID SEQID,
+			T.NETWORK_ID NETWORKID,
+			T.NETWORK_GROUP NETWORKGROUP,
+			T.NETWORK_NAME NETWORKNAME,
+			T.UPDATE_TIME UPDATEDATE,
+			T.UPDATE_BY UPDATEBY
+		FROM MT_NETWORK T
+		ORDER BY T.NETWORK_ID ASC
+	</select>
+	<insert id="addNetworkType" parameterType="NetworkTypeDTO">
+		INSERT INTO MT_NETWORK(SEQ_ID,NETWORK_ID,NETWORK_GROUP,NETWORK_NAME,UPDATE_TIME,UPDATE_BY)
+		VALUES(SEQ_MAP_TABLES.NEXTVAL,
+			#{networkID},
+			#{networkGroup},
+			#{networkName},
+			SYSDATE,
+			#{updateBy})
+	</insert>
+	<update id="updateNetworkType" parameterType="NetworkTypeDTO">
+		UPDATE MT_NETWORK T
+		SET T.NETWORK_NAME=#{networkName},
+			T.NETWORK_GROUP=#{networkGroup},
+			T.UPDATE_TIME=SYSDATE,
+			T.UPDATE_BY=#{updateBy}
+		WHERE T.NETWORK_ID=#{networkID}
+	</update>
+	<delete id="deleteNetworkType" parameterType="NetworkTypeDTO">
+		DELETE FROM MT_NETWORK T
+		WHERE T.NETWORK_ID=#{networkID}
+	</delete>
+	<!-- 游戏中心产品:增删查改 -->
+	<select id="getGCProductList" parameterType="GCProductDTO" resultType="GCProductEntity">
+		SELECT T.SEQ_ID SEQID,
+			T.PRODUCT_ID PRODUCTID,
+			T.SYSTEM_ID SYSTEMID,
+			T.PRODUCT_NAME PRODUCTNAME,
+			T.UPDATE_TIME UPDATEDATE,
+			T.UPDATE_BY UPDATEBY
+		FROM MT_GC_PRODUCT T
+		ORDER BY T.PRODUCT_ID DESC
+	</select>
+	<insert id="addGCProduct" parameterType="GCProductDTO">
+		INSERT INTO MT_GC_PRODUCT(SEQ_ID,PRODUCT_ID,SYSTEM_ID,PRODUCT_NAME,UPDATE_TIME,UPDATE_BY)
+		VALUES(SEQ_MAP_TABLES.NEXTVAL,
+			#{productID},
+			#{systemID},
+			#{productName},
+			SYSDATE,
+			#{updateBy})
+	</insert>
+	<update id="updateGCProduct" parameterType="GCProductDTO">
+		UPDATE MT_GC_PRODUCT T
+		SET T.SYSTEM_ID=#{systemID},
+			T.PRODUCT_NAME=#{productName},
+			T.UPDATE_TIME=SYSDATE,
+			T.UPDATE_BY=#{updateBy}
+		WHERE T.PRODUCT_ID=#{productID}
+	</update>
+	<delete id="deleteGCProduct" parameterType="GCProductDTO">
+		DELETE FROM MT_GC_PRODUCT T
+		WHERE T.SYSTEM_ID=#{systemID}
+	</delete>
+</mapper>

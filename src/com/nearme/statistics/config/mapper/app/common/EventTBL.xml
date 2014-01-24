@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+	"-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nearme.statistics.dao.app.common.EventDao">
+	<!-- 事件删除 -->
+	<delete id="deleteKVEvent" parameterType="EventDTO">
+	    DELETE FROM BT_KV_EVENT T
+		WHERE T.SYSTEM_ID = #{systemID}	AND T.ID=#{id}
+	</delete>
+	<!-- 事件插入 -->
+	<update id="addKVEvent" parameterType="EventDTO">
+	    INSERT INTO BT_KV_EVENT(ID,EVENT_ID,EVENT_NAME,EVENT_DESC,SYSTEM_ID)
+		VALUES(SEQ_ID.NEXTVAL,#{eventID},#{eventName},#{eventDesc},#{systemID})
+	</update>
+	<!-- 事件更新 -->
+	<update id="updateKVEvent" parameterType="EventDTO">
+	    UPDATE BT_KV_EVENT t
+		SET t.EVENT_ID = #{eventID},
+		    t.EVENT_NAME = #{eventName},
+		    t.SYSTEM_ID  = #{systemID}, 
+		    t.EVENT_DESC  = #{eventDesc}
+		WHERE t.ID = #{id}
+	</update>
+
+	<!-- KV事件 列表 -->
+	<select id="listKVEvent" parameterType="BaseDTO" resultType="KVEventEntity">
+	    SELECT T.ID,T.EVENT_ID EVENTID,T.EVENT_NAME EVENTNAME,T.EVENT_DESC EVENTDESC,T.SYSTEM_ID SYSTEMID
+		FROM BT_KV_EVENT T
+		WHERE T.SYSTEM_ID=#{systemID}
+		ORDER BY NLSSORT(EVENTDESC,'NLS_SORT=SCHINESE_PINYIN_M'),NLSSORT(T.EVENT_NAME,'NLS_SORT=SCHINESE_PINYIN_M')
+	</select>
+	
+	<!-- KV事件统计列表 -->
+	<select id="listKVEventIndex" parameterType="EventDTO" resultType="KVEventIndexEntity">
+	   SELECT T.STATDATE ,T1.START_IMEI startImeis,T1.START_TIMES startCounts,T.EVENT_IMEIS eventImeis,T.EVENT_COUNTS eventCounts
+		FROM DM_KV_EVENT_INDEX_DAILY T LEFT JOIN DM_DETAIL_DAILY T1 
+		     ON(T.SYSTEM_ID=T1.SYSTEM_ID AND TO_DATE(T.STATDATE,'YYYYMMDD')=T1.STATDATE AND nvl(T.MODEL,'#_$')=nvl(T1.MODEL,'#_$') AND nvl(T.APP_VERSION,'#_$')=nvl(T1.APP_VERSION,'#_$'))
+		WHERE T.STATDATE >= ${startDateInt} AND T.STATDATE &lt;= ${endDateInt}
+		<if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+		      AND T.APP_VERSION=#{appVersion} 
+		</if>
+		<if test="appVersion==null or appVersion=='' or appVersion=='all'">
+		      AND T.APP_VERSION IS NULL
+		</if>
+		<if test="model!=null and model!='' and model!='all'">
+		      AND T.MODEL=#{model}
+		</if>
+		<if test="model==null or model=='' or model=='all'">
+		      AND T.MODEL IS NULL
+		</if>
+		      AND T.EVENT_ID=#{eventID}   
+		      AND T.SYSTEM_ID=#{systemID}
+		ORDER BY T.STATDATE DESC 
+	</select>
+	
+	<!-- KV事件Key列表 -->
+	<select id="listKVEventKey" parameterType="EventDTO" resultType="KVEventDetailEntity">
+		SELECT T.EVENT_KEY eventKey
+		FROM DM_KV_EVENT_DETAIL_DAILY T
+		WHERE T.STATDATE >= ${startDateInt} AND T.STATDATE &lt;= ${endDateInt}
+	   <if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+		      AND T.APP_VERSION=#{appVersion} 
+		</if>
+		<if test="appVersion==null or appVersion=='' or appVersion=='all'">
+		      AND T.APP_VERSION IS NULL
+		</if>
+		<if test="model!=null and model!='' and model!='all'">
+		      AND T.MODEL=#{model}
+		</if>
+		<if test="model==null or model=='' or model=='all'">
+		      AND T.MODEL IS NULL
+		</if>
+		      AND T.EVENT_ID=#{eventID}   
+		      AND T.SYSTEM_ID=#{systemID}
+		GROUP BY T.EVENT_KEY
+		ORDER BY SUM(T.EVENT_COUNTS) DESC
+	</select>
+	
+	<!-- KV事件详情统计列表 -->
+	<select id="listKVEventDetailSum" parameterType="EventDTO" resultType="KVEventDetailEntity">
+		SELECT eventValue,eventCounts FROM(
+			SELECT T.EVENT_VALUE eventValue, SUM(T.EVENT_COUNTS) eventCounts
+			FROM DM_KV_EVENT_DETAIL_DAILY T
+			WHERE T.STATDATE >= ${startDateInt} AND T.STATDATE &lt;= ${endDateInt}
+		   <if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+			      AND T.APP_VERSION=#{appVersion} 
+			</if>
+			<if test="appVersion==null or appVersion=='' or appVersion=='all'">
+			      AND T.APP_VERSION IS NULL
+			</if>
+			<if test="model!=null and model!='' and model!='all'">
+			      AND T.MODEL=#{model}
+			</if>
+			<if test="model==null or model=='' or model=='all'">
+			      AND T.MODEL IS NULL
+			</if>
+			      AND T.EVENT_KEY=#{eventKey} AND T.EVENT_ID=#{eventID} AND T.SYSTEM_ID=#{systemID} 
+			GROUP BY T.EVENT_VALUE
+			ORDER BY eventCounts DESC
+		)M WHERE ROWNUM &lt;=100
+	</select>
+	
+	<!-- KV事件详情统计列表 -->
+	<select id="listKVEventDetail" parameterType="EventDTO" resultType="KVEventDetailEntity">
+		SELECT T.STATDATE statdate, SUM(T.EVENT_COUNTS) eventCounts
+		FROM DM_KV_EVENT_DETAIL_DAILY T
+		WHERE T.EVENT_VALUE=#{eventValue}
+			AND T.STATDATE >= ${startDateInt} AND T.STATDATE &lt;= ${endDateInt}
+	   <if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+		      AND T.APP_VERSION=#{appVersion} 
+		</if>
+		<if test="appVersion==null or appVersion=='' or appVersion=='all'">
+		      AND T.APP_VERSION IS NULL
+		</if>
+		<if test="model!=null and model!='' and model!='all'">
+		      AND T.MODEL=#{model}
+		</if>
+		<if test="model==null or model=='' or model=='all'">
+		      AND T.MODEL IS NULL
+		</if>
+		      AND T.EVENT_KEY=#{eventKey} AND T.EVENT_ID=#{eventID} AND T.SYSTEM_ID=#{systemID} 
+		GROUP BY T.STATDATE
+		ORDER BY T.STATDATE DESC
+	</select>
+	
+	
+	<!-- 查询事件流列表 -->
+	<select id="listKVEventFlow" parameterType="BaseDTO" resultType="KVEventFlowEntity">
+	    SELECT M1.EVENT_FLOW_NAME EVENTFLOWNAME, M1.STEPS EVENTFLOWSTEPS, M2.EVENT_NAME FINALEVENTNAME
+		FROM(
+		SELECT EVENT_FLOW_NAME,COUNT(1) STEPS,MAX(EVENT_FLOW_STEP) EVENT_FLOW_STEP
+		FROM BT_KV_EVENT_FLOW
+		WHERE SYSTEM_ID=${systemID}
+		GROUP BY EVENT_FLOW_NAME
+		ORDER BY NLSSORT(EVENT_FLOW_NAME,'NLS_SORT=SCHINESE_PINYIN_M')
+		)M1
+		LEFT JOIN(
+		SELECT DISTINCT T1.EVENT_FLOW_NAME,T1.EVENT_FLOW_STEP,T2.EVENT_NAME
+		FROM BT_KV_EVENT_FLOW T1 LEFT JOIN BT_KV_EVENT T2 ON(T1.EVENT_ID=T2.EVENT_ID AND T1.SYSTEM_ID=T2.SYSTEM_ID AND T1.SYSTEM_ID=${systemID})
+		)M2 ON(M1.EVENT_FLOW_NAME=M2.EVENT_FLOW_NAME AND M1.EVENT_FLOW_STEP=M2.EVENT_FLOW_STEP)
+	</select>
+	<!-- 查询一个事件流详情-->
+	<select id="getTheKVEventFlow" parameterType="EventFlowDTO" resultType="KVEventFlowEntity">
+	    SELECT T.EVENT_FLOW_NAME EVENTFLOWNAME,T.EVENT_FLOW_STEP EVENTFLOWSTEP, 
+		       T.EVENT_FLOW_DESC EVENTFLOWDESC, T.EVENT_ID FINALEVENTID, T1.EVENT_NAME finalEventName
+		FROM BT_KV_EVENT_FLOW T LEFT JOIN BT_KV_EVENT T1 ON(T.EVENT_ID=T1.EVENT_ID AND T.SYSTEM_ID=T1.SYSTEM_ID)
+		WHERE T.SYSTEM_ID=${systemID} AND T.EVENT_FLOW_NAME=#{eventFlowName}
+		ORDER BY T.EVENT_FLOW_STEP
+	</select>
+	<!-- 删除事件流 -->
+	<delete id="deleteKVEventFlow" parameterType="EventFlowDTO">
+	    DELETE FROM BT_KV_EVENT_FLOW 
+		WHERE SYSTEM_ID=${systemID} AND EVENT_FLOW_NAME=#{eventFlowName}
+	</delete>
+	<!-- 新增事件流 -->
+	<update id="addKVEventFlow" parameterType="EventFlowDTO">
+	    INSERT INTO BT_KV_EVENT_FLOW(SYSTEM_ID,EVENT_FLOW_NAME,EVENT_FLOW_DESC,EVENT_FLOW_STEP,EVENT_ID)
+		VALUES(${systemID},#{eventFlowName},#{eventFlowDesc},${eventFlowStep},#{finalEventID})
+	</update>
+	
+	<!-- 查询一个转化率详情-->
+	<select id="listConversionDetail" parameterType="EventFlowDTO" resultType="KVEventFlowEntity">
+	    SELECT T1.EVENT_FLOW_NAME EVENTFLOWNAME,T1.EVENT_FLOW_DESC EVENTFLOWDESC,
+	    	T1.EVENT_FLOW_STEP EVENTFLOWSTEP,T3.EVENT_NAME finalEventName,
+	    	T2.EVENT_IMEIS eventImeis, T2.EVENT_COUNTS eventCounts
+		FROM BT_KV_EVENT_FLOW T1 LEFT JOIN(
+		  SELECT T.SYSTEM_ID,T.EVENT_ID,T.EVENT_IMEIS,T.EVENT_COUNTS 
+		  FROM DM_KV_EVENT_INDEX_${lidu} T 
+		  WHERE T.STATDATE=${statDate} AND T.SYSTEM_ID=${systemID}
+		        <if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+				      AND T.APP_VERSION=#{appVersion} 
+				</if>
+				<if test="appVersion==null or appVersion=='' or appVersion=='all'">
+				      AND T.APP_VERSION IS NULL
+				</if>
+				<if test="model!=null and model!='' and model!='all'">
+				      AND T.MODEL=#{model}
+				</if>
+				<if test="model==null or model=='' or model=='all'">
+				      AND T.MODEL IS NULL
+				</if>
+		)T2 ON(T1.EVENT_ID=T2.EVENT_ID AND T1.SYSTEM_ID=T2.SYSTEM_ID)
+		LEFT JOIN BT_KV_EVENT T3 ON(T1.EVENT_ID=T3.EVENT_ID AND T1.SYSTEM_ID=T3.SYSTEM_ID)
+		WHERE T1.EVENT_FLOW_NAME=#{eventFlowName}
+		ORDER BY T1.EVENT_FLOW_STEP
+	</select>
+	
+	<!-- 查询一个转化率在一段时间内的详情-->
+	<select id="listConversionDetailPeriod" parameterType="EventFlowDTO" resultType="KVEventFlowEntity">
+	    SELECT T1.EVENT_FLOW_NAME EVENTFLOWNAME,T1.EVENT_FLOW_DESC EVENTFLOWDESC,
+	    	T1.EVENT_FLOW_STEP EVENTFLOWSTEP,T3.EVENT_NAME finalEventName,
+	    	T2.STATDATE, T2.EVENT_IMEIS eventImeis, T2.EVENT_COUNTS eventCounts
+		FROM BT_KV_EVENT_FLOW T1 LEFT JOIN(
+		  SELECT T.STATDATE,T.SYSTEM_ID,T.EVENT_ID,T.EVENT_IMEIS,T.EVENT_COUNTS 
+		  FROM DM_KV_EVENT_INDEX_${lidu} T 
+		  WHERE T.STATDATE>=${statFromDate} 
+		  		AND T.STATDATE &lt;= ${statDate} 
+		  		AND T.SYSTEM_ID=${systemID}
+		        <if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+				      AND T.APP_VERSION=#{appVersion} 
+				</if>
+				<if test="appVersion==null or appVersion=='' or appVersion=='all'">
+				      AND T.APP_VERSION IS NULL
+				</if>
+				<if test="model!=null and model!='' and model!='all'">
+				      AND T.MODEL=#{model}
+				</if>
+				<if test="model==null or model=='' or model=='all'">
+				      AND T.MODEL IS NULL
+				</if>
+		)T2 ON(T1.EVENT_ID=T2.EVENT_ID AND T1.SYSTEM_ID=T2.SYSTEM_ID)
+		LEFT JOIN BT_KV_EVENT T3 ON(T1.EVENT_ID=T3.EVENT_ID AND T1.SYSTEM_ID=T3.SYSTEM_ID)
+		WHERE T1.EVENT_FLOW_NAME=#{eventFlowName}
+		ORDER BY T2.STATDATE,T1.EVENT_FLOW_STEP
+	</select>
+	
+</mapper>

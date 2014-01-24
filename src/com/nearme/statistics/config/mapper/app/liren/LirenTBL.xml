@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+	"-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nearme.statistics.dao.app.liren.LirenDao">
+	<!-- 首页 -->
+	<select id="getHomepageList" parameterType="LirenDTO"
+		resultType="LRHomepageEntity">
+		SELECT
+    		t.stat_date statDate,
+    		t.lbt_device lbtimei,
+    		t.lbt_cnt lbtcnt,
+    		t.recommend_device hotrecommendImei,
+    		t.recommend_cnt hotrecommendCnt,
+    		t.recommend_browse_device hotrecommendBrose,
+    		t.hot_top50 hottop50,
+    		t.hot_top100 hottop100,
+    		t.cur_refer_time refertime,
+    		t.last_refer_time referyestime 
+		FROM dm_lr_homepage t
+		WHERE 1 = 1
+    		<if test="startDate != null">
+    		AND t.stat_date >= TRUNC(#{startDate})
+    		</if>
+    		<if test="endDate != null">
+    		AND t.stat_date &lt; TRUNC(#{endDate}+1)
+    		</if>
+    		AND t.stat_date &lt; TRUNC(SYSDATE)
+    		<if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+            AND t.appVersion = #{appVersion}
+            </if>
+            <if test="appVersion=='all' or appVersion=='' or appVersion==null">
+            AND t.appVersion IS NULL
+            </if>
+		ORDER BY t.stat_date DESC
+	</select>
+	
+	<!-- 类目 -->
+	<select id="getCategoryList" parameterType="LirenDTO"
+		resultType="LRCategoryEntity">
+		SELECT
+    		t.stat_date statDate ,
+    		t.category_name category,
+    	    t.shangxin_total shangxinTotal,
+            t.shangxin_cnt shangxinCnt,
+            t.browse_cnt browseCnt,
+            t.like_cnt likeCnt,
+            t.device_cnt visitImei,
+            t.visit_cnt visitCnt,
+            t.ysx_total ysxtotal,
+            t.ysx_cnt ysxcnt,
+            t.recent_sx_time recentsxtime,
+            t.recent_cnt recentcnt,
+            t.avg_recent_browse avgrecentbrowse,
+            t.browse_new_imei browsenewimei,
+            t.browse_new_cnt browsenewcnt
+		FROM dm_lr_category t
+		WHERE 1 = 1
+    		<if test="startDate != null">
+    		AND t.stat_date = TRUNC(#{startDate})
+    		</if>
+    		<if test="startDate == null">
+    		AND t.stat_date = TRUNC(#{startDate})
+    		</if>
+    		<if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+            AND t.appVersion = #{appVersion}
+            </if>
+            <if test="appVersion=='all' or appVersion=='' or appVersion==null">
+            AND t.appVersion IS NULL
+            </if>
+		ORDER BY t.device_cnt DESC
+	</select>
+	
+	<!-- 商品 -->
+	<select id="getGoodsList" parameterType="LirenDTO"
+		resultType="LRGoodsEntity">
+		SELECT
+    		t.stat_date statDate,
+    		t.shangxin_total shangxinTotal,
+            t.shangxin_cnt shangxinCnt,
+            t.new_browse_total newbrowseTotal,
+            t.new_browse_cnt newbrowseDetail,
+            t.new_like_cnt newlike,
+            t.device_cnt deviceCnt,
+            t.avg_quality avgquality
+		FROM dm_lr_goods t
+		WHERE 1 = 1
+    		<if test="startDate != null">
+    		AND t.stat_date >= TRUNC(#{startDate})
+    		</if>
+    		<if test="endDate != null">
+    		AND t.stat_date &lt; TRUNC(#{endDate}+1)
+    		</if>
+    		AND t.stat_date &lt; TRUNC(SYSDATE)
+    		<if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+            AND t.appVersion = #{appVersion}
+            </if>
+            <if test="appVersion=='all' or appVersion=='' or appVersion==null">
+            AND t.appVersion IS NULL
+            </if>
+		ORDER BY t.stat_date DESC,t.shangxin_total DESC
+	</select>
+	
+	<!-- 商品质量 -->
+	<select id="getGoodsqualityList" parameterType="LirenDTO"
+		resultType="LRGoodsqualityEntity">
+		SELECT
+    		t.stat_date statDate,
+            t.between_type betweentype,--所在区间
+            t.nums numb --数值
+		FROM dm_lr_goods_quality t
+		WHERE t.tag = '${type}'
+    		<if test="startDate != null">
+    		AND t.stat_date = TRUNC(#{startDate})
+    		</if>
+    		<if test="startDate == null">
+    		AND t.stat_date = TRUNC(SYSDATE - 1)
+    		</if>
+    		<if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+            AND t.appVersion = #{appVersion}
+            </if>
+            <if test="appVersion=='all' or appVersion=='' or appVersion==null">
+            AND t.appVersion IS NULL
+            </if>
+            AND t.between_type IS NOT NULL
+		ORDER BY t.between_type DESC
+	</select>
+	
+	<!-- 标签热度 -->
+	<select id="getTaghotList" parameterType="LirenDTO"
+		resultType="LRTaghotEntity">
+		SELECT
+    		t.stat_date statDate,
+            t.tag tag,
+            t.like_cnt likecnt,
+            t.like_total totallikecnt,
+            t.day_like_cnt dayliketotal
+		FROM dm_lr_taghot t
+		WHERE 1 = 1
+    		<if test="startDate != null">
+    		AND t.stat_date = TRUNC(#{startDate})
+    		</if>
+    		<if test="startDate == null">
+    		AND t.stat_date = TRUNC(SYSDATE - 1)
+    		</if>
+    		<if test="appVersion!=null and appVersion!='' and appVersion!='all'">
+            AND t.appVersion = #{appVersion}
+            </if>
+            <if test="appVersion=='all' or appVersion=='' or appVersion==null">
+            AND t.appVersion IS NULL
+            </if>
+		ORDER BY t.like_total DESC
+	</select>
+	
+	<!-- push数据 -->
+	<select id="getPushList" parameterType="LirenDTO"
+		resultType="LRPushEntity">
+	</select>
+	
+	<!-- 抓取商品 -->
+	<select id="getCatchgoodsList" parameterType="LirenDTO"
+		resultType="LRCatchgoodsEntity">
+	</select>
+	
+	<!-- V4.0以上版本数据 -->
+	<select id="getVersion4upList" parameterType="LirenDTO"
+		resultType="LRVersion4upEntity">
+		SELECT
+            <if test="lidu == 'MONTHLY'">
+            to_date(t.statdate,'yyyy-MM') statDate,
+            </if>
+            <if test="lidu != 'MONTHLY'">
+            to_date(t.statdate,'yyyy-MM-dd') statDate,
+            </if>
+            t.start_imei startimei,
+            t.start_lrr startlrrcnt,
+            t.new_imei newimei,
+            t1.new_imei newimeitotal,
+            t.new_ssoid newssoid,
+            t.new_lrr newlrrcnt,
+            t.start_imei_total startimeitotal
+        FROM dm_lr_v4_${lidu} t
+        LEFT OUTER JOIN (
+            SELECT *
+            FROM dm_detail_${lidu}
+            WHERE system_id = 10002
+                AND app_version IS NULL
+        ) t1
+        <if test="lidu == 'MONTHLY'">
+        ON to_date(t.statdate,'yyyy-MM') = t1.statdate
+        </if>
+        <if test="lidu != 'MONTHLY'">
+        ON to_date(t.statdate,'yyyy-MM-dd') = t1.statdate
+        </if>
+            AND NVL(t.model,'@@@@') = NVL(t1.model,'@@@@')
+        WHERE 1 = 1
+            <if test="startDate != null and lidu != 'MONTHLY'">
+			AND to_date(t.statdate,'yyyy-MM-dd') >= TRUNC(#{startDate})
+		    </if>
+		    <if test="endDate != null and lidu != 'MONTHLY'">
+		    AND to_date(t.statdate,'yyyy-MM-dd') &lt; TRUNC(#{endDate} + 1)
+		    </if>
+		    <if test="startDate != null and lidu == 'MONTHLY'">
+			AND t.statdate >= to_char(TRUNC(#{startDate}),'yyyyMM')
+		    </if>
+		    <if test="endDate != null and lidu == 'MONTHLY'">
+		    AND t.statdate &lt; to_char(TRUNC(#{endDate}+1),'yyyyMM')
+		    </if>
+            <if test="model!= null and model!='' and model!='all'">
+            AND t.MODEL = #{model}
+            </if>
+            <if test="model=='all' or model=='' or model==null">
+            AND t.MODEL IS NULL
+            </if>
+        ORDER BY t.statdate DESC
+	</select>
+</mapper>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+	"-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nearme.statistics.dao.app.common.ModelDao">
+	<!-- 机型管理 -->
+	<!-- 查询 -->
+	<select id="getModelList" parameterType="ModelDTO" resultType="ModelEntity">
+	   SELECT
+    	   t.type_name typename,
+		   t.model model,
+		   t.is_oppo isoppo
+	   FROM bt_model t
+	   WHERE 1 = 1
+	       AND t.is_oppo = #{isoppo}
+	       AND t.is_used = 1
+	   ORDER BY t.is_oppo,t.type_name,t.model
+	</select>
+	
+	<!-- 管理查询 -->
+	<select id="getModelmanageList" parameterType="ModelDTO" resultType="ModelEntity">
+	   SELECT
+    	   t.type_name typename,
+		   t.model model,
+		   t.is_oppo isoppo,
+		   t.is_used isused
+	   FROM bt_model t
+	   ORDER BY t.is_used DESC, t.is_oppo DESC, t.type_name, t.model
+	</select>
+	
+	<!-- 更新 -->
+	<update id="update" parameterType="ModelDTO">
+	    <if test="model != null and model != ''">
+	    UPDATE bt_model t
+	    SET 
+	        <if test="typename != null and typename != ''">
+	        t.type_name=#{typename},
+	        </if>
+	        <if test="isoppo != -1">
+	        t.is_oppo=#{isoppo},
+	        </if>
+    	    <if test="isused != -1">
+    	    t.is_used=#{isused},
+    	    </if>
+    	    t.update_time = SYSDATE
+	    WHERE t.model in (${model})
+	    </if>
+	</update>
+</mapper>

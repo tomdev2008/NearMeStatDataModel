@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+	<!-- 账号覆盖率 -->
+	<bean id="grzxUsercoverAction" class="com.nearme.statistics.action.app.grzx.UsercoverAction"
+		scope="prototype">
+		<property name="service">
+			<ref bean="grzxService" />
+		</property>
+	</bean>
+	
+	<!-- 新增来源 -->
+	<bean id="grzxNewfromAction" class="com.nearme.statistics.action.app.grzx.NewfromAction"
+		scope="prototype">
+		<property name="service">
+			<ref bean="grzxService" />
+		</property>
+	</bean>
+	
+	<!-- 注册来源 -->
+	<bean id="grzxRegisterfromAction" class="com.nearme.statistics.action.app.grzx.RegisterfromAction"
+		scope="prototype">
+		<property name="service">
+			<ref bean="grzxService" />
+		</property>
+	</bean>
+</beans>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<!-- 云 -->
+	<package name="appCloud" namespace="/app/cloud" extends="statistics-default">
+		<!-- nearme云 -->
+		<!-- 流量分配 -->
+		<action name="cloud_flowdistribute_*" class="cloudFlowdistributeAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/cloud/flowdistribute.jsp</result>
+		</action>
+		
+
+		
+		<!-- 云相册 -->
+		<!-- 日增情况 -->
+		<action name="cloud_dayincrease_*" class="cloudDayincreaseAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/cloud/dayincrease.jsp</result>
+		</action>
+		
+		<!-- 存储留存 -->
+		<action name="cloud_remain_*" class="cloudRemainAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/cloud/remain.jsp</result>
+		</action>
+		
+		<!-- 路径统计 -->
+		<action name="cloud_path_*" class="cloudPathAction"
+			method="{1}">
+			<result name="success">/WEB-INF/pages/app/cloud/path.jsp</result>
+		</action>
+	</package>
+</struts>
